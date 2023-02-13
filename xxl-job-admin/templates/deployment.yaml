@@ -1,0 +1,86 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "xxl-job-admin.fullname" . }}
+  labels:
+    {{- include "xxl-job-admin.labels" . | nindent 4 }}
+spec:
+  {{- if not .Values.autoscaling.enabled }}
+  replicas: {{ .Values.replicaCount }}
+  {{- end }}
+  selector:
+    matchLabels:
+      {{- include "xxl-job-admin.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      annotations:
+        checksum/secret-sha: {{ include (print $.Template.BasePath "/secret.yaml") . | sha256sum }}
+        checksum/config-sha: {{ include (print $.Template.BasePath "/config.yaml") . | sha256sum }}
+      {{- with .Values.podAnnotations }}
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        {{- include "xxl-job-admin.selectorLabels" . | nindent 8 }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      volumes:
+        - name: config
+          configMap:
+            name: {{ include "xxl-job-admin.fullname" . }}-config
+        - name: creds
+          secret:
+            secretName: {{ include "xxl-job-admin.fullname" . }}-creds
+      serviceAccountName: {{ include "xxl-job-admin.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      containers:
+        - name: {{ .Chart.Name }}
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          env:
+            - name: SPRING_CONFIG_IMPORT
+              value: optional:configtree:/var/run/secrets/spring/
+            - name: PARAMS
+              value: {{ include "xxl-job-admin.spring.datasource.url" . }}
+          volumeMounts:
+            - name: config
+              mountPath: /config
+            - name: creds
+              mountPath: /var/run/secrets/spring/
+          ports:
+            - name: http
+              containerPort: {{ .Values.properties.server.port }}
+              protocol: TCP
+          livenessProbe:
+            httpGet:
+              path: {{ include "xxl-job-admin.healthCheckEndpoint" . }}/liveness
+              port: http
+          readinessProbe:
+            httpGet:
+              path: {{ include "xxl-job-admin.healthCheckEndpoint" . }}/readiness
+              port: http
+          startupProbe:
+            httpGet:
+              port: http
+              path: {{ include "xxl-job-admin.healthCheckEndpoint" . }}/liveness
+            initialDelaySeconds: 15
+            failureThreshold: 30
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
