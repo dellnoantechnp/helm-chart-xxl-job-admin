@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "xxl-job-admin.fullname" . }}-config
+  labels:
+    {{- include "xxl-job-admin.labels" . | nindent 4 }}
+data:
+  application.yaml: |
+{{ toYaml .Values.properties | indent 4 }}
