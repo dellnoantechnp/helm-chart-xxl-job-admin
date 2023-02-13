@@ -71,5 +71,5 @@ jdbc datasource url
 */}}
 {{- define "xxl-job-admin.spring.datasource.url" -}}
 {{- printf "--spring.datasource.url=jdbc:mysql://%s:%d/%s?useUnicode=true&characterEncoding=UTF-8&autoReconnect=true&serverTimezone=%s --spring.datasource.username=%s --spring.datasource.password=%s"
-.Values.database.db_address .Values.database.db_port .Values.database.db_name .Values.database.serverTimezone .Values.database.user .Values.database.password}}
+.Values.database.db_address (.Values.database.db_port | int) .Values.database.db_name .Values.database.serverTimezone .Values.database.user .Values.database.password}}
 {{- end}}

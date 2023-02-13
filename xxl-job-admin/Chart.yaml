@@ -1,7 +1,7 @@
 annotations:
   artifacthub.io/images: |
-    - name: dellnoantechnp/xxl-job-admin:2.3.1
-      image: dellnoantechnp/xxl-job-admin:2.3.1
+    - name: xuxueli/xxl-job-admin:2.3.1
+      image: xuxueli/xxl-job-admin:2.3.1
   artifacthub.io/license: Apache-2.0
   artifacthub.io/links: |
     - name: Chart Source

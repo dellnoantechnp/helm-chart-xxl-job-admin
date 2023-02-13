@@ -124,14 +124,14 @@ service:
   port: 8080
 
 ingress:
-  enabled: true
+  enabled: false
   className: "nginx"
   annotations:
     {}
     # kubernetes.io/ingress.class: nginx
     # kubernetes.io/tls-acme: "true"
   hosts:
-    - host: xxl-job.test.chives.vip
+    - host: xxl-job.example.com
       paths:
         - path: /xxl-job-admin
           pathType: ImplementationSpecific
