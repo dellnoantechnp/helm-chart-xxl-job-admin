@@ -48,6 +48,8 @@ Selector labels
 {{- define "xxl-job-admin.selectorLabels" -}}
 app.kubernetes.io/name: {{ include "xxl-job-admin.name" . }}
 app.kubernetes.io/instance: {{ .Release.Name }}
+app: {{ .Chart.Name }}
+version: {{ .Chart.AppVersion }}
 {{- end }}
 
 {{/*
