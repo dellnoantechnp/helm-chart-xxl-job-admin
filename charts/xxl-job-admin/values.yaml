@@ -106,6 +106,16 @@ serviceAccount:
 
 podAnnotations: {}
 
+# default label name includes:
+## helm.sh/chart:
+## app.kubernetes.io/name:
+## app.kubernetes.io/instance:
+## app.kubernetes.io/version:
+## app.kubernetes.io/managed-by:
+## app:
+## version:
+podLabels: {}
+
 podSecurityContext:
   {}
   # fsGroup: 2000
@@ -139,6 +149,16 @@ ingress:
   #  - secretName: chart-example-tls
   #    hosts:
   #      - chart-example.local
+
+virtualservice:
+  # Istio VirtualService
+  enabled: false
+  hosts:
+    - xxl-job.example.com
+  gateways:
+    - default/default-gateway
+    - middleware-gateway
+
 
 resources:
   #{}

@@ -48,6 +48,9 @@ Selector labels
 {{- define "xxl-job-admin.selectorLabels" -}}
 app.kubernetes.io/name: {{ include "xxl-job-admin.name" . }}
 app.kubernetes.io/instance: {{ .Release.Name }}
+{{- range $key, $val := .Values.podLabels }}
+{{ $key }}: {{ $val | quote | lower }}
+{{- end }}
 app: {{ .Chart.Name }}
 version: {{ .Chart.AppVersion }}
 {{- end }}
@@ -75,3 +78,21 @@ jdbc datasource url
 {{- printf "--spring.datasource.url=jdbc:mysql://%s:%d/%s?useUnicode=true&characterEncoding=UTF-8&autoReconnect=true&serverTimezone=%s --spring.datasource.username=%s --spring.datasource.password=%s"
 .Values.database.db_address (.Values.database.db_port | int) .Values.database.db_name .Values.database.serverTimezone .Values.database.user .Values.database.password}}
 {{- end}}
+
+{{/*
+Istio VirtualService hosts
+*/}}
+{{- define "xxl-job-admin.virtualservice.hosts" }}
+{{- range $host := .Values.virtualservice.hosts }}
+- {{ $host | lower }}
+{{- end -}}
+{{- end -}}
+
+{{/*
+Istio VirtualService gateways
+*/}}
+{{- define "xxl-job-admin.virtualservice.gateways" }}
+{{- range $gateway := .Values.virtualservice.gateways }}
+- {{ $gateway |trim }}
+{{- end -}}
+{{- end -}}
