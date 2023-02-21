@@ -1,0 +1,29 @@
+apiVersion: v1
+entries:
+  xxl-job-admin:
+  - annotations:
+      artifacthub.io/images: |
+        - name: xuxueli/xxl-job-admin:2.3.1
+          image: xuxueli/xxl-job-admin:2.3.1
+      artifacthub.io/license: Apache-2.0
+      artifacthub.io/links: |
+        - name: Chart Source
+          url: https://github.com/dellnoantechnp.github.io/tree/main/charts/xxl-job-admin
+    apiVersion: v2
+    appVersion: 2.3.1
+    created: "2023-02-21T03:57:47.604081198Z"
+    description: XXL-JOB-ADMIN is schedule center for XXL-JOB
+    digest: 18a9434f57a88b73d5695be5692a1fe33b12688f10cfd70b025a831abb70678b
+    home: https://github.com/xuxueli/xxl-job/
+    maintainers:
+    - email: dellnoantechnp@gmail.com
+      name: dellnoantechnp
+      url: https://github.com/dellnoantechnp
+    name: xxl-job-admin
+    sources:
+    - https://github.com/dellnoantechnp.github.io/
+    type: application
+    urls:
+    - https://github.com/dellnoantechnp/helm-chart-xxl-job-admin/releases/download/xxl-job-admin-1.0.2/xxl-job-admin-1.0.2.tgz
+    version: 1.0.2
+generated: "2023-02-21T03:57:47.604097899Z"
