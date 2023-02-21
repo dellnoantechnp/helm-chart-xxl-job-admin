@@ -16,7 +16,8 @@ Helm's [documentation](https://helm.sh/docs) to get started.
 Once Helm has been set up correctly, add the repo as follows:
 
 ```shell
-helm repo add <repo_name> https://dellnoantechnp.github.io/charts
+REPO_NAME=xxl-job
+helm repo add ${REPO_NAME} https://dellnoantechnp.github.io/charts
 helm repo list
 ```
 
@@ -27,22 +28,21 @@ xxl-job-admin` to see the charts.
 To quick install the xxl-job-admin chart:
 
 ```shell
-helm install my-xxl-job-admin <repo_name>/xxl-job-admin
+helm install my-xxl-job-admin ${REPO_NAME}/xxl-job-admin
 ```
 
 To install the xxl-job-admin with custom values:
 ```shell
-helm install -n <namespace> my-xxl-job-admin <repo_name>/xxl-job-admin \
+helm install -n <namespace> my-xxl-job-admin ${REPO_NAME}/xxl-job-admin \
   --set database.db_address=127.0.0.1 \
   --set database.user=db_usernmae \
-  --set database.password=abcde1234!@# 
+  --set database.password='abcde1234!@#' 
 ```
 
 Open your browser open [http://xxl-job-admin-svc:8080/xxl-job-admin](http://xxl-job-admin-svc:8080/xxl-job-admin)
 ```log
-# Default username 
+# Default username / passwd
 admin
-# Default password
 123456
 ```
 
@@ -70,10 +70,10 @@ Set connection detail of [MySQL](https://www.mysql.com) for xxl-job-admin
 ```yaml
 ## configure the database detail
 database:
-  db_address: x.x.x.x
+  db_address: 1.2.3.4
   db_port: 3306
-  user: ****
-  password: ****
+  user: xxl_job
+  password: xxl_job_pass
   db: xxl_job
   serverTimezone: UTC
 ```
