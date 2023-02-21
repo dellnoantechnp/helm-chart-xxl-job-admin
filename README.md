@@ -3,6 +3,8 @@
 
 ```shell
 $ helm repo add xxl-job  https://dellnoantechnp.github.io/charts/
+$ helm repo update xxl-job
+$ helm search repo xxl-job
 ```
 
 includes:
