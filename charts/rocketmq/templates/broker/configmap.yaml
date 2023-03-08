@@ -1,0 +1,64 @@
+{{- $brokerCmName := include "rocketmq.broker.configmap.fullname" . -}}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ $brokerCmName }}
+data:
+  broker-base.conf: |
+    brokerClusterName = {{ .Values.clusterName }}
+{{- range $key, $value := .Values.broker.config }}
+    {{ $key }} = {{ $value }}
+{{- end }}
+  runbroker.sh: |
+    java -version
+    if [ $? -ne 0 ]; then
+      echo "[ERROR] Missing java"
+      exit 500
+    fi
+    if [ -z "${ROCKETMQ_HOME}" ]; then
+      echo "[ERROR] Missing env ROCKETMQ_HOME"
+      exit 500
+    fi
+
+    export JAVA_HOME=$(dirname $(dirname $(readlink -f $(which javac))))
+    export CLASSPATH=".:${ROCKETMQ_HOME}/conf:${CLASSPATH}"
+    
+    JAVA_OPT="${JAVA_OPT} -server"
+    JAVA_OPT="${JAVA_OPT} ${JAVA_OPT_BROKER}"
+    JAVA_OPT="${JAVA_OPT} -Djava.ext.dirs=${JAVA_HOME}/jre/lib/ext:${ROCKETMQ_HOME}/lib"
+    JAVA_OPT="${JAVA_OPT} ${JAVA_OPT_EXT}"
+    JAVA_OPT="${JAVA_OPT} -cp ${CLASSPATH}"
+
+    export BROKER_CONF_FILE="$HOME/broker.conf"
+    update_broker_conf() {
+      local key=$1
+      local value=$2
+      local pattern="^${key}"
+      sed -i "/^${pattern}/d" ${BROKER_CONF_FILE}
+      echo "${key} = ${value}" >> ${BROKER_CONF_FILE}
+    }
+    rm -f ${BROKER_CONF_FILE}
+    cp /etc/rocketmq/broker-base.conf ${BROKER_CONF_FILE}
+    echo "" >> ${BROKER_CONF_FILE}
+    echo "# generated config" >> ${BROKER_CONF_FILE}
+    broker_name_seq=${HOSTNAME##*-}
+    update_broker_conf "brokerName" "broker-g${broker_name_seq}"
+    # if [ -z "${BROKER_CLUSTER_NAME}" ]; then
+    #   export BROKER_CLUSTER_NAME="DefaultCluster"
+    # fi
+    # update_broker_conf "brokerClusterName" "${BROKER_CLUSTER_NAME}"
+    if [ "${ROCKETMQ_CONF_brokerRole}" == "SLAVE" ]; then
+      update_broker_conf "brokerRole" "SLAVE"
+    elif [ "${ROCKETMQ_CONF_brokerRole}" == "SYNC_MASTER" ]; then
+      update_broker_conf "brokerRole" "SYNC_MASTER"
+    else
+      update_broker_conf "brokerRole" "ASYNC_MASTER"
+    fi
+    if echo "${ROCKETMQ_CONF_brokerId}" | grep -E '^[0-9]+$'; then
+      update_broker_conf "brokerId" "${ROCKETMQ_CONF_brokerId}"
+    fi
+    echo "[exec] cat ${BROKER_CONF_FILE}"
+    cat ${BROKER_CONF_FILE}
+
+    echo "java ${JAVA_OPT} org.apache.rocketmq.broker.BrokerStartup -c ${BROKER_CONF_FILE}"
+    java ${JAVA_OPT} org.apache.rocketmq.broker.BrokerStartup -c ${BROKER_CONF_FILE}
