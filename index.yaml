@@ -2,6 +2,24 @@ apiVersion: v1
 entries:
   prometheusalert:
   - apiVersion: v1
+    appVersion: 4.8.2
+    created: "2023-03-21T13:07:22.557132238Z"
+    description: A Alert-Center for Prometheus Grafana and Graylog, alert message
+      deliver to Wechat/Feishu/Lark/email/DingTalk/workWechat/webhook/telegram ...
+    digest: 8d257557b26bda9ebb341168ab08617e0cb2517b8eced06b7e9c747d72bc8ce1
+    home: https://github.com/feiyu563/PrometheusAlert
+    icon: https://raw.githubusercontent.com/feiyu563/PrometheusAlert/master/doc/logo.png
+    maintainers:
+    - email: dellnoantechnp@gmail.com
+      name: dellnoantechnp
+    name: prometheusalert
+    sources:
+    - https://github.com/feiyu563/PrometheusAlert
+    type: application
+    urls:
+    - https://github.com/dellnoantechnp/helm-chart-xxl-job-admin/releases/download/prometheusalert-1.0.1/prometheusalert-1.0.1.tgz
+    version: 1.0.1
+  - apiVersion: v1
     appVersion: 1.2.0
     created: "2023-03-21T12:48:41.394727527Z"
     description: A Alert-Center for Prometheus Grafana and Graylog, alert message
@@ -30,6 +48,31 @@ entries:
           url: https://github.com/dellnoantechnp.github.io/tree/main/charts/rocketmq
     apiVersion: v2
     appVersion: 4.9.4
+    created: "2023-03-21T13:07:22.738350236Z"
+    description: A RocketMQ Helm chart for Kubernetes
+    digest: d3df69fd694c4d126da4922025c43a158165a40c0eb79e448b50ccd73adbe947
+    home: https://github.com/apache/rocketmq
+    maintainers:
+    - email: dellnoantechnp@gmail.com
+      name: dellnoantechnp
+      url: https://github.com/dellnoantechnp
+    name: rocketmq
+    sources:
+    - https://github.com/apache/rocketmq
+    type: application
+    urls:
+    - https://github.com/dellnoantechnp/helm-chart-xxl-job-admin/releases/download/rocketmq-1.0.1/rocketmq-1.0.1.tgz
+    version: 1.0.1
+  - annotations:
+      artifacthub.io/images: |
+        - name: apache/rocketmq:4.9.4
+          image: apache/rocketmq:4.9.4
+      artifacthub.io/license: Apache-2.0
+      artifacthub.io/links: |-
+        - name: Chart Source
+          url: https://github.com/dellnoantechnp.github.io/tree/main/charts/rocketmq
+    apiVersion: v2
+    appVersion: 4.9.4
     created: "2023-03-08T06:46:18.409733938Z"
     description: A RocketMQ Helm chart for Kubernetes
     digest: a8429cdff3beef4a23e97bc88eeef193a992db0c7449a90365b7288133dcb038
@@ -46,6 +89,31 @@ entries:
     - https://github.com/dellnoantechnp/helm-chart-xxl-job-admin/releases/download/rocketmq-1.0.0/rocketmq-1.0.0.tgz
     version: 1.0.0
   xxl-job-admin:
+  - annotations:
+      artifacthub.io/images: |
+        - name: xuxueli/xxl-job-admin:2.3.1
+          image: xuxueli/xxl-job-admin:2.3.1
+      artifacthub.io/license: Apache-2.0
+      artifacthub.io/links: |
+        - name: Chart Source
+          url: https://github.com/dellnoantechnp.github.io/tree/main/charts/xxl-job-admin
+    apiVersion: v2
+    appVersion: 2.3.1
+    created: "2023-03-21T13:07:22.928076015Z"
+    description: XXL-JOB-ADMIN is schedule center for XXL-JOB on Kubernetes.
+    digest: 55be0cce7adf3d5f11497aec023542e7de051f6564bf7f42b76a6b8ee4353717
+    home: https://github.com/xuxueli/xxl-job/
+    maintainers:
+    - email: dellnoantechnp@gmail.com
+      name: dellnoantechnp
+      url: https://github.com/dellnoantechnp
+    name: xxl-job-admin
+    sources:
+    - https://github.com/dellnoantechnp.github.io/
+    type: application
+    urls:
+    - https://github.com/dellnoantechnp/helm-chart-xxl-job-admin/releases/download/xxl-job-admin-1.0.5/xxl-job-admin-1.0.5.tgz
+    version: 1.0.5
   - annotations:
       artifacthub.io/images: |
         - name: xuxueli/xxl-job-admin:2.3.1
@@ -121,4 +189,4 @@ entries:
     urls:
     - https://github.com/dellnoantechnp/helm-chart-xxl-job-admin/releases/download/xxl-job-admin-1.0.2/xxl-job-admin-1.0.2.tgz
     version: 1.0.2
-generated: "2023-03-21T12:48:41.394740027Z"
+generated: "2023-03-21T13:07:22.928196115Z"
