@@ -1,0 +1,21 @@
+annotations:
+  artifacthub.io/images: |
+    - name: xuxueli/xxl-job-admin:2.3.1
+      image: xuxueli/xxl-job-admin:2.3.1
+  artifacthub.io/license: Apache-2.0
+  artifacthub.io/links: |
+    - name: Chart Source
+      url: https://github.com/dellnoantechnp.github.io/tree/main/charts/xxl-job-admin
+apiVersion: v2
+appVersion: 2.3.1
+description: XXL-JOB-ADMIN is schedule center for XXL-JOB on Kubernetes.
+home: https://github.com/xuxueli/xxl-job/
+maintainers:
+- email: dellnoantechnp@gmail.com
+  name: dellnoantechnp
+  url: https://github.com/dellnoantechnp
+name: xxl-job-admin
+sources:
+- https://github.com/dellnoantechnp.github.io/
+type: application
+version: 1.0.4

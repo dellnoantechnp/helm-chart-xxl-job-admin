@@ -1,0 +1,165 @@
+{{- $fullName := include "rocketmq.fullname" . -}}
+{{- $nameserverFullName := include "rocketmq.nameserver.fullname" . -}}
+{{- $brokerCmName := include "rocketmq.broker.configmap.fullname" . -}}
+{{- $masterSize := int .Values.broker.size.master }}
+{{- $replicaCount := int (add1 .Values.broker.size.replica) }}
+{{- $nameserverReplicaCount:= int .Values.nameserver.replicaCount }}
+{{- $image := printf "%s:%s" .Values.image.repository .Values.image.tag }}
+{{- range $brokerId := until $replicaCount }}
+  {{- $brokerFullName := printf "%s-broker-master" $fullName }}
+  {{- $brokerMemory := $.Values.broker.master.jvmMemory }}
+  {{- $brokerRole := $.Values.broker.master.brokerRole }}
+  {{- $brokerConfigKey := "broker-master.conf" }}
+  {{- if gt $brokerId 0 }}
+    {{- /* master $brokerId = 0, slave $brokerId > 0 */}}
+    {{- $brokerFullName = printf "%s-broker-replica-id%d" $fullName $brokerId }}
+    {{- $brokerMemory = $.Values.broker.replica.jvmMemory }}
+    {{- $brokerRole = "SLAVE" }}
+    {{- $brokerConfigKey = "broker-slave.conf" }}
+  {{- end }}
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ $brokerFullName }}
+  labels:
+    {{- include "rocketmq.labels" $ | nindent 4 }}
+spec:
+  podManagementPolicy: OrderedReady
+  replicas: {{ $masterSize }}
+  updateStrategy:
+    type: RollingUpdate
+  selector:
+    matchLabels:
+      {{- include "rocketmq.selectorLabels" $ | nindent 6 }}
+      component: broker
+      broker: {{ $brokerFullName }}
+  serviceName: ""
+  template:
+    metadata:
+      labels:
+        {{- include "rocketmq.selectorLabels" $ | nindent 8 }}
+        component: broker
+        broker: {{ $brokerFullName }}
+    spec:
+      {{- with $.Values.broker.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- if not $.Values.broker.affinityOverride }}
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - weight: 5
+            podAffinityTerm:
+              labelSelector:
+                matchLabels:
+                  {{- include "rocketmq.selectorLabels" $ | nindent 18 }}
+                  component: broker
+              topologyKey: kubernetes.io/hostname
+      {{- else if $.Values.broker.affinityOverride }}
+      affinity:
+        {{- toYaml $.Values.broker.affinityOverride | nindent 8 }}
+      {{- end }}
+      {{- with $.Values.broker.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      securityContext:
+        fsGroup: 3000
+        runAsUser: 3000
+      containers:
+      - name: broker
+        image: {{ $image | quote }}
+        command:
+          - sh
+          - /runbroker.sh
+        {{- if $.Values.image.pullPolicy }}
+        imagePullPolicy: {{ $.Values.image.pullPolicy | quote }}
+        {{- end }}
+        env:
+        - name: NAMESRV_ADDR
+          #value: rocketmq-nameserver:9876
+          value: {{ range $i := until $nameserverReplicaCount }}{{ if gt $i 0 }}{{ printf ";" }}{{ end }}{{ printf "%s-%d.%s:9876" $nameserverFullName $i $nameserverFullName }}{{ end }}
+        {{- /*
+        #- name: BROKER_CLUSTER_NAME
+        #  value: {{ $.Values.clusterName | quote }}
+        #- name: BROKER_NAME
+        #  value: {{ $brokerName | quote }}
+        */}}
+        - name: ROCKETMQ_CONF_brokerId
+          value: {{ $brokerId | quote }}
+        - name: ROCKETMQ_CONF_brokerRole
+          value: {{ $brokerRole | quote }}
+        - name: JAVA_OPT_BROKER
+          value: "{{ $brokerMemory }} -XX:+UseG1GC"
+        {{- with $.Values.broker.commonEnvs }}
+          {{- toYaml . | nindent 8 }}
+        {{- end }}
+        {{- with $.Values.broker.extraEnvs }}
+          {{- toYaml . | nindent 8 }}
+        {{- end }}
+        ports:
+        - containerPort: 10909
+          name: vip
+          protocol: TCP
+        - containerPort: 10911
+          name: main
+          protocol: TCP
+        - containerPort: 10912
+          name: ha
+          protocol: TCP
+        resources:
+        {{- if eq $brokerId 0 }}
+          {{- toYaml $.Values.broker.master.resources | nindent 10 }}
+        {{- else }}
+          {{- toYaml $.Values.broker.replica.resources | nindent 10 }}
+        {{- end }}
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+        volumeMounts:
+        - mountPath: /home/rocketmq/logs
+          name: broker-storage
+          subPath: rocketmq-broker/logs
+        - mountPath: /home/rocketmq/store
+          name: broker-storage
+          subPath: rocketmq-broker/store
+        - mountPath: /etc/rocketmq/broker-base.conf
+          name: broker-base-config
+          subPath: broker-base.conf
+        - mountPath: /runbroker.sh
+          name: runbroker-sh
+          subPath: runbroker.sh
+      dnsPolicy: ClusterFirst
+      terminationGracePeriodSeconds: 30
+      volumes:
+      - configMap:
+          items:
+          - key: broker-base.conf
+            path: broker-base.conf
+          name: {{ $brokerCmName }}
+        name: broker-base-config
+      - configMap:
+          items:
+          - key: runbroker.sh
+            path: runbroker.sh
+          name: {{ $brokerCmName }}
+        name: runbroker-sh
+  {{- if not $.Values.broker.persistence.enabled }}
+      - name: broker-storage
+        emptyDir: {}
+  {{- else }}
+  volumeClaimTemplates:
+    - metadata:
+        name: broker-storage
+      spec:
+        accessModes:
+          - ReadWriteOnce
+        {{- with $.Values.broker.persistence.storageClass }}
+        storageClassName: {{ if (eq "-" .) }}""{{ else }}{{ . }}{{ end }}
+        {{- end }}
+        resources:
+          requests:
+            storage: {{ $.Values.broker.persistence.size | quote }}
+  {{- end }}
+{{- end }}
