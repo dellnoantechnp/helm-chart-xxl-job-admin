@@ -9,5 +9,5 @@ maintainers:
 sources:
 - https://github.com/feiyu563/PrometheusAlert
 type: application
-version: 1.0.0
+version: 1.0.1
 appVersion: 4.8.2
