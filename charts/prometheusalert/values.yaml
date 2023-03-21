@@ -1,0 +1,45 @@
+# Default values for prometheusalert.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+global:
+  imagePullSecrets: []
+    # - name: "registry-secret"
+
+replicaCount: 1
+
+image:
+  # 支持配置自定义模版需要重出镜像，或者使用本人构建镜像：feiyu563/prometheusalert:v4.8.2
+  repository: feiyu563/prometheus-alert:latest
+  pullPolicy: IfNotPresent
+
+nameOverride: ""
+fullnameOverride: ""
+
+service:
+  type: ClusterIP
+  port: 8080
+
+ingress:
+  enabled: true
+  annotations: {}
+    # kubernetes.io/ingress.class: nginx
+    # kubernetes.io/tls-acme: "true"
+  hosts:
+    - host: prometheus-alert.local
+      paths: ["/"]
+  tls: []
+
+resources: 
+  limits:
+   cpu: 500m
+   memory: 512Mi
+  requests:
+   cpu: 100m
+   memory: 128Mi
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
