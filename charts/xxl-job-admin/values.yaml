@@ -116,12 +116,14 @@ podAnnotations: {}
 ## version:
 podLabels: {}
 
-podSecurityContext:
-  {}
+podEnviron: {}
+  # foo: bar
+  # key1: value1
+
+podSecurityContext: {}
   # fsGroup: 2000
 
-securityContext:
-  {}
+securityContext: {}
   # capabilities:
   #   drop:
   #   - ALL

@@ -47,6 +47,9 @@ spec:
               value: optional:configtree:/var/run/secrets/spring/
             - name: PARAMS
               value: {{ include "xxl-job-admin.spring.datasource.url" . }}
+            {{- if .Values.podEnviron }}
+            {{- include "xxl-job-admin.podEnvion" . | indent 12 }}
+            {{- end }}
           volumeMounts:
             - name: config
               mountPath: /config

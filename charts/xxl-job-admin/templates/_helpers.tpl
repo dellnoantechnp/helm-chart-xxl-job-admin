@@ -96,3 +96,17 @@ Istio VirtualService gateways
 - {{ $gateway |trim }}
 {{- end -}}
 {{- end -}}
+
+{{/*
+Add pod environment
+*/}}
+{{- define "xxl-job-admin.podEnvion" }}
+{{- range $key, $val := .Values.podEnviron }}
+- name: {{ $key }}
+  {{- if kindIs  "string" $val }}
+  value: {{ $val }}
+  {{- else }}
+  {{ tpl ($val | toYaml) (. | toYaml) }}
+  {{- end -}}
+{{- end }}
+{{- end}}
