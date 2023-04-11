@@ -1,0 +1,21 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  labels:
+{{ include "prometheusalert.labels" . | indent 4 }}
+  name: {{ template "prometheusalert.fullname" . }}
+data:
+{{- if .Values.config.app_conf }}
+  app.conf: |
+{{ .Values.config.app_conf | indent 4 }}
+{{- end -}}
+
+{{- if .Values.config.init_sql }}
+  init.sql: |
+{{ .Values.config.init_sql | indent 4 }}
+{{- end -}}
+
+{{- if .Values.config.user_csv }}
+  user.csv: |
+{{ .Values.config.user_csv | indent 4 }}
+{{- end -}}

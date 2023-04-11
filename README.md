@@ -8,7 +8,10 @@
 </p>
 
 # xxl-job-admin helm chart source
-xxl-job-admin web.
+- [x] xxl-job-admin web
+- [x] rocketmq
+- [x] prometheusAlert
+
 
 
 # Helm Charts repository
