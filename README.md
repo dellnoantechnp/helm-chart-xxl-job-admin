@@ -4,10 +4,12 @@
 [![Release Version](https://img.shields.io/github/v/release/dellnoantechnp/helm-chart-xxl-job-admin?label=chart-release)](https://img.shields.io/github/v/release/dellnoantechnp/helm-chart-xxl-job-admin?label=chart-release)
 
 <p align="center">
-  <img width="200" height="200" src="https://www.xuxueli.com/doc/static/xxl-job/images/xxl-logo.jpg">
+  <img width="200" alt="XXL-JOB" height="200" src="https://www.xuxueli.com/doc/static/xxl-job/images/xxl-logo.jpg">
+  <img width="200" alt="PrometheusAlert" height="200" src="https://feiyu563.github.io/static/img/prometheus-ico.png">
+  <img width="150" alt="RocketMQ" height="200" src="https://rocketmq.apache.org/zh/img/Apache_RocketMQ_logo.svg.png">
 </p>
 
-# xxl-job-admin helm chart source
+# This helm chart repository include charts:
 - [x] xxl-job-admin web
 - [x] rocketmq
 - [x] prometheusAlert
