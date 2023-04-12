@@ -24,6 +24,8 @@ database:
   db_name: xxl_job
   serverTimezone: UTC
 
+containerTimeZone: "Asia/Shanghai"    # eg. UTC
+
 ## overwrite the default value of properties in application.yaml
 properties:
   management:

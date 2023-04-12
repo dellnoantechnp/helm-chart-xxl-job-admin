@@ -36,6 +36,19 @@ spec:
       serviceAccountName: {{ include "xxl-job-admin.serviceAccountName" . }}
       securityContext:
         {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      initContainers:
+        - name: change-timezone
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: IfNotPresent
+          command:
+            - "cp"
+            - "-rf"
+            - "/usr/share/zoneinfo/{{ .Values.containerTimeZone }}"
+            - "/etc/localtime"
+          volumeMounts:
+            - mountPath: /etc
+              subPath: timezone
+              name: timezone-conf
       containers:
         - name: {{ .Chart.Name }}
           securityContext:
@@ -50,11 +63,18 @@ spec:
             {{- if .Values.podEnviron }}
             {{- include "xxl-job-admin.podEnvion" . | indent 12 }}
             {{- end }}
+            {{- if .Values.containerTimeZone }}
+            - name: TZ
+              value: {{ .Values.containerTimeZone }}
+            {{- end }}
           volumeMounts:
             - name: config
               mountPath: /config
             - name: creds
               mountPath: /var/run/secrets/spring/
+            - name: timezone-conf
+              mountPath: /etc
+              subPath: timezone
           ports:
             - name: http
               containerPort: {{ .Values.properties.server.port }}
@@ -75,6 +95,9 @@ spec:
             failureThreshold: 30
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
+      volumes:
+        - name: timezone-conf
+          emptyDir: {}
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
