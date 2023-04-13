@@ -22,5 +22,8 @@
 2.visit it in k8s cluster by:
   {{ template "prometheusalert.fullname" . }}.{{ .Release.Namespace }}:{{ .Values.service.port }}
 
-3.how to use it:
+3. import init.sql to mysql / postgresql on first installation complete:
+  mysql prometheusalert < kubectl get cm {{ template "prometheusalert.name" . }} -o jsonpath='{.data.init\.sql}'
+
+4.how to use it:
   Please visit https://github.com/feiyu563/PrometheusAlert to get help!
