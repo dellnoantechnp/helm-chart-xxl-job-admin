@@ -354,11 +354,11 @@ config:
     > <font color="warning">故障主机IP:</font> {{$v.labels.instance}}
     > <font color="warning">**{{$v.annotations.description}}**</font>{{end}}{{ end }}
     {{ $urimsg:=""}}{{ range $key,$value:=.commonLabels }}{{$urimsg =  print $urimsg $key "%3D%22" $value "%22%2C" }}{{end}}[*** 点我屏蔽该告警]({{$var}}/#/silences/new?filter=%7B{{SplitString $urimsg 0 -3}}%7D)', '2022-05-26 09:59:49');
-    INSERT INTO prometheus_alert_d_b (id, tpltype, tpluse, tplname, tpl, created) VALUES (3, 'fs', 'Prometheus', 'prometheus-fs', '{{ $var := .externalURL}}{{ range $k,$v:=.alerts }} 状态：**{{$v.status}}** {{if eq $v.status "resolved"}}（恢复）{{else}}（报警）{{end}}
+    INSERT INTO prometheus_alert_d_b (id, tpltype, tpluse, tplname, tpl, created) VALUES (3, 'fs', 'Prometheus', 'prometheus-fs', '{{ $var := .externalURL}}{{ range $k,$v:=.alerts }} 状态：**{{$v.status}}** {{if eq $v.status "resolved"}}（✅恢复）{{else}}（💥报警）{{end}}
     报警名字：**{{$v.labels.alertname}}**  [查看图表]({{$v.generatorURL}})
     告警级别：{{$v.labels.severity}}
     环境信息：{{$v.labels.namespace}}
-    故障主机：{{$v.labels.instance}}
+    故障主机：{{ if $v.labels.instance }} {{ $v.labels.instance }} {{ else }} {{ $v.labels.pod }} {{ end }}
     开始时间：{{TimeFormat $v.startsAt "2006-01-02 15:04:05"}}
     结束时间：{{TimeFormat $v.endsAt "2006-01-02 15:04:05"}}
     报警概述：{{$v.annotations.summary}}
