@@ -185,6 +185,31 @@ entries:
           url: https://github.com/dellnoantechnp.github.io/tree/main/charts/xxl-job-admin
     apiVersion: v2
     appVersion: 2.4.0
+    created: "2023-04-18T11:06:26.066143935Z"
+    description: XXL-JOB-ADMIN is schedule center for XXL-JOB on Kubernetes.
+    digest: 3a33fc682e22aae5929927735809b5c6c4925a19902a81ac6f81eb5920b6f37e
+    home: https://github.com/xuxueli/xxl-job/
+    maintainers:
+    - email: dellnoantechnp@gmail.com
+      name: dellnoantechnp
+      url: https://github.com/dellnoantechnp
+    name: xxl-job-admin
+    sources:
+    - https://github.com/dellnoantechnp.github.io/
+    type: application
+    urls:
+    - https://github.com/dellnoantechnp/helm-chart-xxl-job-admin/releases/download/xxl-job-admin-1.1.1/xxl-job-admin-1.1.1.tgz
+    version: 1.1.1
+  - annotations:
+      artifacthub.io/images: |
+        - name: xuxueli/xxl-job-admin:2.3.1
+          image: xuxueli/xxl-job-admin:2.3.1
+      artifacthub.io/license: Apache-2.0
+      artifacthub.io/links: |
+        - name: Chart Source
+          url: https://github.com/dellnoantechnp.github.io/tree/main/charts/xxl-job-admin
+    apiVersion: v2
+    appVersion: 2.4.0
     created: "2023-04-12T06:43:40.012953557Z"
     description: XXL-JOB-ADMIN is schedule center for XXL-JOB on Kubernetes.
     digest: 1028c2076275932e1991da18533bd562acd02dee4b01848f5d0aa8bbe59c82af
@@ -350,4 +375,4 @@ entries:
     urls:
     - https://github.com/dellnoantechnp/helm-chart-xxl-job-admin/releases/download/xxl-job-admin-1.0.2/xxl-job-admin-1.0.2.tgz
     version: 1.0.2
-generated: "2023-04-17T08:48:46.694456793Z"
+generated: "2023-04-18T11:06:26.066195236Z"
