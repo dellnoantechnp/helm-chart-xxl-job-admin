@@ -7,9 +7,17 @@ metadata:
 spec:
   type: {{ .Values.service.type }}
   ports:
-    - port: {{ .Values.service.port }}
-      targetPort: http
+    - port: {{ .Values.service.canal }}
+      targetPort: tcp-canal
       protocol: TCP
-      name: http
+      name: tcp-canal
+    - port: {{ .Values.service.admin }}
+      targetPort: tcp-admin
+      protocol: TCP
+      name: tcp-admin
+    - port: {{ .Values.service.metrics }}
+      targetPort: http-metrics
+      protocol: TCP
+      name: http-metrics
   selector:
     {{- include "canal-server.selectorLabels" . | nindent 4 }}
