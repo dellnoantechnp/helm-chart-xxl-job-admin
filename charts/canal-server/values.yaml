@@ -78,6 +78,26 @@ ServerConf:
   ## @param canalServerMode specify canal server-mode, eg. tcp, kafka, rocketMQ, rabbitMQ, pulsarMQ
   ## 
   canalServerMode: tcp
+InstanceConf:
+  ## @param canal.instance.gtidon boolean, for instance gtid mode.
+  ## @param canal.instance.mysql.slaveId.autoGenerate boolean, for auto generate instance serverID.
+  ## @param canal.instance.mysql.slaveId.number int, for instance serverID.
+  ##
+  canal:
+    instance:
+      mysql:
+        slaveId:
+          autoGenerate: true
+          number: 12345
+      gtidon: true
+      master:
+        address: 127.0.0.1
+      dbUsername: canal
+      dbPassword: canal
+      filter:
+        regex: ".*\\..*"
+        black:
+          regex: "mysql\\.slave_.*"
 
 ## configure canal repl source from mysql detail
 ReplSourceConf:
@@ -145,6 +165,140 @@ securityContext: {}
 # runAsUser: 1000
 
 ## @section canal-server; deployment/statefulset parameters
+
+ingress:
+  enabled: false
+  className: ""
+  annotations: {}
+    # kubernetes.io/ingress.class: nginx
+    # kubernetes.io/tls-acme: "true"
+  hosts:
+    - host: canal.example.local
+      paths:
+        - path: /
+          pathType: ImplementationSpecific
+  tls: []
+  #  - secretName: chart-example-tls
+  #    hosts:
+  #      - chart-example.local
+
+## @param hostAliases canal-server; pod host aliases
+## https://kubernetes.io/docs/concepts/services-networking/add-entries-to-pod-etc-hosts-with-host-aliases/
+##
+hostAliases: []
+
+resources:
+  # We usually recommend not to specify default resources and to leave this as a conscious
+  # choice for the user. This also increases chances charts run on environments with little
+  # resources, such as Minikube. If you do want to specify resources, uncomment the following
+  # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+  ## Example:
+  ## limits:
+  ##    cpu: 250m
+  ##    memory: 256Mi
+  limits: {}
+  ## Examples:
+  ## requests:
+  ##    cpu: 250m
+  ##    memory: 256Mi
+  requests: {}
+  ##  cpu: 250m
+  ##  memory: 256Mi
+
+## Configure extra options for liveness probe
+## ref: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-probes/#configure-probes
+## @param livenessProbe.enabled Enable livenessProbe
+## @param livenessProbe.initialDelaySeconds Initial delay seconds for livenessProbe
+## @param livenessProbe.periodSeconds Period seconds for livenessProbe
+## @param livenessProbe.timeoutSeconds Timeout seconds for livenessProbe
+## @param livenessProbe.failureThreshold Failure threshold for livenessProbe
+## @param livenessProbe.successThreshold Success threshold for livenessProbe
+##
+livenessProbe:
+  enabled: true
+  initialDelaySeconds: 10
+  periodSeconds: 5
+  timeoutSeconds: 5
+  successThreshold: 1
+  failureThreshold: 5
+## Configure extra options for readiness probe
+## ref: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-probes/#configure-probes
+## @param readinessProbe.enabled Enable readinessProbe
+## @param readinessProbe.initialDelaySeconds Initial delay seconds for readinessProbe
+## @param readinessProbe.periodSeconds Period seconds for readinessProbe
+## @param readinessProbe.timeoutSeconds Timeout seconds for readinessProbe
+## @param readinessProbe.failureThreshold Failure threshold for readinessProbe
+## @param readinessProbe.successThreshold Success threshold for readinessProbe
+##
+readinessProbe:
+  enabled: true
+  initialDelaySeconds: 10
+  periodSeconds: 5
+  timeoutSeconds: 1
+  successThreshold: 1
+  failureThreshold: 5
+## Configure extra options for startupProbe probe
+## ref: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-probes/#configure-probes
+## @param startupProbe.enabled Enable startupProbe
+## @param startupProbe.initialDelaySeconds Initial delay seconds for startupProbe
+## @param startupProbe.periodSeconds Period seconds for startupProbe
+## @param startupProbe.timeoutSeconds Timeout seconds for startupProbe
+## @param startupProbe.failureThreshold Failure threshold for startupProbe
+## @param startupProbe.successThreshold Success threshold for startupProbe
+##
+startupProbe:
+  enabled: false
+  initialDelaySeconds: 0
+  periodSeconds: 10
+  timeoutSeconds: 5
+  successThreshold: 1
+  failureThreshold: 60
+## @param customLivenessProbe Override default liveness probe
+##
+customLivenessProbe: {}
+## @param customReadinessProbe Override default readiness probe
+##
+customReadinessProbe: {}
+## @param customStartupProbe Override default startup probe
+##
+customStartupProbe: {}
+
+## @param initContainers Add additional init containers to the Canal-server; pods
+## e.g:
+## initContainers:
+##   - name: your-image-name
+##     image: your-image
+##     imagePullPolicy: Always
+##     ports:
+##       - name: portname
+##         containerPort: 1234
+##
+initContainers: []
+## @param sidecars Add additional sidecar containers to the Canal-server; pods
+## e.g:
+## sidecars:
+##   - name: your-image-name
+##     image: your-image
+##     imagePullPolicy: Always
+##     ports:
+##       - name: portname
+##         containerPort: 1234
+##
+sidecars: []
+
+autoscaling:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 100
+  targetCPUUtilizationPercentage: 80
+  # targetMemoryUtilizationPercentage: 80
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
+
 config:
   canal: |
     # tcp bind ip
@@ -335,137 +489,71 @@ config:
     pulsarmq.serverUrl=
     pulsarmq.roleToken=
     pulsarmq.topicTenantPrefix=
+  instance: |
+    #################################################
+    ## mysql serverId , v1.0.26+ will autoGen
+    {{- if not .Values.InstanceConf.canal.instance.mysql.salveId.autoGenerate }}
+    #canal.instance.mysql.slaveId=
+    {{- else }}
+    canal.instance.mysql.slaveId={{ .Values.InstanceConf.canal.instance.mysql.salveId.number }}
+    {{- end }}
+    # enable gtid use true/false
+    canal.instance.gtidon="{{ .Values.InstanceConf.canal.instance.gtidon }}"
 
+    # position info
+    canal.instance.master.address={{ .Values.InstanceConf.canal.instance.master.address }}
+    canal.instance.master.journal.name=
+    canal.instance.master.position=
+    canal.instance.master.timestamp=
+    canal.instance.master.gtid=
 
-ingress:
-  enabled: false
-  className: ""
-  annotations: {}
-    # kubernetes.io/ingress.class: nginx
-    # kubernetes.io/tls-acme: "true"
-  hosts:
-    - host: canal.example.local
-      paths:
-        - path: /
-          pathType: ImplementationSpecific
-  tls: []
-  #  - secretName: chart-example-tls
-  #    hosts:
-  #      - chart-example.local
+    # rds oss binlog
+    canal.instance.rds.accesskey=
+    canal.instance.rds.secretkey=
+    canal.instance.rds.instanceId=
 
-## @param hostAliases canal-server; pod host aliases
-## https://kubernetes.io/docs/concepts/services-networking/add-entries-to-pod-etc-hosts-with-host-aliases/
-##
-hostAliases: []
+    # table meta tsdb info
+    canal.instance.tsdb.enable=true
+    #canal.instance.tsdb.url=jdbc:mysql://127.0.0.1:3306/canal_tsdb?characterEncoding=utf-8&autoReconnect=true&rewriteBatchedStatements=true&serverTimezone=UTC
+    #canal.instance.tsdb.dbUsername=canal
+    #canal.instance.tsdb.dbPassword=canal
+    #canal.instance.standby.address =
+    #canal.instance.standby.journal.name =
+    #canal.instance.standby.position =
+    #canal.instance.standby.timestamp =
+    #canal.instance.standby.gtid=
 
-resources:
-  # We usually recommend not to specify default resources and to leave this as a conscious
-  # choice for the user. This also increases chances charts run on environments with little
-  # resources, such as Minikube. If you do want to specify resources, uncomment the following
-  # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
-  ## Example:
-  ## limits:
-  ##    cpu: 250m
-  ##    memory: 256Mi
-  limits: {}
-  ## Examples:
-  ## requests:
-  ##    cpu: 250m
-  ##    memory: 256Mi
-  requests: {}
-  ##  cpu: 250m
-  ##  memory: 256Mi
+    # username/password
+    canal.instance.dbUsername={{ .Values.InstanceConf.canal.instance.dbUsername }}
+    canal.instance.dbPassword={{ .Values.InstanceConf.canal.instance.dbPassword }}
+    canal.instance.connectionCharset=UTF-8
 
-## Configure extra options for liveness probe
-## ref: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-probes/#configure-probes
-## @param livenessProbe.enabled Enable livenessProbe
-## @param livenessProbe.initialDelaySeconds Initial delay seconds for livenessProbe
-## @param livenessProbe.periodSeconds Period seconds for livenessProbe
-## @param livenessProbe.timeoutSeconds Timeout seconds for livenessProbe
-## @param livenessProbe.failureThreshold Failure threshold for livenessProbe
-## @param livenessProbe.successThreshold Success threshold for livenessProbe
-##
-livenessProbe:
-  enabled: true
-  initialDelaySeconds: 10
-  periodSeconds: 5
-  timeoutSeconds: 5
-  successThreshold: 1
-  failureThreshold: 5
-## Configure extra options for readiness probe
-## ref: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-probes/#configure-probes
-## @param readinessProbe.enabled Enable readinessProbe
-## @param readinessProbe.initialDelaySeconds Initial delay seconds for readinessProbe
-## @param readinessProbe.periodSeconds Period seconds for readinessProbe
-## @param readinessProbe.timeoutSeconds Timeout seconds for readinessProbe
-## @param readinessProbe.failureThreshold Failure threshold for readinessProbe
-## @param readinessProbe.successThreshold Success threshold for readinessProbe
-##
-readinessProbe:
-  enabled: true
-  initialDelaySeconds: 10
-  periodSeconds: 5
-  timeoutSeconds: 1
-  successThreshold: 1
-  failureThreshold: 5
-## Configure extra options for startupProbe probe
-## ref: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-probes/#configure-probes
-## @param startupProbe.enabled Enable startupProbe
-## @param startupProbe.initialDelaySeconds Initial delay seconds for startupProbe
-## @param startupProbe.periodSeconds Period seconds for startupProbe
-## @param startupProbe.timeoutSeconds Timeout seconds for startupProbe
-## @param startupProbe.failureThreshold Failure threshold for startupProbe
-## @param startupProbe.successThreshold Success threshold for startupProbe
-##
-startupProbe:
-  enabled: false
-  initialDelaySeconds: 0
-  periodSeconds: 10
-  timeoutSeconds: 5
-  successThreshold: 1
-  failureThreshold: 60
-## @param customLivenessProbe Override default liveness probe
-##
-customLivenessProbe: {}
-## @param customReadinessProbe Override default readiness probe
-##
-customReadinessProbe: {}
-## @param customStartupProbe Override default startup probe
-##
-customStartupProbe: {}
+    # enable druid Decrypt database password
+    canal.instance.enableDruid=false
+    #canal.instance.pwdPublicKey=MFwwDQYJKoZIhvcNAQEBBQADSwAwSAJBALK4BUxdDltRRE5/zXpVEVPUgunvscYFtEip3pmLlhrWpacX7y7GCMo2/JM6LeHmiiNdH1FWgGCpUfircSwlWKUCAwEAAQ==
 
-## @param initContainers Add additional init containers to the Canal-server; pods
-## e.g:
-## initContainers:
-##   - name: your-image-name
-##     image: your-image
-##     imagePullPolicy: Always
-##     ports:
-##       - name: portname
-##         containerPort: 1234
-##
-initContainers: []
-## @param sidecars Add additional sidecar containers to the Canal-server; pods
-## e.g:
-## sidecars:
-##   - name: your-image-name
-##     image: your-image
-##     imagePullPolicy: Always
-##     ports:
-##       - name: portname
-##         containerPort: 1234
-##
-sidecars: []
+    # table regex
+    canal.instance.filter.regex={{ .Values.InstanceConf.canal.instance.filter.regex }}
 
-autoscaling:
-  enabled: false
-  minReplicas: 1
-  maxReplicas: 100
-  targetCPUUtilizationPercentage: 80
-  # targetMemoryUtilizationPercentage: 80
+    # table black regex
+    canal.instance.filter.black.regex={{ .Values.InstanceConf.canal.instance.filter.black.regex }}
 
-nodeSelector: {}
+    # table field filter(format: schema1.tableName1:field1/field2,schema2.tableName2:field1/field2)
+    #canal.instance.filter.field=test1.t_product:id/subject/keywords,test2.t_company:id/name/contact/ch
 
-tolerations: []
+    # table field black filter(format: schema1.tableName1:field1/field2,schema2.tableName2:field1/field2)
+    #canal.instance.filter.black.field=test1.t_product:subject/product_image,test2.t_company:id/name/contact/ch
 
-affinity: {}
+    # mq config
+    canal.mq.topic=example
+
+    # dynamic topic route by schema or table regex
+    #canal.mq.dynamicTopic=mytest1.user,topic2:mytest2\\..*,.*\\..*
+    canal.mq.partition=0
+
+    # hash partition config
+    #canal.mq.enableDynamicQueuePartition=false
+    #canal.mq.partitionsNum=3
+    #canal.mq.dynamicTopicPartitionNum=test.*:4,mycanal:6
+    #canal.mq.partitionHash=test.table:id^name,.*\\..*
+    #################################################

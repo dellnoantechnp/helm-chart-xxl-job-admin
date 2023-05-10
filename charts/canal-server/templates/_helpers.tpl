@@ -5,6 +5,37 @@ Expand the name of the chart.
 {{- default .Chart.Name .Values.nameOverride | trunc 63 | trimSuffix "-" }}
 {{- end }}
 
+
+{{/* vim: set filetype=mustache: */}}
+{{/*
+Return the proper image name
+{{ include "common.images.image" ( dict "imageRoot" .Values.path.to.the.image "global" $) }}
+*/}}
+{{- define "common.images.image" -}}
+{{- $registryName := .imageRoot.registry -}}
+{{- $repositoryName := .imageRoot.repository -}}
+{{- $separator := ":" -}}
+{{- $termination := .imageRoot.tag | toString -}}
+{{- if .global }}
+    {{- if .global.imageRegistry }}
+     {{- $registryName = .global.imageRegistry -}}
+    {{- end -}}
+{{- end -}}
+{{- if .imageRoot.digest }}
+    {{- $separator = "@" -}}
+    {{- $termination = .imageRoot.digest | toString -}}
+{{- end -}}
+{{- printf "%s/%s%s%s" $registryName $repositoryName $separator $termination -}}
+{{- end -}}
+
+{{/*
+Return the proper canal-server; image name
+*/}}
+{{- define "canal.image" -}}
+{{ include "common.images.image" (dict "imageRoot" .Values.image "global" .Values.global) }}
+
+{{- end -}}
+
 {{/*
 Create a default fully qualified app name.
 We truncate at 63 chars because some Kubernetes name fields are limited to this (by the DNS naming spec).
@@ -59,4 +90,11 @@ Create the name of the service account to use
 {{- else }}
 {{- default "default" .Values.serviceAccount.name }}
 {{- end }}
+{{- end }}
+
+{{/*
+canal-server-cm
+*/}}
+{{- define "canal.server.configmap.fullname" -}}
+{{ include "canal-server.fullname" . }}-cm
 {{- end }}

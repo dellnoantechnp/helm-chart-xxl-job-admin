@@ -1,0 +1,10 @@
+{{- $canalServerCmName := include "canal.server.configmap.fullname" . -}}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ $canalServerCmName }}
+data:
+  canal.properties: |
+{{ .Values.config.canal | indent 4 }}
+  instance.properties: |
+{{ .Values.config.instance | indent 4}}

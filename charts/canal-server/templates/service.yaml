@@ -7,15 +7,15 @@ metadata:
 spec:
   type: {{ .Values.service.type }}
   ports:
-    - port: {{ .Values.service.canal }}
+    - port: {{ .Values.service.ports.canal }}
       targetPort: tcp-canal
       protocol: TCP
       name: tcp-canal
-    - port: {{ .Values.service.admin }}
+    - port: {{ .Values.service.ports.admin }}
       targetPort: tcp-admin
       protocol: TCP
       name: tcp-admin
-    - port: {{ .Values.service.metrics }}
+    - port: {{ .Values.service.ports.metrics }}
       targetPort: http-metrics
       protocol: TCP
       name: http-metrics
