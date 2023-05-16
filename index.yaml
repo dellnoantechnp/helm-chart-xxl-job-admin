@@ -1,5 +1,57 @@
 apiVersion: v1
 entries:
+  canal-server:
+  - annotations:
+      artifacthub.io/links: |
+        - name: Chart Source
+          url: https://github.com/dellnoantechnp/helm-chart-xxl-job-admin
+      ghcr.io/license: MIT-License
+      ghcr.io/packages: |
+        - name: dellnoantechnp/canal-server
+          image: dellnoantechnp/canal-server:v0.0.1
+    apiVersion: v2
+    appVersion: 1.1.6
+    created: "2023-05-16T02:58:39.67467607Z"
+    description: Canal Server is capable of parsing MySQL binlog and subscribe to
+      the data change, while Canal Client can be implemented to broadcast the change
+      to anywhere, e.g. database and Apache Kafka.
+    digest: 6512494bef5a3b037c757a493fc0427670dd4c10d452e2cb6fc97f08c6380dbd
+    home: https://github.com/alibaba/canal/wiki
+    name: canal-server
+    sources:
+    - https://github.com/dellnoantechnp/helm-chart-xxl-job-admin
+    type: application
+    urls:
+    - https://github.com/dellnoantechnp/helm-chart-xxl-job-admin/releases/download/canal-server-0.0.1/canal-server-0.0.1.tgz
+    version: 0.0.1
+  common:
+  - annotations:
+      category: Infrastructure
+    apiVersion: v2
+    appVersion: 1.10.0
+    created: "2023-05-16T02:58:39.827053551Z"
+    description: A Library Helm Chart for grouping common logic between bitnami charts.
+      This chart is not deployable by itself.
+    digest: ac7307f6da50aa9580caeca9233ba63bae2b351292e1ba3b299acfab7d66db74
+    home: https://github.com/bitnami/charts/tree/master/bitnami/common
+    icon: https://bitnami.com/downloads/logos/bitnami-mark.png
+    keywords:
+    - common
+    - helper
+    - template
+    - function
+    - bitnami
+    maintainers:
+    - email: containers@bitnami.com
+      name: Bitnami
+    name: common
+    sources:
+    - https://github.com/bitnami/charts
+    - https://www.bitnami.com/
+    type: library
+    urls:
+    - https://github.com/dellnoantechnp/helm-chart-xxl-job-admin/releases/download/common-1.10.3/common-1.10.3.tgz
+    version: 1.10.3
   prometheusalert:
   - annotations:
       artifacthub.io/images: |
@@ -375,4 +427,4 @@ entries:
     urls:
     - https://github.com/dellnoantechnp/helm-chart-xxl-job-admin/releases/download/xxl-job-admin-1.0.2/xxl-job-admin-1.0.2.tgz
     version: 1.0.2
-generated: "2023-04-18T11:06:26.066195236Z"
+generated: "2023-05-16T02:58:39.827087353Z"
