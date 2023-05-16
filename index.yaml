@@ -427,4 +427,34 @@ entries:
     urls:
     - https://github.com/dellnoantechnp/helm-chart-xxl-job-admin/releases/download/xxl-job-admin-1.0.2/xxl-job-admin-1.0.2.tgz
     version: 1.0.2
-generated: "2023-05-16T02:58:39.827087353Z"
+  zookeeper:
+  - annotations:
+      category: Infrastructure
+    apiVersion: v2
+    appVersion: 3.7.0
+    created: "2023-05-16T03:01:21.482003328Z"
+    dependencies:
+    - name: common
+      repository: https://dellnoantechnp.github.io/helm-chart-xxl-job-admin/
+      tags:
+      - bitnami-common
+      version: 1.x.x
+    description: '[OpenSource by Bitnami] A centralized service for maintaining configuration
+      information, naming, providing distributed synchronization, and providing group
+      services for distributed applications.'
+    digest: f194094a8c552568ebd0bfdfbb84097d4082c090027fbefbc357e93629b4f3ea
+    home: https://github.com/bitnami/charts/tree/master/bitnami/zookeeper
+    icon: https://bitnami.com/assets/stacks/zookeeper/img/zookeeper-stack-220x234.png
+    keywords:
+    - zookeeper
+    maintainers:
+    - email: containers@bitnami.com
+      name: Bitnami
+    name: zookeeper
+    sources:
+    - https://github.com/bitnami/bitnami-docker-zookeeper
+    - https://zookeeper.apache.org/
+    urls:
+    - https://github.com/dellnoantechnp/helm-chart-xxl-job-admin/releases/download/zookeeper-7.6.1/zookeeper-7.6.1.tgz
+    version: 7.6.1
+generated: "2023-05-16T03:01:21.482046929Z"
