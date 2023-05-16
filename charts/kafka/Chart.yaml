@@ -4,13 +4,13 @@ apiVersion: v2
 appVersion: 2.8.1
 dependencies:
   - name: common
-    repository: https://charts.bitnami.com/bitnami
+    repository: https://dellnoantechnp.github.io/helm-chart-xxl-job-admin/
     tags:
       - bitnami-common
     version: 1.x.x
   - condition: zookeeper.enabled
     name: zookeeper
-    repository: https://charts.bitnami.com/bitnami
+    repository: https://dellnoantechnp.github.io/helm-chart-xxl-job-admin/
     version: 7.x.x
 description: "[OpenSource by Bitnami] Apache Kafka is a distributed streaming platform."
 engine: gotpl
