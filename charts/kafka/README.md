@@ -1,14 +1,16 @@
 <!--- app-name: Apache Kafka -->
 
 # Kafka
+Version: *2.8.1*
 
 [Kafka](https://kafka.apache.org/) is a distributed streaming platform used for building real-time data pipelines and streaming apps. It is horizontally scalable, fault-tolerant, wicked fast, and runs in production in thousands of companies.
 
 ## TL;DR
 
 ```console
-helm repo add bitnami https://charts.bitnami.com/bitnami
-helm install my-release bitnami/kafka
+REPO_NAME=xxl-job
+helm repo add ${REPO_NAME} https://dellnoantechnp.github.io/helm-chart-xxl-job-admin/
+helm install my-release ${REPO_NAME}/kafka
 ```
 
 ## Introduction
@@ -28,8 +30,9 @@ Bitnami charts can be used with [Kubeapps](https://kubeapps.com/) for deployment
 To install the chart with the release name `my-release`:
 
 ```console
-helm repo add bitnami https://charts.bitnami.com/bitnami
-helm install my-release bitnami/kafka
+REPO_NAME=xxl-job
+helm repo add ${REPO_NAME} https://dellnoantechnp.github.io/helm-chart-xxl-job-admin/
+helm install my-release ${REPO_NAME}/kafka
 ```
 
 These commands deploy Kafka on the Kubernetes cluster in the default configuration. The [Parameters](#parameters) section lists the parameters that can be configured during installation.
@@ -399,6 +402,103 @@ helm install my-release -f values.yaml bitnami/kafka
 ```
 
 > **Tip**: You can use the default [values.yaml](values.yaml)
+
+## Best practices values
+#### 1. For **advertised.listeners** via domain
+```yaml
+externalAccess:
+  enabled: true
+  service:
+    type: NodePort
+    domain: your-external-domain
+  autoDiscovery:
+    enabled: true
+metrics:
+  kafka:
+    enabled: true
+  jmx:
+    enabled: true
+  serviceMonitor:
+    enabled: true
+serviceAccount:
+  create: true
+rbac:
+  create: true
+zookeeper:
+  enabled: true
+```
+get *you-kafka-release* external svc from kubernetes:
+```shell
+$ kubectl get svc | grep external
+NAME                       TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)                      AGE
+kafka (not this)           ClusterIP   10.96.105.60    <none>        9092/TCP                     17h
+kafka-0-external (this)    NodePort    10.96.113.241   <none>        9094:32039/TCP               17h
+kafka-1-external (this)    NodePort    10.96.4.12      <none>        9094:30795/TCP               17h
+kafka-2-external (this)    NodePort    10.96.103.118   <none>        9094:30681/TCP               17h
+```
+and then you must be accessed via *your-external-domain*:
+```log
+;; QUESTION SECTION:
+;your-external-domain.		IN	A
+
+;; ANSWER SECTION:
+your-external-domain.	3600	IN	A	10.96.4.12
+your-external-domain.	3600	IN	A	10.96.113.241
+your-external-domain.	3600	IN	A	10.96.103.118
+```
+Finally you can use like this: (used by shell script)
+```shell
+$ JMX_PORT=0 kafka-topics.sh --bootstrap-server your-external-domain:9094 --list
+FINE_test
+__consumer_offsets
+....
+
+$ JMX_PORT=0 kafka-console-consumer.sh --bootstrap-server your-external-domain:9094 --topic spot_robot_order_entrust --from-beginning
+message1
+message2
+...
+```
+
+#### 2. For **advertised.listeners** via HostIP
+```yaml
+externalAccess:
+  enabled: true
+  service:
+    type: NodePort
+    nodePorts:
+      - 30001
+      - 30002
+      - 30003
+    useHostIPs: true
+    domain: ""
+  autoDiscovery:
+    enabled: false
+metrics:
+  kafka:
+    enabled: true
+  jmx:
+    enabled: true
+  serviceMonitor:
+    enabled: true
+serviceAccount:
+  create: true
+rbac:
+  create: false
+zookeeper:
+  enabled: true
+```
+Finally you can use like this: (used by shell script)
+```shell
+$ JMX_PORT=0 kafka-topics.sh --bootstrap-server hostIP1:30001 --list
+FINE_test
+__consumer_offsets
+....
+
+$ JMX_PORT=0 kafka-console-consumer.sh --bootstrap-server hostIP1:30002 --topic spot_robot_order_entrust --from-beginning
+message1
+message2
+...
+```
 
 ## Configuration and installation details
 
@@ -839,8 +939,8 @@ Backwards compatibility is not guaranteed when Kafka metrics are enabled, unless
 Use the workaround below to upgrade from versions previous to 7.0.0. The following example assumes that the release name is kafka:
 
 ```console
-helm upgrade kafka bitnami/kafka --version 6.1.8 --set metrics.kafka.enabled=false
-helm upgrade kafka bitnami/kafka --version 7.0.0 --set metrics.kafka.enabled=true
+helm upgrade kafka ${REPO_NAME}/kafka --version 6.1.8 --set metrics.kafka.enabled=false
+helm upgrade kafka ${REPO_NAME}/kafka --version 7.0.0 --set metrics.kafka.enabled=true
 ```
 
 ### To 2.0.0

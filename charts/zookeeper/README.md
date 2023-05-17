@@ -5,8 +5,9 @@
 ## TL;DR
 
 ```console
-$ helm repo add bitnami https://charts.bitnami.com/bitnami
-$ helm install my-release bitnami/zookeeper
+$ REPO_NAME=xxl-job
+$ helm repo add ${REPO_NAME} https://dellnoantechnp.github.io/helm-chart-xxl-job-admin/
+$ helm install my-release ${REPO_NAME}/zookeeper
 ```
 
 ## Introduction
@@ -26,8 +27,9 @@ Bitnami charts can be used with [Kubeapps](https://kubeapps.com/) for deployment
 To install the chart with the release name `my-release`:
 
 ```console
-$ helm repo add bitnami https://charts.bitnami.com/bitnami
-$ helm install my-release bitnami/zookeeper
+$ REPO_NAME=xxl-job
+$ helm repo add ${REPO_NAME} https://dellnoantechnp.github.io/helm-chart-xxl-job-admin/
+$ helm install my-release ${REPO_NAME}/zookeeper
 ```
 
 These commands deploy ZooKeeper on the Kubernetes cluster in the default configuration. The [Parameters](#parameters) section lists the parameters that can be configured during installation.

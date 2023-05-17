@@ -17,7 +17,7 @@ Once Helm has been set up correctly, add the repo as follows:
 
 ```shell
 REPO_NAME=xxl-job
-helm repo add ${REPO_NAME} https://dellnoantechnp.github.io/charts
+helm repo add ${REPO_NAME} https://dellnoantechnp.github.io/helm-chart-xxl-job-admin/
 helm repo list
 ```
 
