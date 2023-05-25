@@ -32,3 +32,8 @@ version: 0.0.1
 # follow Semantic Versioning. They should reflect the version the application is using.
 # It is recommended to use it with quotes.
 appVersion: "1.1.6"
+dependencies:
+  - name: zookeeper
+    version: 7.x.x
+    condition: zookeeper.enabled
+    repository: https://dellnoantechnp.github.io/helm-chart-xxl-job-admin/

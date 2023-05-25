@@ -4,7 +4,7 @@ kind: ConfigMap
 metadata:
   name: {{ $canalServerCmName }}
 data:
-  canal.properties: |
-{{ .Values.config.canal | indent 4 }}
-  instance.properties: |
-{{ .Values.config.instance | indent 4}}
+{{- range .Values.InstanceConf.canal.instance }}
+  example: |
+{{ include "instance.configmap.tpl" . | indent 4 -}}
+{{- end }}

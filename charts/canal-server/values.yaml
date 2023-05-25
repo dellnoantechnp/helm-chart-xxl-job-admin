@@ -85,19 +85,20 @@ InstanceConf:
   ##
   canal:
     instance:
-      mysql:
-        slaveId:
-          autoGenerate: true
-          number: 12345
-      gtidon: true
-      master:
-        address: 127.0.0.1
-      dbUsername: canal
-      dbPassword: canal
-      filter:
-        regex: ".*\\..*"
-        black:
-          regex: "mysql\\.slave_.*"
+      - name: example
+        mysql:
+          slaveId:
+            autoGenerate: false
+            number: 12345
+        gtidon: false
+        master:
+          address: 127.0.0.1
+        dbUsername: canal
+        dbPassword: canal
+        filter:
+          regex: ".*\\..*"
+          black:
+            regex: "mysql\\.slave_.*"
 
 ## configure canal repl source from mysql detail
 ReplSourceConf:
@@ -298,6 +299,36 @@ nodeSelector: {}
 tolerations: []
 
 affinity: {}
+
+## Zookeeper chart configuration
+## https://github.com/bitnami/charts/blob/master/bitnami/zookeeper/values.yaml
+##
+zookeeper:
+  ## @param zookeeper.enabled Switch to enable or disable the Zookeeper helm chart
+  ##
+  enabled: true
+  auth:
+    ## @param zookeeper.auth.enabled Enable Zookeeper auth
+    ##
+    enabled: false
+    ## @param zookeeper.auth.clientUser User that will use Zookeeper clients to auth
+    ##
+    clientUser: ""
+    ## @param zookeeper.auth.clientPassword Password that will use Zookeeper clients to auth
+    ##
+    clientPassword: ""
+    ## @param zookeeper.auth.serverUsers Comma, semicolon or whitespace separated list of user to be created. Specify them as a string, for example: "user1,user2,admin"
+    ##
+    serverUsers: ""
+    ## @param zookeeper.auth.serverPasswords Comma, semicolon or whitespace separated list of passwords to assign to users when created. Specify them as a string, for example: "pass4user1, pass4user2, pass4admin"
+    ##
+    serverPasswords: ""
+## This value is only used when zookeeper.enabled is set to false
+##
+externalZookeeper:
+  ## @param externalZookeeper.servers Server or list of external Zookeeper servers to use
+  ##
+  servers: []
 
 config:
   canal: |
