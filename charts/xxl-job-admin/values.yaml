@@ -137,6 +137,11 @@ service:
   type: ClusterIP
   port: 8080
 
+  ## @param service.nodePort; only on service.type value is NodePort, then service.nodePort will be used.
+  ## if set value to string "" or number 0, it will be assign random port number.
+  ##
+  nodePort: 30080
+
 ingress:
   enabled: false
   className: "nginx"

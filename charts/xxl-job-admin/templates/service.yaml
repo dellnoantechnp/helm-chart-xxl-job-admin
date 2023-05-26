@@ -10,6 +10,9 @@ spec:
     - port: {{ .Values.service.port }}
       targetPort: http
       protocol: TCP
+      {{- if and (eq .Values.service.type "NodePort") (.Values.service.nodePort) }}
+      nodePort: {{ .Values.service.nodePort }}
+      {{- end }}
       name: http
   selector:
     {{- include "xxl-job-admin.selectorLabels" . | nindent 4 }}
