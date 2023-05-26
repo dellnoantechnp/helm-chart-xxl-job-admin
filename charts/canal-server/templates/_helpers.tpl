@@ -98,3 +98,15 @@ canal-server-cm
 {{- define "canal.server.configmap.fullname" -}}
 {{ include "canal-server.fullname" . }}-cm
 {{- end }}
+
+{{- /*
+return canal.destinations string,
+e.g: example,example2
+*/ -}}
+{{- define "canal.destinations" -}}
+{{- $destinations := "" }}
+{{- range .Values.InstanceConf.canal.instance }}
+{{- $destinations = printf "%s,%s" $destinations .name }}
+{{- end }}
+{{- trimPrefix "," $destinations }}
+{{- end }}

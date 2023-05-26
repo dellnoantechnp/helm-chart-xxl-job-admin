@@ -99,6 +99,20 @@ InstanceConf:
           regex: ".*\\..*"
           black:
             regex: "mysql\\.slave_.*"
+      - name: futures
+        mysql:
+          slaveId:
+            autoGenerate: false
+            number: 12345
+        gtidon: false
+        master:
+          address: 127.0.0.1
+        dbUsername: canal
+        dbPassword: canal
+        filter:
+          regex: ".*\\..*"
+          black:
+            regex: "mysql\\.slave_.*"
 
 ## configure canal repl source from mysql detail
 ReplSourceConf:
@@ -109,6 +123,7 @@ ReplSourceConf:
 
 ## configure canal tsdb database by mysql detail
 TsdbDBConf:
+  enabled: true
   canal_tsdb_mysql_address: 127.0.0.1
   canal_tsdb_mysql_port: 3306
   canal_tsdb_db_name: canal_tsdb
