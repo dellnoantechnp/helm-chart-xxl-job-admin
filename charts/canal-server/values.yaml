@@ -321,9 +321,9 @@ affinity: {}
 zookeeper:
   ## @param zookeeper.enabled Switch to enable or disable the Zookeeper helm chart
   ##
-  enabled: true
+  enabled: false
   auth:
-    ## @param zookeeper.auth.enabled Enable Zookeeper auth
+    ## @param zookeeper.auth.enabled Enable Zookeeper auth, it's always false.
     ##
     enabled: false
     ## @param zookeeper.auth.clientUser User that will use Zookeeper clients to auth
@@ -342,6 +342,10 @@ zookeeper:
 ##
 externalZookeeper:
   ## @param externalZookeeper.servers Server or list of external Zookeeper servers to use
+  ## Example:
+  ## servers:
+  ##   - zkServer1:2181
+  ##   - zkServer2:2181
   ##
   servers: []
 

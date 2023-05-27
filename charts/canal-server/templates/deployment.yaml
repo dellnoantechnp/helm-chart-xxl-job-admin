@@ -127,6 +127,10 @@ spec:
           {{- if .Values.resources }}
           resources: {{- toYaml .Values.resources | nindent 12 }}
           {{- end }}
+          volumeMounts:
+{{- include "config.canal-properties" . | indent 12 }}
+{{- include "config.instances.instance-properties" . | indent 12 }}
+
 
       {{- with .Values.nodeSelector }}
       nodeSelector:
@@ -140,3 +144,7 @@ spec:
       tolerations:
         {{- toYaml . | nindent 8 }}
       {{- end }}
+      volumes:
+        - name: config
+          configMap:
+            name: {{ include "canal.server.configmap.fullname" . }}

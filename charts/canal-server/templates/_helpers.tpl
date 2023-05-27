@@ -110,3 +110,41 @@ e.g: example,example2
 {{- end }}
 {{- trimPrefix "," $destinations }}
 {{- end }}
+
+{{/*
+return zkServers
+*/}}
+{{- define "zkServers" -}}
+{{- if .Values.zookeeper.enabled }}
+{{- if .Values.zookeeper.fullnameOverride -}}
+{{- .Values.zookeeper.fullnameOverride | trunc 63 | trimSuffix "-" -}}:{{ .Values.zookeeper.service.port }}
+{{- else -}}
+{{- $name := default "zookeeper" .Values.zookeeper.nameOverride -}}
+{{- printf "%s-%s" .Release.Name $name | trunc 63 | trimSuffix "-" -}}:{{ .Values.zookeeper.service.port }}
+{{- end }}
+{{- else }}
+{{- if .Values.externalZookeeper.servers }}
+{{- join "," .Values.externalZookeeper.servers }}
+{{- end }}
+{{- end }}
+{{- end }}
+
+{{/*
+return canal-server canal.properties mount resouce string.
+*/}}
+{{- define "config.canal-properties" }}
+- mountPath: /app/canal-server/conf/canal.properties
+  subPath: canal.properties
+  name: config
+{{- end }}
+
+{{/*
+return canal-server instance instance.properties mount resouce string.
+*/}}
+{{- define "config.instances.instance-properties" }}
+{{- range .Values.InstanceConf.canal.instance }}
+- mountPath: /app/canal-server/conf/{{ .name }}/instance.properties
+  subPath: {{ .name }}-instance.properties
+  name: config
+{{- end }}
+{{- end }}
