@@ -148,3 +148,16 @@ return canal-server instance instance.properties mount resouce string.
   name: config
 {{- end }}
 {{- end }}
+
+{{/*
+canal-server instance HA detection config.
+*/}}
+{{- define "canal.instance.enable.detection" }}
+## heartbeat instance HA config
+canal.instance.detecting.enable=true
+#canal.instance.detecting.sql = insert into retl.xdual values(1,now()) on duplicate key update x=now()
+canal.instance.detecting.sql=select 1
+canal.instance.detecting.interval.time=3
+canal.instance.detecting.retry.threshold=3
+canal.instance.detecting.heartbeatHaEnable=true
+{{- end }}

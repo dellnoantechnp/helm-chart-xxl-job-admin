@@ -7,7 +7,7 @@ data:
 {{- range $key, $values := .Values.InstanceConf.canal.instance }}
 {{- $_ := set $ "item" $values }}
   {{ $values.name }}-instance.properties: |
-{{- tpl ($.Files.Get "configs/instance.properties") $ | indent 4 }}
+{{ tpl ($.Files.Get "configs/instance.properties") $ | indent 4 }}
 {{- end }}
   canal.properties: |
 {{ tpl ($.Files.Get "configs/canal.properties") $ | indent 4 }}

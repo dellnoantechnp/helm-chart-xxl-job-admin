@@ -7,17 +7,26 @@ metadata:
 spec:
   type: {{ .Values.service.type }}
   ports:
-    - port: {{ .Values.service.ports.canal }}
+    - port: {{ .Values.service.ports.canal.port }}
       targetPort: tcp-canal
       protocol: TCP
       name: tcp-canal
+      {{- if and (contains .Values.service.type "NodePort") (typeIs "int" .Values.service.ports.canal.nodePort) }}
+      nodePort: {{ .Values.service.ports.canal.nodePort }}
+      {{- end }}
     - port: {{ .Values.service.ports.admin }}
       targetPort: tcp-admin
       protocol: TCP
       name: tcp-admin
+      {{- if and (contains .Values.service.type "NodePort") (typeIs "int" .Values.service.ports.admin.nodePort) }}
+      nodePort: {{ .Values.service.ports.admin.nodePort }}
+      {{- end }}
     - port: {{ .Values.service.ports.metrics }}
       targetPort: http-metrics
       protocol: TCP
       name: http-metrics
+      {{- if and (contains .Values.service.type "NodePort") (typeIs "int" .Values.service.ports.metrics.nodePort) }}
+      nodePort: {{ .Values.service.ports.metrics.nodePort }}
+      {{- end }}
   selector:
     {{- include "canal-server.selectorLabels" . | nindent 4 }}
