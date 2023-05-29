@@ -16,6 +16,7 @@
 - [x] prometheusAlert
 - [x] kafka-*2.8.1*
 - [x] zookeeper-*3.7.0*
+- [x] [canal-server-*1.1.6*](https://github.com/alibaba/canal)
 
 
 
