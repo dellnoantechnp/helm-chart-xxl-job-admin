@@ -1,7 +1,7 @@
 apiVersion: apps/v1
-kind: Deployment
+kind: StatefulSet
 metadata:
-  name: {{ include "canal-server.fullname" . }}
+  name: {{ include "canal-server.name" . }}
   labels:
     {{- include "canal-server.labels" . | nindent 4 }}
 spec:
@@ -112,6 +112,8 @@ spec:
                 fieldRef:
                   apiVersion: v1
                   fieldPath: status.podIP
+            - name: CANAL_HEAP_SIZE
+              value: {{ .Values.ServerConf.heapSize }}
             {{- if .Values.extraEnvVars }}
             {{- include "common.tplvalues.render" (dict "value" .Values.extraEnvVars "context" $) | nindent 12 }}
             {{- end }}
@@ -130,8 +132,6 @@ spec:
           volumeMounts:
 {{- include "config.canal-properties" . | indent 12 }}
 {{- include "config.instances.instance-properties" . | indent 12 }}
-
-
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
