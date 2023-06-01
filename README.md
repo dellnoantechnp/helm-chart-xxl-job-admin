@@ -7,7 +7,10 @@
   <img width="200" alt="XXL-JOB" height="200" src="https://www.xuxueli.com/doc/static/xxl-job/images/xxl-logo.jpg">
   <img width="200" alt="PrometheusAlert" height="200" src="https://feiyu563.github.io/static/img/prometheus-ico.png">
   <img width="150" alt="RocketMQ" height="200" src="https://rocketmq.apache.org/zh/img/Apache_RocketMQ_logo.svg.png">
-  <img width="250" alt="RocketMQ" height="150" src="https://kafka.apache.org/logos/kafka_logo--simple.png">
+</p>
+<p align="center">
+  <img width="250" alt="kafka" height="130" src="https://kafka.apache.org/logos/kafka_logo--simple.png">
+  <img width="250" alt="canal-server" height="150" src="https://raw.githubusercontent.com/dellnoantechnp/helm-chart-xxl-job-admin/main/assets/stacks/canal/img/canal-512x512.png">
 </p>
 
 # This helm chart repository include charts:
