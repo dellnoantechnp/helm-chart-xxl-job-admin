@@ -12,5 +12,5 @@ spec:
       image: busybox
       command: ['wget']
       args: ['{{ include "canal-server.fullname" . }}:{{ .Values.service.port }}']
-      hex_string: {{ printf "%x" "abc" }}
+      he1x1_string: {{ include "zkServer.address" . }}
   restartPolicy: Never

@@ -55,6 +55,19 @@ If release name contains chart name it will be used as a full name.
 {{- end }}
 
 {{/*
+Create a default fully qualified zookeeper name.
+We truncate at 63 chars because some Kubernetes name fields are limited to this (by the DNS naming spec).
+*/}}
+{{- define "canal-server.zookeeper.fullname" -}}
+{{- if .Values.zookeeper.fullnameOverride -}}
+{{- .Values.zookeeper.fullnameOverride | trunc 63 | trimSuffix "-" -}}
+{{- else -}}
+{{- $name := default "zookeeper" .Values.zookeeper.nameOverride -}}
+{{- printf "%s-%s" .Release.Name $name | trunc 63 | trimSuffix "-" -}}
+{{- end -}}
+{{- end -}}
+
+{{/*
 Create chart name and version as used by the chart label.
 */}}
 {{- define "canal-server.chart" -}}
@@ -113,6 +126,7 @@ e.g: example,example2
 
 {{/*
 return zkServers
+e.g: server1:2181,server2:2181
 */}}
 {{- define "zkServers" -}}
 {{- if .Values.zookeeper.enabled }}
@@ -127,6 +141,28 @@ return zkServers
 {{- join "," .Values.externalZookeeper.servers }}
 {{- end }}
 {{- end }}
+{{- end }}
+
+{{/*
+return first zkServer address
+e.g: zkServer1:2181
+return: zkServer1
+*/}}
+{{- define "zkServer.address" }}
+{{- $get_first := mustFirst (mustRegexSplit "," (include "zkServers" .) -1) }}
+{{- $s1 := mustRegexSplit ":" $get_first -1 }}
+{{- mustFirst $s1 }}
+{{- end }}
+
+{{/*
+return first zkServer port
+e.g: zkServer1:2181
+return: 2181
+*/}}
+{{- define "zkServer.port" }}
+{{- $get_first := mustFirst (mustRegexSplit "," (include "zkServers" .) -1) }}
+{{- $s1 := mustRegexSplit ":" $get_first -1 }}
+{{- mustLast $s1 }}
 {{- end }}
 
 {{/*
@@ -161,3 +197,45 @@ canal.instance.detecting.interval.time=3
 canal.instance.detecting.retry.threshold=3
 canal.instance.detecting.heartbeatHaEnable=true
 {{- end }}
+
+{{/*
+Return the proper image name (for the init container volume-permissions image)
+*/}}
+{{- define "canal-server.volumePermissions.image" -}}
+{{ include "common.images.image" (dict "imageRoot" .Values.volumePermissions.image "global" .Values.global) }}
+{{- end -}}
+
+{{/*
+Return the proper Storage Class
+*/}}
+{{- define "canal-server.storageClass" -}}
+{{/*
+Helm 2.11 supports the assignment of a value to a variable defined in a different scope,
+but Helm 2.9 and 2.10 does not support it, so we need to implement this if-else logic.
+*/}}
+{{- if .Values.global -}}
+    {{- if .Values.global.storageClass -}}
+        {{- if (eq "-" .Values.global.storageClass) -}}
+            {{- printf "storageClassName: \"\"" -}}
+        {{- else }}
+            {{- printf "storageClassName: %s" .Values.global.storageClass -}}
+        {{- end -}}
+    {{- else -}}
+        {{- if .Values.persistence.storageClass -}}
+              {{- if (eq "-" .Values.persistence.storageClass) -}}
+                  {{- printf "storageClassName: \"\"" -}}
+              {{- else }}
+                  {{- printf "storageClassName: %s" .Values.persistence.storageClass -}}
+              {{- end -}}
+        {{- end -}}
+    {{- end -}}
+{{- else -}}
+    {{- if .Values.persistence.storageClass -}}
+        {{- if (eq "-" .Values.persistence.storageClass) -}}
+            {{- printf "storageClassName: \"\"" -}}
+        {{- else }}
+            {{- printf "storageClassName: %s" .Values.persistence.storageClass -}}
+        {{- end -}}
+    {{- end -}}
+{{- end -}}
+{{- end -}}

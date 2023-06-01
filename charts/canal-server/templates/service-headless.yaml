@@ -1,0 +1,33 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ template "canal-server.fullname" . }}-headless
+  labels: {{- include "common.labels.standard" . | nindent 4 }}
+    app.kubernetes.io/component: canal-server
+    {{- include "canal-server.labels" . | nindent 4 }}
+spec:
+  type: ClusterIP
+  clusterIP: None
+  ports:
+    - port: {{ .Values.service.ports.canal.port }}
+      targetPort: tcp-canal
+      protocol: TCP
+      name: tcp-canal
+      {{- if and (contains .Values.service.type "NodePort") (typeIs "int" .Values.service.ports.canal.nodePort) }}
+      nodePort: {{ .Values.service.ports.canal.nodePort }}
+      {{- end }}
+    - port: {{ .Values.service.ports.admin.port }}
+      targetPort: tcp-admin
+      protocol: TCP
+      name: tcp-admin
+      {{- if and (contains .Values.service.type "NodePort") (typeIs "int" .Values.service.ports.admin.nodePort) }}
+      nodePort: {{ .Values.service.ports.admin.nodePort }}
+      {{- end }}
+    - port: {{ .Values.service.ports.metrics.port }}
+      targetPort: http-metrics
+      protocol: TCP
+      name: http-metrics
+      {{- if and (contains .Values.service.type "NodePort") (typeIs "int" .Values.service.ports.metrics.nodePort) }}
+      nodePort: {{ .Values.service.ports.metrics.nodePort }}
+      {{- end }}
+  selector: {{- include "common.labels.matchLabels" . | nindent 4 }}
