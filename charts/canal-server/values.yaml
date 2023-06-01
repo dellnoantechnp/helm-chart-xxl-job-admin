@@ -109,11 +109,12 @@ InstanceConf:
       - name: example
         mysql:
           slaveId:
-            autoGenerate: false
+            autoGenerate: true
             number: 12345
         gtidon: false
         master:
           address: 127.0.0.1
+          port: 3306
           ## @param journalName type string, it's mysql-binlog name, default none.
           ##
           journalName: ""
@@ -134,6 +135,7 @@ InstanceConf:
           ##
           enabled: true
           address: 127.0.0.1
+          port: 3306
           ## @param journalName type string, it's mysql-binlog name, default none.
           ##
           journalName: ""
@@ -370,11 +372,13 @@ persistence:
   ## @param persistence.existingClaim Provide an existing `PersistentVolumeClaim`
   ## If defined, PVC must be created manually before volume will be bound
   ## The value is evaluated as a template
+  ## This configuration is only available when Zookeeper is not used
   ##
   existingClaim: ""
   ## @param persistence.enabled Enable Canal-server meta data persistence using PVC
+  ## This configuration is only available when Zookeeper is not used.
   ##
-  enabled: true
+  enabled: false
   ## @param persistence.storageClass PVC Storage Class for Canal-server meta data volume
   ##
   storageClass: ""
