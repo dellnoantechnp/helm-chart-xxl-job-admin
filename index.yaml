@@ -11,6 +11,38 @@ entries:
           image: dellnoantechnp/canal-server:v0.0.1
     apiVersion: v2
     appVersion: 1.1.6
+    created: "2023-06-01T07:51:28.570534432Z"
+    dependencies:
+    - condition: zookeeper.enabled
+      name: zookeeper
+      repository: https://dellnoantechnp.github.io/helm-chart-xxl-job-admin/
+      version: 7.x.x
+    - name: common
+      repository: https://dellnoantechnp.github.io/helm-chart-xxl-job-admin/
+      version: 1.x.x
+    description: Canal Server is capable of parsing MySQL binlog and subscribe to
+      the data change, while Canal Client can be implemented to broadcast the change
+      to anywhere, e.g. database and Apache Kafka.
+    digest: 7a0beffc97333a3c0032aeccc44e73c1d85671c618bff49551e22add6423cc9c
+    home: https://github.com/alibaba/canal/wiki
+    icon: https://raw.githubusercontent.com/dellnoantechnp/helm-chart-xxl-job-admin/main/assets/stacks/canal/img/canal-75x80.png
+    name: canal-server
+    sources:
+    - https://github.com/dellnoantechnp/helm-chart-xxl-job-admin
+    type: application
+    urls:
+    - https://github.com/dellnoantechnp/helm-chart-xxl-job-admin/releases/download/canal-server-0.1.1/canal-server-0.1.1.tgz
+    version: 0.1.1
+  - annotations:
+      artifacthub.io/links: |
+        - name: Chart Source
+          url: https://github.com/dellnoantechnp/helm-chart-xxl-job-admin
+      ghcr.io/license: MIT-License
+      ghcr.io/packages: |
+        - name: dellnoantechnp/canal-server
+          image: dellnoantechnp/canal-server:v0.0.1
+    apiVersion: v2
+    appVersion: 1.1.6
     created: "2023-06-01T07:38:19.959788108Z"
     dependencies:
     - condition: zookeeper.enabled
@@ -672,4 +704,4 @@ entries:
     urls:
     - https://github.com/dellnoantechnp/helm-chart-xxl-job-admin/releases/download/zookeeper-7.6.1/zookeeper-7.6.1.tgz
     version: 7.6.1
-generated: "2023-06-01T07:38:19.960203514Z"
+generated: "2023-06-01T07:51:28.570586433Z"
