@@ -12,8 +12,8 @@ Github: [https://github.com/dellnoantechnp/helm-chart-xxl-job-admin](https://git
 ## Usage:
 ### 1. Add helm repo
 ```shell
-helm repo add xxl-job
-helm repo update xxl-job
+helm repo add dellnoantechnp https://github.com/dellnoantechnp/helm-chart-xxl-job-admin
+helm repo update dellnoantechnp
 helm search repo xxl-job-admin
 ```
 
@@ -25,7 +25,7 @@ helm pull xxl-job/xxl-job-admin --untar
 
 ### 3. Install chart
 ```shell
-helm install -n <namespace> my-xxl-job-admin xxl-job/xxl-job-admin \
+helm install -n <namespace> my-xxl-job-admin dellnoantechnp/xxl-job-admin \
 --set database.db_address=127.0.0.1 \
 --set database.user=db_usernmae \
 --set database.password='abcde1234!@#' 
@@ -34,7 +34,7 @@ helm install -n <namespace> my-xxl-job-admin xxl-job/xxl-job-admin \
 ### 4. Custom `values.yaml` variables, and install from local
 *custom multi variables from `values.yaml`*
 ```shell
-helm install -n <namespace> my-xxl-job-admin xxl-job/xxl-job-admin .
+helm install -n <namespace> my-xxl-job-admin dellnoantechnp/xxl-job-admin .
 ```
 
 ### 5. Get current release values
