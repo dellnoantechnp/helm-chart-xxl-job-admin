@@ -736,4 +736,38 @@ entries:
     urls:
     - https://github.com/dellnoantechnp/helm-chart-xxl-job-admin/releases/download/zookeeper-7.6.1/zookeeper-7.6.1.tgz
     version: 7.6.1
-generated: "2023-06-01T08:21:10.868370037Z"
+  - annotations:
+      category: Database
+    apiVersion: v2
+    appVersion: 4.4.13
+    created: "2022-04-23T15:24:33.056926136Z"
+    dependencies:
+      - name: common
+        repository: https://charts.bitnami.com/bitnami
+        tags:
+          - bitnami-common
+        version: 1.x.x
+    description: MongoDB(R) is an open source NoSQL database that uses JSON for data
+      storage. MongoDB(TM) Sharded improves scalability and reliability for large
+      datasets by distributing data across multiple machines.
+    digest: sha256:6b2b8dbb707c333047ae68dee4e7ee9b000b6293789d9904af8e4196f84138fb
+    home: https://github.com/bitnami/charts/tree/master/bitnami/mongodb-sharded
+    icon: https://bitnami.com/assets/stacks/mongodb/img/mongodb-stack-220x234.png
+    keywords:
+      - mongodb
+      - database
+      - nosql
+      - cluster
+      - replicaset
+      - replication
+    maintainers:
+      - email: containers@bitnami.com
+        name: Bitnami
+    name: mongodb-sharded
+    sources:
+      - https://github.com/bitnami/bitnami-docker-mongodb-sharded
+      - https://mongodb.org
+    urls:
+      - https://charts.bitnami.com/bitnami/mongodb-sharded-4.0.21.tgz
+    version: 4.0.21
+generated: "2023-07-25T08:21:10.868370037Z"
