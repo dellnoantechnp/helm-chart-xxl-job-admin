@@ -771,4 +771,38 @@ entries:
     urls:
       - https://charts.bitnami.com/bitnami/mongodb-sharded-4.0.21.tgz
     version: 4.0.21
+  elasticsearch:
+  - annotations:
+      category: Analytics
+    apiVersion: v2
+    appVersion: 7.17.3
+    created: "2022-04-22T11:33:12.51611251Z"
+    dependencies:
+      - condition: global.kibanaEnabled
+        name: kibana
+        repository: https://charts.bitnami.com/bitnami
+        version: 9.x.x
+      - name: common
+        repository: https://charts.bitnami.com/bitnami
+        tags:
+          - bitnami-common
+        version: 1.x.x
+    description: Elasticsearch is a distributed search and analytics engine. It is
+      used for web search, log monitoring, and real-time analytics. Ideal for Big
+      Data applications.
+    digest: sha256:e6f2c6d41e79bbbb84d86705827e1ec2942688062f7755b2d780c682b815235a
+    home: https://github.com/bitnami/charts/tree/master/bitnami/elasticsearch
+    icon: https://bitnami.com/assets/stacks/elasticsearch/img/elasticsearch-stack-220x234.png
+    keywords:
+      - elasticsearch
+    maintainers:
+      - email: containers@bitnami.com
+        name: Bitnami
+    name: elasticsearch
+    sources:
+      - https://github.com/bitnami/bitnami-docker-elasticsearch
+      - https://www.elastic.co/products/elasticsearch
+    urls:
+      - https://charts.bitnami.com/bitnami/elasticsearch-17.9.29.tgz
+    version: 17.9.29
 generated: "2023-07-25T08:21:10.868370037Z"
