@@ -25,3 +25,10 @@
 
 # Helm Charts repository
 Helm Charts repository: [https://dellnoantechnp.github.io/helm-chart-xxl-job-admin/](https://dellnoantechnp.github.io/helm-chart-xxl-job-admin/)
+
+# How to usage:
+```shell
+helm repo add dellnoantechnp https://dellnoantechnp.github.io/helm-chart-xxl-job-admin
+helm repo update
+helm search repo dellnoantechnp
+```
