@@ -736,7 +736,7 @@ entries:
     urls:
     - https://github.com/dellnoantechnp/helm-chart-xxl-job-admin/releases/download/zookeeper-7.6.1/zookeeper-7.6.1.tgz
     version: 7.6.1
-  mongodb-shard:
+  mongodb-sharded:
   - annotations:
       category: Database
     apiVersion: v2
