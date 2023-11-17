@@ -1,24 +1,24 @@
 annotations:
   category: Infrastructure
 apiVersion: v2
-appVersion: 3.7.0
+appVersion: 3.8.0
 dependencies:
-  - name: common
-    repository: https://dellnoantechnp.github.io/helm-chart-xxl-job-admin/
-    tags:
-      - bitnami-common
-    version: 1.x.x
-description: "[OpenSource by Bitnami] A centralized service for maintaining configuration information, naming, providing distributed synchronization, and providing group services for distributed applications."
-engine: gotpl
+- name: common
+  repository: https://dellnoantechnp.github.io/helm-chart-xxl-job-admin/
+  tags:
+  - bitnami-common
+  version: 1.x.x
+description: "[OpenSource by Bitnami] Apache ZooKeeper provides a reliable, centralized register of configuration
+  data and services for distributed applications."
 home: https://github.com/bitnami/charts/tree/master/bitnami/zookeeper
 icon: https://raw.githubusercontent.com/dellnoantechnp/helm-chart-xxl-job-admin/main/assets/stacks/zookeeper/img/zookeeper-stack-110x117.png
 keywords:
-  - zookeeper
+- zookeeper
 maintainers:
-  - email: containers@bitnami.com
-    name: Bitnami
+- email: containers@bitnami.com
+  name: Bitnami
 name: zookeeper
 sources:
-  - https://github.com/bitnami/bitnami-docker-zookeeper
-  - https://zookeeper.apache.org/
-version: 7.6.1
+- https://github.com/bitnami/bitnami-docker-zookeeper
+- https://zookeeper.apache.org/
+version: 9.2.0
