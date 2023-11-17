@@ -334,6 +334,43 @@ entries:
   - annotations:
       category: Infrastructure
     apiVersion: v2
+    appVersion: 3.2.0
+    created: "2023-11-17T09:29:40.343979783Z"
+    dependencies:
+    - condition: zookeeper.enabled
+      name: zookeeper
+      repository: https://dellnoantechnp.github.io/helm-chart-xxl-job-admin/
+      version: 9.x.x
+    - name: common
+      repository: https://dellnoantechnp.github.io/helm-chart-xxl-job-admin/
+      tags:
+      - bitnami-common
+      version: 1.x.x
+    description: '[OpenSource by Bitnami] Apache Kafka is a distributed streaming
+      platform designed to build real-time pipelines and can be used as a message
+      broker or as a replacement for a log aggregation solution for big data applications.'
+    digest: 4bee7228788dc91252ff2b6e22897e42226c46c542f1c84982a1282afdb4b756
+    home: https://github.com/bitnami/charts/tree/master/bitnami/kafka
+    icon: https://raw.githubusercontent.com/dellnoantechnp/helm-chart-xxl-job-admin/main/assets/stacks/kafka/img/kafka-stack-110x117.png
+    keywords:
+    - kafka
+    - zookeeper
+    - streaming
+    - producer
+    - consumer
+    maintainers:
+    - email: containers@bitnami.com
+      name: Bitnami
+    name: kafka
+    sources:
+    - https://github.com/bitnami/bitnami-docker-kafka
+    - https://kafka.apache.org/
+    urls:
+    - https://github.com/dellnoantechnp/helm-chart-xxl-job-admin/releases/download/kafka-17.1.0/kafka-17.1.0.tgz
+    version: 17.1.0
+  - annotations:
+      category: Infrastructure
+    apiVersion: v2
     appVersion: 2.8.1
     created: "2023-05-16T03:04:20.690176909Z"
     dependencies:
@@ -860,4 +897,4 @@ entries:
     urls:
     - https://github.com/dellnoantechnp/helm-chart-xxl-job-admin/releases/download/zookeeper-7.6.1/zookeeper-7.6.1.tgz
     version: 7.6.1
-generated: "2023-11-17T08:57:49.176973593Z"
+generated: "2023-11-17T09:29:40.344038963Z"
