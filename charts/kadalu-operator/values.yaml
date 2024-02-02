@@ -1,0 +1,156 @@
+# Default values for kadalu
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+global:
+  image:
+    registry: 'docker.io'
+    repository: 'kadalu'
+    pullPolicy: 'IfNotPresent'
+  kubeletDir: ''
+  kubernetesDistro: 'kubernetes'
+
+commonLabels: {}
+
+commonAnnotations: {}
+
+## @param namespaceOverride Override namespace for Kadalu-operator resources
+##
+namespaceOverride: ""
+
+# Values while deploying operator
+operator:
+  verbose: 'no'
+  containerPort:
+    number: 8050
+    name: http-api
+  service:
+    ## @param service.type Kubernetes Service type
+    ##
+    type: ClusterIP
+    port: 8050
+    annotations: {}
+    ## @param service.clusterIP Kadalu-operator service Cluster IP
+    ## e.g.:
+    ## clusterIP: None
+    ##
+    clusterIP: ""
+    ## @param service.loadBalancerIP Kadalu-operator service Load Balancer IP
+    ## ref: https://kubernetes.io/docs/user-guide/services/#type-loadbalancer
+    ##
+    loadBalancerIP: ""
+    ## @param service.loadBalancerSourceRanges Kadalu-operator service Load Balancer sources
+    ## ref: https://kubernetes.io/docs/tasks/access-application-cluster/configure-cloud-provider-firewall/#restrict-access-for-loadbalancer-service
+    ## e.g:
+    ## loadBalancerSourceRanges:
+    ##   - 10.10.10.0/24
+    ##
+    loadBalancerSourceRanges: []
+    ## @param service.externalTrafficPolicy Kadalu-operator service external traffic policy
+    ## ref https://kubernetes.io/docs/tasks/access-application-cluster/create-external-load-balancer/#preserving-the-client-source-ip
+    ##
+    externalTrafficPolicy: Cluster
+    ## @param service.sessionAffinity Control where client requests go, to the same pod or round-robin
+    ## Values: ClientIP or None
+    ## ref: https://kubernetes.io/docs/user-guide/services/
+    ##
+    sessionAffinity: None
+    ## @param service.sessionAffinityConfig Additional settings for the sessionAffinity
+    ## sessionAffinityConfig:
+    ##   clientIP:
+    ##     timeoutSeconds: 300
+    ##
+    sessionAffinityConfig: {}
+  ## Prometheus Operator ServiceMonitor configuration
+  ##
+  serviceMonitor:
+    ## @param metrics.serviceMonitor.enabled Create ServiceMonitor Resource for scraping metrics using Prometheus Operator
+    ##
+    enabled: false
+    ## @param metrics.serviceMonitor.namespace Namespace for the ServiceMonitor Resource (defaults to the Release Namespace)
+    ##
+    namespace: ""
+    ## @param metrics.serviceMonitor.interval Interval at which metrics should be scraped.
+    ## ref: https://github.com/coreos/prometheus-operator/blob/master/Documentation/api.md#endpoint
+    ##
+    interval: ""
+    ## @param metrics.serviceMonitor.scrapeTimeout Timeout after which the scrape is ended
+    ## ref: https://github.com/coreos/prometheus-operator/blob/master/Documentation/api.md#endpoint
+    ##
+    scrapeTimeout: ""
+    ## @param metrics.serviceMonitor.additionalLabels Additional labels that can be used so ServiceMonitor will be discovered by Prometheus
+    ##
+    additionalLabels: { }
+    ## @param metrics.serviceMonitor.selector Prometheus instance selector labels
+    ## ref: https://github.com/bitnami/charts/tree/master/bitnami/prometheus-operator#prometheus-configuration
+    ##
+    selector: { }
+    ## @param metrics.serviceMonitor.relabelings RelabelConfigs to apply to samples before scraping
+    ##
+    relabelings: [ ]
+    ## @param metrics.serviceMonitor.metricRelabelings MetricRelabelConfigs to apply to samples before ingestion
+    ##
+    metricRelabelings: [ ]
+    ## @param metrics.serviceMonitor.honorLabels Specify honorLabels parameter to add the scrape endpoint
+    ##
+    honorLabels: false
+    ## @param metrics.serviceMonitor.jobLabel The name of the label on the target service to use as the job name in prometheus.
+    ##
+    jobLabel: ""
+  ## Prometheus Operator PrometheusRule configuration
+  ##
+  prometheusRule:
+    ## @param metrics.prometheusRule.enabled Create a PrometheusRule for Prometheus Operator
+    ##
+    enabled: false
+    ## @param metrics.prometheusRule.namespace Namespace for the PrometheusRule Resource (defaults to the Release Namespace)
+    ##
+    namespace: ""
+    ## @param metrics.prometheusRule.additionalLabels Additional labels that can be used so PrometheusRule will be discovered by Prometheus
+    ##
+    additionalLabels: { }
+    ## @param metrics.prometheusRule.rules PrometheusRule definitions
+    ##  - alert: ZooKeeperSyncedFollowers
+    ##    annotations:
+    ##      message: The number of synced followers for the leader node in ZooKeeper deployment my-release is less than 2. This usually means that some of the ZooKeeper nodes aren't communicating properly. If it doesn't resolve itself you can try killing the pods (one by one).
+    ##    expr: max(synced_followers{service="my-release-metrics"}) < 2
+    ##    for: 5m
+    ##    labels:
+    ##      severity: critical
+    ##  - alert: ZooKeeperOutstandingRequests
+    ##    annotations:
+    ##      message: The number of outstanding requests for ZooKeeper pod {{ $labels.pod }} is greater than 10. This can indicate a performance issue with the Pod or cluster a whole.
+    ##    expr: outstanding_requests{service="my-release-metrics"} > 10
+    ##    for: 5m
+    ##    labels:
+    ##      severity: critical
+    ##
+    rules: [ ]
+
+# Values while deploying csi-nodeplugin
+csi_nodeplugin:
+  enabled: true
+  verbose: 'no'
+
+external_storage:
+  - enabled: true
+    name: kadalu-ext-1
+    glusterfs_hosts:
+      - ip1_or_hostname1
+      - ip2_or_hostname2
+    glusterfs_volume_name: gfs_hdd_volume
+    glusterfs_options: "log-level=DEBUG"
+  - enabled: true
+    name: kadalu-ext-2
+    glusterfs_hosts: host-name
+    glusterfs_volume_name: gfs_ssd_volume
+    glusterfs_options: "log-level=DEBUG"
+
+kadalu_glusterquota_ssh:
+  enabled: false
+  glusterquota_ssh_username: username
+  glusterquota_ssh_privatekey: |
+    -----BEGIN OPENSSH PRIVATE KEY-----
+    ==== THERE IS THE PRIVATE KEY CONTENT ====
+    ==== THERE IS THE PRIVATE KEY CONTENT ====
+    -----END OPENSSH PRIVATE KEY-----

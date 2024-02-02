@@ -1,0 +1,17 @@
+{{- range $item := .Values.external_storage }}
+{{ if $item.enabled }}
+---
+apiVersion: kadalu-operator.storage/v1alpha1
+kind: KadaluStorage
+metadata:
+  name: {{ $item.name }}
+  namespace: {{ $.Release.Namespace }}
+  labels: {{- include "common.labels.standard" $ | nindent 4 }}
+spec:
+  type: External
+  details:
+    {{- include "external.gluster_hosts.render" (dict "value" $item.glusterfs_hosts "context" $) | indent 4 }}
+    gluster_volname: {{ $item.glusterfs_volume_name }}
+    gluster_options: {{ $item.glusterfs_options }}
+{{- end }}
+{{ end }}

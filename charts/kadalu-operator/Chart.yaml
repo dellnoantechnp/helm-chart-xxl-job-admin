@@ -1,0 +1,41 @@
+annotations:
+  category: Storage
+apiVersion: v2
+appVersion: 1.2.0
+name: kadalu-operator
+icon: https://kadalu.io/static/css/logo.png
+description: Contains subchart for deploying Kadalu-Operator and Kadalu CSI-Nodeplugin
+type: application
+home: https://github.com/dellnoantechnp/helm-chart-xxl-job-admin
+# Value of 'version' will be replaced with correct version on part of release
+version: 1.2.0
+kubeVersion: '>=1.16.0-0'
+maintainers:
+  - email: dellnoantechnp@gmail.com
+    name: dellnoantechnp
+keywords:
+  - GlusterFS
+  - Kadalu
+  - CSI-driver
+  - Kubernetes
+  - Operator
+sources:
+  - https://github.com/dellnoantechnp/helm-chart-xxl-job-admin
+  - https://github.com/kadalu/kadalu
+dependencies:
+  - name: common
+    repository: https://dellnoantechnp.github.io/helm-chart-xxl-job-admin/
+    tags:
+      - bitnami-common
+    version: 1.x.x
+#  - name: common
+#    repository: file://charts/common
+#    version: 1.2.0
+#  - name: operator
+#    repository: file://charts/operator
+#    condition: operator.enabled
+#    version: 1.2.0
+#  - name: csi-nodeplugin
+#    repository: file://charts/csi-nodeplugin
+#    condition: csi_nodeplugin.enabled
+#    version: 1.2.0

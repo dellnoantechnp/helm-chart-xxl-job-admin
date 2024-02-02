@@ -1,0 +1,66 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "common.names.fullname" . }}
+  namespace: {{ .Release.Namespace }}
+  labels: {{- include "common.labels.standard" . | nindent 4 }}
+    app.kubernetes.io/component: kadalu-operator
+    {{- if .Values.commonLabels }}
+    {{- include "common.tplvalues.render" ( dict "value" .Values.commonLabels "context" $ ) | nindent 4 }}
+    {{- end }}
+  {{- if .Values.commonAnnotations }}
+  annotations: {{- include "common.tplvalues.render" ( dict "value" .Values.commonAnnotations "context" $ ) | nindent 4 }}
+  {{- end }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels: {{- include "common.labels.matchLabels" . | nindent 6 }}
+      app.kubernetes.io/component: kadalu-operator
+  template:
+    metadata:
+      labels: {{- include "common.labels.standard" . | nindent 8 }}
+        app.kubernetes.io/component: kadalu-operator
+        {{- if .Values.commonLabels }}
+        {{- include "common.tplvalues.render" ( dict "value" .Values.commonLabels "context" $ ) | nindent 8 }}
+        {{- end }}
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "8050"
+    spec:
+      serviceAccountName: kadalu-operator
+      containers:
+        - name: kadalu-operator
+          securityContext:
+            capabilities: {}
+            privileged: true
+          image: {{ include "common.images.image" . }}/kadalu-operator:{{ .Chart.AppVersion }}
+          imagePullPolicy: {{ .Values.global.image.pullPolicy }}
+          env:
+            - name: WATCH_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+            - name: POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: OPERATOR_NAME
+              value: "kadalu-operator"
+            - name: IMAGES_HUB
+              value: {{ .Values.global.image.registry | quote }}
+            - name: DOCKER_USER
+              value: {{ .Values.global.image.repository | quote }}
+            - name: KADALU_VERSION
+              value: {{ .Chart.AppVersion | quote }}
+            - name: KADALU_NAMESPACE
+              value: {{ .Release.Namespace | quote }}
+            - name: KUBELET_DIR
+              value: {{ include "common.configs.kubeletDir" . | quote }}
+            - name: K8S_DIST
+              value: {{ .Values.global.kubernetesDistro | quote }}
+            - name: VERBOSE
+              value: {{ .Values.verbose | quote }}
+          ports:
+            - containerPort: {{ .Values.operator.containerPort.number }}
+              name: {{ .Values.operator.containerPort.name }}
+              protocol: TCP
