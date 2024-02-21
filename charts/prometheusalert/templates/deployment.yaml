@@ -18,13 +18,13 @@ spec:
     spec:
       {{- if .Values.global.imagePullSecrets }}
       imagePullSecrets:
-        {{ toYaml .Values.global.imagePullSecrets | indent 0}}
+        {{ toYaml .Values.global.imagePullSecrets }}
       {{- end }}
       containers:
         - name: {{ .Chart.Name }}
           image: "{{ .Values.image.repository }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
-          command: ['sh', '-c', "sqlite3 /app/db/PrometheusAlertDB.db '.read /app/db/init.sql' && /app/PrometheusAlert"]
+          command: ['sh', '-c', "/app/PrometheusAlert"]
           env:
           - name: TZ
             value: "Asia/Shanghai"
@@ -61,18 +61,18 @@ spec:
             successThreshold: 1
             timeoutSeconds: 3
           resources:
-{{ toYaml .Values.resources | indent 12 }}
+            {{- toYaml .Values.resources | nindent 12 }}
     {{- with .Values.nodeSelector }}
       nodeSelector:
-{{ toYaml . | indent 8 }}
+        {{- toYaml . | nindent 8 }}
     {{- end }}
     {{- with .Values.affinity }}
       affinity:
-{{ toYaml . | indent 8 }}
+        {{- toYaml . | nindent 8 }}
     {{- end }}
     {{- with .Values.tolerations }}
       tolerations:
-{{ toYaml . | indent 8 }}
+        {{- toYaml . | nindent 8 }}
     {{- end }}
       volumes:
       - name: prometheus-alert-center-conf

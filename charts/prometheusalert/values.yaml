@@ -10,7 +10,7 @@ replicaCount: 1
 
 image:
   # 支持配置自定义模版需要重出镜像，或者使用本人构建镜像：feiyu563/prometheusalert:v4.8.2
-  repository: feiyu563/prometheus-alert:latest
+  repository: feiyu563/prometheus-alert:v4.9
   pullPolicy: IfNotPresent
 
 nameOverride: ""
@@ -21,7 +21,7 @@ service:
   port: 8080
 
 ingress:
-  enabled: true
+  enabled: false
   annotations: {}
     # kubernetes.io/ingress.class: nginx
     # kubernetes.io/tls-acme: "true"
@@ -47,15 +47,19 @@ affinity: {}
 config:
   app_conf: |
     #---------------------↓全局配置-----------------------
-    appname = PrometheusAlert
+    appname=PrometheusAlert
+    
     #登录用户名
     login_user=prometheusalert
+    
     #登录密码
     login_password=prometheusalert
+    
     #监听地址
     httpaddr = "0.0.0.0"
     #监听端口
     httpport = 8080
+    # 运行模式 dev|prod
     runmode = dev
     #设置代理 proxy = http://123.123.123.123:8080
     proxy =
@@ -83,7 +87,7 @@ config:
     logpath=logs/prometheusalertcenter.log
     #转换Prometheus,graylog告警消息的时区为CST时区(如默认已经是CST时区，请勿开启)
     prometheus_cst_time=0
-    #数据库驱动，支持sqlite3，mysql,postgres如使用mysql或postgres，请开启db_host,db_port,db_user,db_password,db_name的注释
+    #数据库驱动，支持sqlite3,mysql,postgres  如使用mysql或postgres,请开启db_host,db_port,db_user,db_password,db_name的注释
     db_driver=sqlite3
     #db_host=127.0.0.1
     #db_port=3306
@@ -105,27 +109,34 @@ config:
     # es用户和密码
     # to_es_user=username
     # to_es_pwd=password
+    # 长连接最大空闲数
+    maxIdleConns=100
+    # 热更新配置文件
+    open-hotreload=0
   
     #---------------------↓webhook-----------------------
-    #是否开启钉钉告警通道,可同时开始多个通道0为关闭,1为开启
+    #是否开启钉钉告警通道,可同时开始多个通道 0为关闭,1为开启
     open-dingding=1
     #默认钉钉机器人地址
     ddurl=https://oapi.dingtalk.com/robot/send?access_token=xxxxx
     #是否开启 @所有人(0为关闭,1为开启)
     dd_isatall=1
+    #是否开启钉钉机器人加签，0为关闭,1为开启
+    # 使用方法：https://oapi.dingtalk.com/robot/send?access_token=XXXXXX&secret=mysecret
+    open-dingding-secret=0
   
-    #是否开启微信告警通道,可同时开始多个通道0为关闭,1为开启
+    #是否开启微信告警通道,可同时开始多个通道 0为关闭,1为开启
     open-weixin=1
     #默认企业微信机器人地址
     wxurl=https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key=xxxxx
   
-    #是否开启飞书告警通道,可同时开始多个通道0为关闭,1为开启
+    #是否开启飞书告警通道,可同时开始多个通道 0为关闭,1为开启
     open-feishu=0
     #默认飞书机器人地址
     fsurl=https://open.feishu.cn/open-apis/bot/hook/xxxxxxxxx
   
     #---------------------↓腾讯云接口-----------------------
-    #是否开启腾讯云短信告警通道,可同时开始多个通道0为关闭,1为开启
+    #是否开启腾讯云短信告警通道,可同时开始多个通道 0为关闭,1为开启
     open-txdx=0
     #腾讯云短信接口key
     TXY_DX_appkey=xxxxx
@@ -136,7 +147,7 @@ config:
     #腾讯云短信签名 根据自己审核通过的签名来填写
     TXY_DX_sign=腾讯云
   
-    #是否开启腾讯云电话告警通道,可同时开始多个通道0为关闭,1为开启
+    #是否开启腾讯云电话告警通道,可同时开始多个通道 0为关闭,1为开启
     open-txdh=0
     #腾讯云电话接口key
     TXY_DH_phonecallappkey=xxxxx
@@ -146,7 +157,7 @@ config:
     TXY_DH_phonecallsdkappid=xxxxx
   
     #---------------------↓华为云接口-----------------------
-    #是否开启华为云短信告警通道,可同时开始多个通道0为关闭,1为开启
+    #是否开启华为云短信告警通道,可同时开始多个通道 0为关闭,1为开启
     open-hwdx=0
     #华为云短信接口key
     HWY_DX_APP_Key=xxxxxxxxxxxxxxxxxxxxxx
@@ -162,7 +173,7 @@ config:
     HWY_DX_Sender=xxxxxxxxxx
   
     #---------------------↓阿里云接口-----------------------
-    #是否开启阿里云短信告警通道,可同时开始多个通道0为关闭,1为开启
+    #是否开启阿里云短信告警通道,可同时开始多个通道 0为关闭,1为开启
     open-alydx=0
     #阿里云短信主账号AccessKey的ID
     ALY_DX_AccessKeyId=xxxxxxxxxxxxxxxxxxxxxx
@@ -173,7 +184,7 @@ config:
     #阿里云短信模板ID
     ALY_DX_Template=xxxxxxxxxxxxxxxxxxxxxx
   
-    #是否开启阿里云电话告警通道,可同时开始多个通道0为关闭,1为开启
+    #是否开启阿里云电话告警通道,可同时开始多个通道 0为关闭,1为开启
     open-alydh=0
     #阿里云电话主账号AccessKey的ID
     ALY_DH_AccessKeyId=xxxxxxxxxxxxxxxxxxxxxx
@@ -185,7 +196,7 @@ config:
     ALY_DH_TtsCode=xxxxxxxx
   
     #---------------------↓容联云接口-----------------------
-    #是否开启容联云电话告警通道,可同时开始多个通道0为关闭,1为开启
+    #是否开启容联云电话告警通道,可同时开始多个通道 0为关闭,1为开启
     open-rlydh=0
     #容联云基础接口地址
     RLY_URL=https://app.cloopen.com:8883/2013-12-26/Accounts/
@@ -213,7 +224,7 @@ config:
     Default_emails=xxxxx@qq.com,xxxxx@qq.com
   
     #---------------------↓七陌云接口-----------------------
-    #是否开启七陌短信告警通道,可同时开始多个通道0为关闭,1为开启
+    #是否开启七陌短信告警通道,可同时开始多个通道 0为关闭,1为开启
     open-7moordx=0
     #七陌账户ID
     7MOOR_ACCOUNT_ID=Nxxx
@@ -223,7 +234,7 @@ config:
     7MOOR_DX_TEMPLATENUM=n
     #注意：七陌短信变量这里只用一个var1，在代码里写死了。
     #-----------
-    #是否开启七陌webcall语音通知告警通道,可同时开始多个通道0为关闭,1为开启
+    #是否开启七陌webcall语音通知告警通道,可同时开始多个通道 0为关闭,1为开启
     open-7moordh=0
     #请在七陌平台添加虚拟服务号、文本节点
     #七陌账户webcall的虚拟服务号
@@ -232,7 +243,7 @@ config:
     7MOOR_WEBCALL_VOICE_VAR=text
   
     #---------------------↓telegram接口-----------------------
-    #是否开启telegram告警通道,可同时开始多个通道0为关闭,1为开启
+    #是否开启telegram告警通道,可同时开始多个通道 0为关闭,1为开启
     open-tg=0
     #tg机器人token
     TG_TOKEN=xxxxx
@@ -246,7 +257,7 @@ config:
     #TG_API_PROXY="https://api.telegram.org/bot%s/%s"
   
     #---------------------↓workwechat接口-----------------------
-    #是否开启workwechat告警通道,可同时开始多个通道0为关闭,1为开启
+    #是否开启workwechat告警通道,可同时开始多个通道 0为关闭,1为开启
     open-workwechat=0
     # 企业ID
     WorkWechat_CropID=xxxxx
@@ -264,7 +275,7 @@ config:
     # WorkWechat_Msgtype = "markdown"
   
     #---------------------↓百度云接口-----------------------
-    #是否开启百度云短信告警通道,可同时开始多个通道0为关闭,1为开启
+    #是否开启百度云短信告警通道,可同时开始多个通道 0为关闭,1为开启
     open-baidudx=0
     #百度云短信接口AK(ACCESS_KEY_ID)
     BDY_DX_AK=xxxxx
@@ -278,14 +289,14 @@ config:
     TXY_DX_SIGNATURE_ID=xxxxx
   
     #---------------------↓百度Hi(如流)-----------------------
-    #是否开启百度Hi(如流)告警通道,可同时开始多个通道0为关闭,1为开启
+    #是否开启百度Hi(如流)告警通道,可同时开始多个通道 0为关闭,1为开启
     open-ruliu=0
     #默认百度Hi(如流)机器人地址
     BDRL_URL=https://api.im.baidu.com/api/msg/groupmsgsend?access_token=xxxxxxxxxxxxxx
     #百度Hi(如流)群ID
     BDRL_ID=123456
     #---------------------↓bark接口-----------------------
-    #是否开启telegram告警通道,可同时开始多个通道0为关闭,1为开启
+    #是否开启telegram告警通道,可同时开始多个通道 0为关闭,1为开启
     open-bark=0
     #bark默认地址, 建议自行部署bark-server
     BARK_URL=https://api.day.app
@@ -306,7 +317,7 @@ config:
     VOICE_PORT=9999
   
     #---------------------↓飞书机器人应用-----------------------
-    #是否开启feishuapp告警通道,可同时开始多个通道0为关闭,1为开启
+    #是否开启feishuapp告警通道,可同时开始多个通道 0为关闭,1为开启
     open-feishuapp=1
     # APPID
     FEISHU_APPID=cli_xxxxxxxxxxxxx
@@ -314,6 +325,27 @@ config:
     FEISHU_APPSECRET=xxxxxxxxxxxxxxxxxxxxxx
     # 可填飞书 用户open_id、user_id、union_ids、部门open_department_id
     AT_USER_ID="xxxxxxxx"
+    
+    #---------------------↓告警组-----------------------
+    # 有其他新增的配置段，请放在告警组的上面
+    # 暂时仅针对 PrometheusContronller 中的 /prometheus/alert 路由
+    # 告警组如果放在了 wx, dd... 那部分的上分，beego section 取 url 值不太对。
+    # 所以这里使用 include 来包含另告警组配置
+    # 是否启用告警组功能
+    open-alertgroup=0
+
+    # demo 告警组，用于测试案例测试
+    [ag-demo]
+    wxurl=wxurl1,wxurl2
+    ddurl=ddurl1,ddurl1,
+    fsurl=fsurl1
+    email=email1,
+    phone=phone1,phone2
+    groupid=groupid1
+
+    # 自定义的告警组既可以写在这里，也可以写在单独的文件里。
+    # 写在单独的告警组配置里更便于修改。
+    include "alertgroup.conf"
   init_sql: |
     -- ----------------------------
     -- Records of prometheus_alert_d_b

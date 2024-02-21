@@ -11,6 +11,7 @@ spec:
       targetPort: http
       protocol: TCP
       name: http
+      appProtocol: HTTP
   selector:
     app.kubernetes.io/name: {{ include "prometheusalert.name" . }}
     app.kubernetes.io/instance: {{ .Release.Name }}
