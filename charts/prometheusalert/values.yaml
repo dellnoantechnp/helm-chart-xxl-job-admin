@@ -345,7 +345,7 @@ config:
 
     # 自定义的告警组既可以写在这里，也可以写在单独的文件里。
     # 写在单独的告警组配置里更便于修改。
-    include "alertgroup.conf"
+    # include "alertgroup.conf"
   init_sql: |
     -- ----------------------------
     -- Records of prometheus_alert_d_b
