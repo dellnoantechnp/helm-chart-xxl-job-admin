@@ -18,7 +18,7 @@
 - [x] rocketmq
 - [x] prometheusAlert-*v4.9*
   - Project: [https://github.com/feiyu563/PrometheusAlert](https://github.com/feiyu563/PrometheusAlert)
-  - About: Receive Prometheus/zabbix/grafana alert to DingTalk/Feishu/Wechat/Email/Phone call IM.
+  - About: A Alert-Center for Prometheus Grafana and Graylog, alert message deliver to Wechat/Feishu/Lark/email/DingTalk/workWechat/webhook/telegram ...
 - [x] kafka-*2.8.1*
 - [x] zookeeper-*3.7.0*
 - [x] canal-server-*1.1.6*  
