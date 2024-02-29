@@ -483,6 +483,32 @@ entries:
           url: https://github.com/dellnoantechnp.github.io/tree/main/charts/xxl-job-admin
     apiVersion: v2
     appVersion: "4.9"
+    created: "2024-02-29T03:14:57.919173191Z"
+    description: A Alert-Center for Prometheus Grafana and Graylog, alert message
+      deliver to Wechat/Feishu/Lark/email/DingTalk/workWechat/webhook/telegram ...
+    digest: 54f500b1b453e9fd1037950a1ca25774c5eee7e353152fd6415373dd6d45ef3f
+    home: https://github.com/feiyu563/PrometheusAlert
+    icon: https://raw.githubusercontent.com/feiyu563/PrometheusAlert/master/doc/images/logo.png
+    maintainers:
+    - email: dellnoantechnp@gmail.com
+      name: dellnoantechnp
+      url: https://github.com/dellnoantechnp
+    name: prometheusalert
+    sources:
+    - https://github.com/feiyu563/PrometheusAlert
+    type: application
+    urls:
+    - https://github.com/dellnoantechnp/helm-chart-xxl-job-admin/releases/download/prometheusalert-1.1.6/prometheusalert-1.1.6.tgz
+    version: 1.1.6
+  - annotations:
+      artifacthub.io/images: |
+        - name: feiyu563/prometheus-alert:latest
+          image: feiyu563/prometheus-alert:latest
+      artifacthub.io/links: |
+        - name: Chart Source
+          url: https://github.com/dellnoantechnp.github.io/tree/main/charts/xxl-job-admin
+    apiVersion: v2
+    appVersion: "4.9"
     created: "2024-02-28T10:53:22.458119879Z"
     description: A Alert-Center for Prometheus Grafana and Graylog, alert message
       deliver to Wechat/Feishu/Lark/email/DingTalk/workWechat/webhook/telegram ...
@@ -1086,4 +1112,4 @@ entries:
     urls:
     - https://github.com/dellnoantechnp/helm-chart-xxl-job-admin/releases/download/zookeeper-7.6.1/zookeeper-7.6.1.tgz
     version: 7.6.1
-generated: "2024-02-28T10:53:22.45821127Z"
+generated: "2024-02-29T03:14:57.919275153Z"
