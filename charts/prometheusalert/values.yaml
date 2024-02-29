@@ -35,7 +35,7 @@ resources:
    cpu: 500m
    memory: 512Mi
   requests:
-   cpu: 100m
+   cpu: 10m
    memory: 128Mi
 
 nodeSelector: {}
@@ -70,9 +70,9 @@ config:
     #链接到告警平台地址
     GraylogAlerturl=http://graylog.org
     #钉钉告警 告警logo图标地址
-    logourl=https://raw.githubusercontent.com/feiyu563/PrometheusAlert/master/doc/alert-center.png
+    logourl=https://raw.githubusercontent.com/feiyu563/PrometheusAlert/master/doc/images/alert-center.png
     #钉钉告警 恢复logo图标地址
-    rlogourl=https://raw.githubusercontent.com/feiyu563/PrometheusAlert/master/doc/alert-center.png
+    rlogourl=https://raw.githubusercontent.com/feiyu563/PrometheusAlert/master/doc/images/alert-center.png
     #短信告警级别(等于3就进行短信告警) 告警级别定义 0 信息,1 警告,2 一般严重,3 严重,4 灾难
     messagelevel=3
     #电话告警级别(等于4就进行语音告警) 告警级别定义 0 信息,1 警告,2 一般严重,3 严重,4 灾难
@@ -354,7 +354,7 @@ config:
     INSERT INTO prometheus_alert_d_b (id, tpltype, tpluse, tplname, tpl, created) VALUES (1, 'dd', 'Prometheus', 'prometheus-dd', '{{ $var := .externalURL}}
     {{ range $k,$v:=.alerts }}
     {{if eq $v.status "resolved"}}
-    ## <font color="info">**Prometheus 恢复通知**</font>
+    ## <font color="#3FB950">**Prometheus 恢复通知**</font>
     ---
     * 🟡【告警名称】{{$v.labels.alertname}}
     * 🚨【告警级别】{{ $v.labels.severity}}
@@ -381,32 +381,49 @@ config:
         {{$urimsg = print $urimsg $key "%3D%22" $value "%22%2C" }}
       {{end}}
     ---
-    🤫*[屏蔽该告警]({{$var}}/#/silences/new?filter=%7B{{SplitString $urimsg 0 -3}}%7D)*', '2024-02-26 10:00:00');
-    INSERT INTO prometheus_alert_d_b (id, tpltype, tpluse, tplname, tpl, created) VALUES (2, 'wx', 'Prometheus', 'prometheus-wx', '{{ $var := .externalURL}}{{ range $k,$v:=.alerts }}{{if eq $v.status "resolved"}}[PROMETHEUS-恢复信息]({{$v.generatorURL}})
-    > **[{{$v.labels.alertname}}]({{$var}})**
-    > <font color="info">告警级别:</font> {{$v.labels.level}}
-    > <font color="info">开始时间:</font> {{$v.startsAt}}
-    > <font color="info">结束时间:</font> {{$v.endsAt}}
-    > <font color="info">故障主机IP:</font> {{$v.labels.instance}}
-    > <font color="info">**{{$v.annotations.description}}**</font>{{else}}[PROMETHEUS-告警信息]({{$v.generatorURL}})
-    > **[{{$v.labels.alertname}}]({{$var}})**
-    > <font color="warning">告警级别:</font> {{$v.labels.level}}
-    > <font color="warning">开始时间:</font> {{$v.startsAt}}
-    > <font color="warning">结束时间:</font> {{$v.endsAt}}
-    > <font color="warning">故障主机IP:</font> {{$v.labels.instance}}
-    > <font color="warning">**{{$v.annotations.description}}**</font>{{end}}{{ end }}
-    {{ $urimsg:=""}}{{ range $key,$value:=.commonLabels }}{{$urimsg =  print $urimsg $key "%3D%22" $value "%22%2C" }}{{end}}[*** 点我屏蔽该告警]({{$var}}/#/silences/new?filter=%7B{{SplitString $urimsg 0 -3}}%7D)', '2022-05-26 09:59:49');
-    INSERT INTO prometheus_alert_d_b (id, tpltype, tpluse, tplname, tpl, created) VALUES (3, 'fs', 'Prometheus', 'prometheus-fs', '{{ $var := .externalURL}}{{ range $k,$v:=.alerts }} 状态：**{{$v.status}}** {{if eq $v.status "resolved"}}（✅恢复）{{else}}（💥报警）{{end}}
-    报警名字：**{{$v.labels.alertname}}**  [查看图表]({{$v.generatorURL}})
-    告警级别：{{$v.labels.severity}}
-    环境信息：{{$v.labels.namespace}}
-    故障主机：{{ if $v.labels.instance }} {{ $v.labels.instance }} {{ else }} {{ $v.labels.pod }} {{ end }}
-    开始时间：{{TimeFormat $v.startsAt "2006-01-02 15:04:05"}}
-    结束时间：{{TimeFormat $v.endsAt "2006-01-02 15:04:05"}}
-    报警概述：{{$v.annotations.summary}}
-    报警详情：{{$v.annotations.description}}
+    🔇*[屏蔽该告警]({{$var}}/#/silences/new?filter=%7B{{SplitString $urimsg 0 -3}}%7D)*', '2024-02-27 10:00:00');
+    INSERT INTO prometheus_alert_d_b (id, tpltype, tpluse, tplname, tpl, created) VALUES (2, 'wx', 'Prometheus', 'prometheus-wx', '{{ $var := .externalURL}}{{ range $k,$v:=.alerts }}
+    {{if eq $v.status "resolved"}}
+    #### [Prometheus恢复信息]({{$v.generatorURL}})
+    
+    > <font color="info">告警名称</font>：[{{$v.labels.alertname}}]({{$var}})
+    > <font color="info">告警级别</font>：{{$v.labels.severity}}
+    > <font color="info">开始时间</font>：{{$v.startsAt}}
+    > <font color="info">结束时间</font>：{{$v.endsAt}}
+    > <font color="info">实例地址</font>：{{$v.labels.instance}}
+    > <font color="info">主机名称</font>：{{$v.labels.hostname}}
+    
+    **{{$v.annotations.description}}**
+    {{else}}
+    #### [Prometheus告警信息]({{$v.generatorURL}})
+    
+    > <font color="#FF0000">告警名称</font>：[{{$v.labels.alertname}}]({{$var}})
+    > <font color="#FF0000">告警级别</font>：{{$v.labels.severity}}
+    > <font color="#FF0000">开始时间</font>：{{$v.startsAt}}
+    > <font color="#FF0000">结束时间</font>：{{$v.endsAt}}
+    > <font color="#FF0000">实例地址</font>：{{$v.labels.instance}}
+    > <font color="#FF0000">主机名称</font>：{{$v.labels.hostname}}
+    
+    **{{$v.annotations.description}}**
+    {{end}}
+    {{ end }}', '2024-02-29 09:59:49');
+    INSERT INTO prometheus_alert_d_b (id, tpltype, tpluse, tplname, tpl, created) VALUES (3, 'fs', 'Prometheus', 'prometheus-fs', '{{ range $k,$v:=.alerts }}{{if eq $v.status "resolved"}}<font color="#3FB950">**告警恢复信息**</font>
+    事件: **{{$v.labels.alertname}}**
+    告警类型：{{$v.status}}
+    告警级别: {{$v.labels.level}}
+    开始时间: {{GetCSTtime $v.startsAt}}
+    结束时间: {{GetCSTtime $v.endsAt}}
+    主机: {{$v.labels.instance}}
+    <font color="green">**事件详情: {{$v.annotations.description}}**</font>
+    {{else}}**告警信息**
+    事件: **{{$v.labels.alertname}}**
+    告警类型：{{$v.status}}
+    告警级别: {{$v.labels.level}}
+    开始时间: {{GetCSTtime $v.startsAt}}
+    主机: {{$v.labels.instance}}
+    <font color="red">**事件详情: {{$v.annotations.description}}**</font>
     {{ end }}
-    {{ $urimsg:=""}}{{ range $key,$value:=.commonLabels }}{{$urimsg =  print $urimsg $key "%3D%22" $value "%22%2C" }}{{end}}[屏蔽该告警]({{$var}}/#/silences/new?filter=%7B{{SplitString $urimsg 0 -3}}%7D)', '2022-05-26 10:10:03');
+    {{ end }}[屏蔽该告警]({{$var}}/#/silences/new?filter=%7B{{SplitString $urimsg 0 -3}}%7D)', '2022-05-26 10:10:03');
     INSERT INTO prometheus_alert_d_b (id, tpltype, tpluse, tplname, tpl, created) VALUES (4, 'txdx', 'Prometheus', 'prometheus-dx', '{{ range $k,$v:=.alerts }}{{if eq $v.status "resolved"}}
     [Prometheus恢复信息]
     {{$v.labels.alertname}}
@@ -431,7 +448,7 @@ config:
     <h5>结束时间：{{$v.endsAt}}</h5>
     <h5>故障主机IP：{{$v.labels.instance}}</h5>
     <h3>{{$v.annotations.description}}</h3>
-    <img src=https://raw.githubusercontent.com/feiyu563/PrometheusAlert/master/doc/alert-center.png />
+    <img src=https://raw.githubusercontent.com/feiyu563/PrometheusAlert/master/doc/images/alert-center.png />
     {{else}}
     <h1><a href ={{$v.generatorURL}}>Prometheus告警信息</a></h1>
     <h2><a href ={{$var}}>{{$v.labels.alertname}}</a></h2>
@@ -440,7 +457,7 @@ config:
     <h5>结束时间：{{$v.endsAt}}</h5>
     <h5>故障主机IP：{{$v.labels.instance}}</h5>
     <h3>{{$v.annotations.description}}</h3>
-    <img src=https://raw.githubusercontent.com/feiyu563/PrometheusAlert/master/doc/alert-center.png />
+    <img src=https://raw.githubusercontent.com/feiyu563/PrometheusAlert/master/doc/images/alert-center.png />
     {{end}}
     {{ end }}', '2020-09-30 09:46:05');
     INSERT INTO prometheus_alert_d_b (id, tpltype, tpluse, tplname, tpl, created) VALUES (7, 'dd', 'Graylog2', 'graylog2-dd', '## [Graylog2告警信息](http://graylog.org)
@@ -451,7 +468,7 @@ config:
     ###### 告警主机：{{$v.fields.gl2_remote_ip}}:{{$v.fields.gl2_remote_port}}
     ##### {{$v.message}}
     {{end}}
-    ![Prometheus](https://raw.githubusercontent.com/feiyu563/PrometheusAlert/master/doc/alert-center.png)', '2020-07-29 09:45:33');
+    ![Prometheus](https://raw.githubusercontent.com/feiyu563/PrometheusAlert/master/doc/images/alert-center.png)', '2020-07-29 09:45:33');
     INSERT INTO prometheus_alert_d_b (id, tpltype, tpluse, tplname, tpl, created) VALUES (8, 'wx', 'Graylog2', 'graylog2-wx', '[Graylog2告警信息](http://graylog.org)
     >**{{.check_result.result_description}}**
     {{ range $k,$v:=.check_result.matching_messages }}
@@ -482,7 +499,7 @@ config:
     <h5>告警主机：{{$v.fields.gl2_remote_ip}}:{{$v.fields.gl2_remote_port}}</h5>
     <h3>{{$v.message}}</h3>
     {{end}}
-    <img src=https://raw.githubusercontent.com/feiyu563/PrometheusAlert/master/doc/alert-center.png />', '2020-07-29 09:59:08');
+    <img src=https://raw.githubusercontent.com/feiyu563/PrometheusAlert/master/doc/images/alert-center.png />', '2020-07-29 09:59:08');
     INSERT INTO prometheus_alert_d_b (id, tpltype, tpluse, tplname, tpl, created) VALUES (28, 'dd', 'Graylog3', 'graylog3-dd', '## [Graylog3告警信息](.check_result.Event.Source)
     #### {{.check_result.event_definition_description}}
     {{ range $k,$v:=.backlog }}
@@ -491,7 +508,7 @@ config:
     ###### 告警主机：{{$v.fields.gl2_remote_ip}}:{{$v.fields.gl_2_remote_port}}
     ##### {{$v.message}}
     {{end}}
-    ![Prometheus](https://raw.githubusercontent.com/feiyu563/PrometheusAlert/master/doc/alert-center.png)', '2020-07-29 10:00:32');
+    ![Prometheus](https://raw.githubusercontent.com/feiyu563/PrometheusAlert/master/doc/images/alert-center.png)', '2020-07-29 10:00:32');
     INSERT INTO prometheus_alert_d_b (id, tpltype, tpluse, tplname, tpl, created) VALUES (29, 'wx', 'Graylog3', 'graylog3-wx', '[Graylog3告警信息](.check_result.Event.Source)
     >**{{.check_result.event_definition_description}}**
     {{ range $k,$v:=.backlog }}
@@ -522,7 +539,7 @@ config:
     <h5>告警主机：{{$v.fields.gl2_remote_ip}}:{{$v.fields.gl_2_remote_port}}</h5>
     <h3>{{$v.message}}</h3>
     {{end}}
-    <img src=https://raw.githubusercontent.com/feiyu563/PrometheusAlert/master/doc/alert-center.png />', '2020-07-29 10:53:20');
+    <img src=https://raw.githubusercontent.com/feiyu563/PrometheusAlert/master/doc/images/alert-center.png />', '2020-07-29 10:53:20');
     INSERT INTO prometheus_alert_d_b (id, tpltype, tpluse, tplname, tpl, created) VALUES (34, 'dd', 'Grafana', 'grafana-dd', '{{if eq .state "ok"}}
     ## [Grafana恢复信息]({{.ruleUrl}})
     #### {{.ruleName}}
@@ -536,7 +553,7 @@ config:
     ###### 开始时间：{{GetCSTtime ""}}
     ##### {{.message}}
     {{end}}
-    ![Prometheus](https://raw.githubusercontent.com/feiyu563/PrometheusAlert/master/doc/alert-center.png)', '2020-07-29 11:40:33');
+    ![Prometheus](https://raw.githubusercontent.com/feiyu563/PrometheusAlert/master/doc/images/alert-center.png)', '2020-07-29 11:40:33');
     INSERT INTO prometheus_alert_d_b (id, tpltype, tpluse, tplname, tpl, created) VALUES (35, 'wx', 'Grafana', 'grafana-wx', '{{if eq .state "ok"}}
     [Grafana恢复信息]({{.ruleUrl}})
     >**{{.ruleName}}**
@@ -586,7 +603,7 @@ config:
     <h5>开始时间：{{GetCSTtime ""}}</h5>
     <h3>{{.message}}</h3>
     {{end}}
-    <img src=https://raw.githubusercontent.com/feiyu563/PrometheusAlert/master/doc/alert-center.png />', '2020-07-29 11:52:25');
+    <img src=https://raw.githubusercontent.com/feiyu563/PrometheusAlert/master/doc/images/alert-center.png />', '2020-07-29 11:52:25');
     INSERT INTO prometheus_alert_d_b (id, tpltype, tpluse, tplname, tpl, created) VALUES (40, 'dd', 'SonarQube', 'sonar-dd-example', '## [Sonar告警信息]({{.serverUrl}})
     ###### 检测状态：{{.status}}
     ###### 检测时间：{{.analysedAt}}
@@ -598,14 +615,14 @@ config:
     ###### status：{{$v.status}}
     ###### -----------------------------------
     {{ end }}
-    ![Prometheus](https://raw.githubusercontent.com/feiyu563/PrometheusAlert/master/doc/alert-center.png)', '2020-07-29 11:53:35');
+    ![Prometheus](https://raw.githubusercontent.com/feiyu563/PrometheusAlert/master/doc/images/alert-center.png)', '2020-07-29 11:53:35');
     INSERT INTO prometheus_alert_d_b (id, tpltype, tpluse, tplname, tpl, created) VALUES (41, 'dd', 'Jenkins', 'jenkins-dd-example', '## [Jenkins构建信息]({{.buildUrl}})
     ###### Jenkins地址：[{{.buildUrl}}]({{.buildUrl}})
     ###### 构建项目：{{.projectName}}
     ###### 构建事件：{{.event}}
     ###### 构建名称：{{.buildName}}
     ###### 构建时间：{{GetCSTtime ""}}
-    ![Prometheus](https://raw.githubusercontent.com/feiyu563/PrometheusAlert/master/doc/alert-center.png)', '2020-07-29 11:54:02');
+    ![Prometheus](https://raw.githubusercontent.com/feiyu563/PrometheusAlert/master/doc/images/alert-center.png)', '2020-07-29 11:54:02');
     INSERT INTO prometheus_alert_d_b (id, tpltype, tpluse, tplname, tpl, created) VALUES (42, 'fs', 'Prometheus', 'prometheus-fsv2', '{{ $var := .externalURL}}{{ range $k,$v:=.alerts }}
     {{if eq $v.status "resolved"}}
     **[Prometheus恢复信息]({{$v.generatorURL}})**
@@ -653,7 +670,7 @@ config:
     ###### 结束时间：{{$v.endsAt}}
     ###### 故障主机IP：{{$v.labels.instance}}
     ##### {{$v.annotations.description}}
-    ![Prometheus](https://raw.githubusercontent.com/feiyu563/PrometheusAlert/master/doc/alert-center.png)
+    ![Prometheus](https://raw.githubusercontent.com/feiyu563/PrometheusAlert/master/doc/images/alert-center.png)
     {{else}}
     ## [Prometheus告警信息]({{$v.generatorURL}})
     #### [{{$v.labels.alertname}}]({{$var}})
@@ -662,7 +679,7 @@ config:
     ###### 结束时间：{{$v.endsAt}}
     ###### 故障主机IP：{{$v.labels.instance}}
     ##### {{$v.annotations.description}}
-    ![Prometheus](https://raw.githubusercontent.com/feiyu563/PrometheusAlert/master/doc/alert-center.png)
+    ![Prometheus](https://raw.githubusercontent.com/feiyu563/PrometheusAlert/master/doc/images/alert-center.png)
     {{end}}
     {{ end }}', '2021-02-02 07:45:30');
     INSERT INTO prometheus_alert_d_b (id, tpltype, tpluse, tplname, tpl, created) VALUES (45, 'webhook', 'WebHook', 'prometheus-webhook', '{
