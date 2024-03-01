@@ -14,6 +14,7 @@ image:
   pullPolicy: IfNotPresent
 
 nameOverride: ""
+
 fullnameOverride: ""
 
 service:
@@ -38,11 +39,124 @@ resources:
    cpu: 10m
    memory: 128Mi
 
+## @param affinity Affinity for pod assignment
+## Ref: https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#affinity-and-anti-affinity
+## Note: podAffinityPreset, podAntiAffinityPreset, and nodeAffinityPreset will be ignored when it's set
+##
+affinity: {}
+
+## @param nodeSelector Node labels for pod assignment
+## Ref: https://kubernetes.io/docs/user-guide/node-selection/
+##
 nodeSelector: {}
 
+## @param tolerations Tolerations for pod assignment
+## Ref: https://kubernetes.io/docs/concepts/configuration/taint-and-toleration/
+##
 tolerations: []
 
-affinity: {}
+## @param receivers for AlertmanagerConfig receivers
+## Ref: https://github.com/prometheus-operator/prometheus-operator/blob/main/Documentation/user-guides/alerting.md#using-alertmanagerconfig-resources
+AlertmanagerConfig:
+  enabled: false
+
+  ## @param namespace, if you Crd Alertmanager has alertmanagerConfigNamespaceSelector, you need to set correct namespace.
+  ## if you don't set alertmanagerConfigNamespaceSelector, you need to set prometheus-operator same namespace.
+  namespace: {}
+
+  ## @param labels, if you Crd Alertmanager has alertmanagerConfigSelector, you need to set this.
+  labels: {}
+
+  ## @param inhibitRules  List of inhibition rules. The rules will only apply to alerts matching the resource's namespace.
+  ## Prometheus Ref: https://prometheus.io/docs/alerting/latest/configuration/#inhibit_rule
+  ## Crd Doc Ref: https://doc.crds.dev/github.com/prometheus-operator/kube-prometheus/monitoring.coreos.com/AlertmanagerConfig/v1alpha1@v0.13.0#spec-inhibitRules
+  ## Example:
+  ## - equal:
+  ##     - namespace
+  ##     - alertname
+  ##   sourceMatch:
+  ##     - name: severity
+  ##       matchType: "="
+  ##       value: "high"
+  ##   targetMatch:
+  ##     - name: severity
+  ##       matchType: "="
+  ##       value: "warning"
+  ##     - name: severity
+  ##       matchType: "="
+  ##       value: "info"
+  inhibitRules: []
+
+  ## @param mutiTimeIntervals List of MuteTimeInterval specifying when the routes should be muted.
+  ## Prometheus Ref: https://prometheus.io/docs/alerting/latest/configuration/#time_interval
+  ## Crd Doc Ref: https://doc.crds.dev/github.com/prometheus-operator/kube-prometheus/monitoring.coreos.com/AlertmanagerConfig/v1alpha1@v0.13.0
+  ## Example:
+  ## - name: holidays
+  ##   timeIntervals:
+  ##     - daysOfMonth:
+  ##         - start: 1
+  ##           end: 31
+  ##       months:
+  ##         - january
+  ##         - "may:august"
+  ##         - "12"   # "1" "2" is permit, "3" is invalid value, regex pattern "december|[1-12]", it's have a bug.
+  ##       years:
+  ##         - "2020:2022"
+  ##         - "2023"
+  ##       weekdays:
+  ##         - "monday:friday"
+  ##         - "wednesday"
+  ##       times:
+  ##         - startTime: "09:00"
+  ##           endTime: "17:00"
+  muteTimeIntervals: []
+
+  ## @param receivers List of receivers.
+  ## Ref: https://doc.crds.dev/github.com/prometheus-operator/kube-prometheus/monitoring.coreos.com/AlertmanagerConfig/v1alpha1@v0.13.0#spec-receivers
+  ## Example:
+  ## - name: example-prometheusAlert
+  ##   webhookConfigs:
+  ##     - url: "http://prometheusalert.monitoring.svc.cluster.local:8080/prometheusalert?type=fs&tpl=prometheus-fs&alertgroup=demo"
+  ##       urlSecret:
+  ##         name: example-urlSecret
+  ##         key: url
+  ##         optional: false
+  ##       sendResolved: true
+  ##       httpConfig:
+  ##         followRedirects: true
+  ##         basicAuth:
+  ##           username:
+  ##             key: username
+  ##             name: example-auth-secret
+  ##             optional: true
+  ##           password:
+  ##             key: passwd
+  ##             name: example-auth-secret
+  ##             optional: true
+  receivers: []
+
+  ## @param routes The Alertmanager route definition for alerts matching the resource’s namespace. It will be added to the generated Alertmanager configuration as a first-level route.
+  ## Ref: https://doc.crds.dev/github.com/prometheus-operator/kube-prometheus/monitoring.coreos.com/AlertmanagerConfig/v1alpha1@v0.13.0#spec-route
+  ## Example:
+  ## groupBy:
+  ##   - namespace
+  ##   - alertname
+  ## matchers:
+  ##   - name: label-name
+  ##     value: label-value
+  ## groupWait: 30s
+  ## groupInterval: 5m
+  ## repeatInterval: 8h
+  ## receiver: example-prometheusAlert
+  ## routes:
+  ##   - receiver: example-prometheusAlert
+  ##     match:
+  ##       severity: warning
+  ## activeTimeIntervals:
+  ##   - holidays
+  ## muteTimeIntervals:
+  ##   - holidays
+  route: []
 
 config:
   app_conf: |

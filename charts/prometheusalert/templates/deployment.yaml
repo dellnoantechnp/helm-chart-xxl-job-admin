@@ -3,7 +3,7 @@ kind: Deployment
 metadata:
   name: {{ template "prometheusalert.fullname" . }}
   labels:
-{{ include "prometheusalert.labels" . | indent 4 }}
+    {{- include "prometheusalert.labels" . | nindent 4 }}
 spec:
   replicas: {{ .Values.replicaCount }}
   selector:

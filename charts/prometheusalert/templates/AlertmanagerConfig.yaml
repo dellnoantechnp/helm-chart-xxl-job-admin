@@ -1,0 +1,29 @@
+{{- with .Values.AlertmanagerConfig }}
+{{- if .enabled -}}
+{{- $fullName := include "prometheusalert.fullname" $ -}}
+apiVersion: monitoring.coreos.com/v1alpha1
+kind: AlertmanagerConfig
+metadata:
+  name: {{ $fullName }}
+  labels:
+    {{- include "prometheusalert.labels" $ | nindent 4 }}
+    {{- if .labels }}
+    {{ .labels | toYaml }}
+    {{- end }}
+spec:
+  {{- if .inhibitRules }}
+  inhibitRules:
+    {{- .inhibitRules | toYaml | nindent 4 }}
+  {{- end }}
+  {{- if .muteTimeIntervals }}
+  muteTimeIntervals:
+    {{- .muteTimeIntervals | toYaml | nindent 4 }}
+  {{- end }}
+  receivers:
+    {{- .receivers | toYaml | nindent 4 }}
+  {{- if .route }}
+  route:
+    {{- .route | toYaml | nindent 4 }}
+  {{- end }}
+{{- end }}
+{{- end }}

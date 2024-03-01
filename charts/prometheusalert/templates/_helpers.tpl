@@ -43,3 +43,14 @@ app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
 {{- end }}
 app.kubernetes.io/managed-by: {{ .Release.Service }}
 {{- end -}}
+
+{{/*
+AlertmanagerConfig namespace
+*/}}
+{{- define "AlertmanagerConfig.namespace" -}}
+{{- if .Values.AlertmanagerConfig.namespace }}
+{{ .Values.AlertmanagerConfig.namespace }}
+{{- else -}}
+{{ .Release.Namespace }}
+{{- end -}}
+{{- end -}}
