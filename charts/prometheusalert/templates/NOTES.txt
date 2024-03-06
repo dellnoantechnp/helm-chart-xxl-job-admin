@@ -28,7 +28,7 @@
 4. how to use it:
   Please visit https://github.com/feiyu563/PrometheusAlert to get help!
 
-{{- if .Values.AlertmanagerConfig.enabled }}
+{{ if .Values.AlertmanagerConfig.enabled -}}
 5. Check AlertmanagerConfig resource:
-  kubectl get -n {{ include "AlertmanagerConfig.namespace" }} AlertmanagerConfig {{ template "prometheusalert.fullname" . }} -o yaml
+  kubectl get -n {{ include "AlertmanagerConfig.namespace" . }} AlertmanagerConfig {{ template "prometheusalert.fullname" . }} -o yaml
 {{- end }}
