@@ -62,7 +62,7 @@ AlertmanagerConfig:
 
   ## @param namespace, if you Crd Alertmanager has alertmanagerConfigNamespaceSelector, you need to set correct namespace.
   ## if you don't set alertmanagerConfigNamespaceSelector, you need to set prometheus-operator same namespace.
-  namespace: {}
+  namespace: ""
 
   ## @param labels, if you Crd Alertmanager has alertmanagerConfigSelector, you need to set this.
   labels: {}
@@ -91,6 +91,28 @@ AlertmanagerConfig:
   ## Prometheus Ref: https://prometheus.io/docs/alerting/latest/configuration/#time_interval
   ## Crd Doc Ref: https://doc.crds.dev/github.com/prometheus-operator/kube-prometheus/monitoring.coreos.com/AlertmanagerConfig/v1alpha1@v0.13.0
   ## Example:
+  ## - name: working
+  ##   timeIntervals:
+  ##     - weekdays:
+  ##         - "monday:friday"
+  ##       times:
+  ##         - startTime: "09:00"
+  ##           endTime: "19:00"
+  ## - name: after_work
+  ##   timeIntervals:
+  ##     - weekdays:
+  ##         - "monday:friday"
+  ##       times:
+  ##         - startTime: "19:00"
+  ##           endTime: "24:00"
+  ##     - weekdays:
+  ##         - "monday:friday"
+  ##       times:
+  ##         - startTime: "00:00"
+  ##           endTime: "09:00"
+  ##     - weekdays:
+  ##         - "saturday"
+  ##         - "sunday"
   ## - name: holidays
   ##   timeIntervals:
   ##     - daysOfMonth:
@@ -153,10 +175,10 @@ AlertmanagerConfig:
   ##     match:
   ##       severity: warning
   ## activeTimeIntervals:
-  ##   - holidays
+  ##   - working
   ## muteTimeIntervals:
-  ##   - holidays
-  route: []
+  ##   - after_work
+  route: {}
 
 config:
   app_conf: |

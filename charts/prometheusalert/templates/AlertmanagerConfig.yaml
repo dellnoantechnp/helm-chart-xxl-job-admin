@@ -10,6 +10,9 @@ metadata:
     {{- if .labels }}
     {{ .labels | toYaml }}
     {{- end }}
+  {{- if .namespace }}
+  namespace: {{ .namespace }}
+  {{- end }}
 spec:
   {{- if .inhibitRules }}
   inhibitRules:
