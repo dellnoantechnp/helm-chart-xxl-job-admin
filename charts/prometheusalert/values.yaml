@@ -858,6 +858,22 @@ config:
     ruleId: {{.RuleId}}
     dimensions: {{.Dimensions}}
     **当前值：{{.CurValue}}**', '2021-07-14 06:57:31');
+    INSERT INTO prometheus_alert_d_b (id, tpltype, tpluse, tplname, tpl, created) VALUES (47, 'dd', 'Other', 'argocd-dd', '{{ $v := .notification }}
+    {{ if eq $v.Health "Healthy" }}
+    ✅ <font color="green">**{{ $v.Title }}**</font>
+    {{ else if  eq $v.Health "Degraded" }}
+    ⚠️ <font color="carol">**{{ $v.Title }}**</font>
+    {{ else }}
+    ❗ <font color="carol">**{{ $v.Title }}**</font>
+    {{ end }}
+    ---
+    * App:  {{ $v.App }}
+    * Revision: {{ $v.Revision }}
+    * Sync_status: {{ $v.Sync_status }}
+    * Health: **{{ $v.Health }}**
+    * Duration: {{ $v.Duration }}
+    ---
+    🔗*[Application Detail]({{ $v.Link }})*', '2024-03-15 06:57:31');
   user_csv: |
     2019年4月10日,15888888881,小张,15999999999,备用联系人小陈,15999999998,备用联系人小赵
     2019年4月11日,15888888882,小李,15999999999,备用联系人小陈,15999999998,备用联系人小赵
