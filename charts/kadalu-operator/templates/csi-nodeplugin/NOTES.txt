@@ -6,5 +6,4 @@ Visit https://kadalu.io/docs/k8s-storage/latest for instructions on how to add s
 Important Notes:
 - You can add storage pools with different types using 'KadaluStorage' type.
 - The helm chart includes all the RBAC required to create kadalu.io CRD.
-
-
+- Install on namespace 'kadalu'.

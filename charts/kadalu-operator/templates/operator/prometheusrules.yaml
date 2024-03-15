@@ -1,0 +1,27 @@
+{{- if .Values.operator.prometheusRule.enabled }}
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: {{ include "common.names.fullname" . }}
+  {{- if .Values.operator.prometheusRule.namespace }}
+  namespace: {{ .Values.operator.prometheusRule.namespace }}
+  {{- else }}
+  namespace: {{ .Release.Namespace }}
+  {{- end }}
+  labels: {{- include "common.labels.standard" . | nindent 4 }}
+    app.kubernetes.io/component: kadalu-operator
+    {{- range $key, $value := .Values.operator.prometheusRule.additionalLabels }}
+    {{ $key }}: {{ $value | quote }}
+    {{- end }}
+    {{- if .Values.commonLabels }}
+    {{- include "common.tplvalues.render" ( dict "value" .Values.commonLabels "context" $ ) | nindent 4 }}
+    {{- end }}
+  {{- if .Values.commonAnnotations }}
+  annotations: {{- include "common.tplvalues.render" ( dict "value" .Values.commonAnnotations "context" $ ) | nindent 4 }}
+  {{- end }}
+spec:
+  groups:
+  - name: {{ include "common.names.fullname" . }}
+    rules: {{- toYaml .Values.operator.prometheusRule.rules | nindent 6 }}
+{{- end }}
+

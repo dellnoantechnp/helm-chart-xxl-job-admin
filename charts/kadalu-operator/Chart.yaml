@@ -38,4 +38,4 @@ dependencies:
 #    repository: file://charts/csi-nodeplugin
 #    condition: csi_nodeplugin.enabled
 #    version: 1.2.0
-version: 1.2.1
+version: 1.2.2
