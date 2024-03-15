@@ -9,7 +9,7 @@ metadata:
     app.kubernetes.io/component: csi-driver
 spec:
   selector:
-    matchLabels: {{- include "common.labels.standard" . | nindent 6 }}
+    matchLabels: {{- include "common.labels.matchLabels" . | nindent 6 }}
       app.kubernetes.io/component: csi-driver
   template:
     metadata:
