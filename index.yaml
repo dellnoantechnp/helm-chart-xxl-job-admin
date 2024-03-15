@@ -335,6 +335,39 @@ entries:
       category: Storage
     apiVersion: v2
     appVersion: 1.2.0
+    created: "2024-03-15T06:51:13.18630114Z"
+    dependencies:
+    - name: common
+      repository: https://dellnoantechnp.github.io/helm-chart-xxl-job-admin/
+      tags:
+      - bitnami-common
+      version: 1.x.x
+    description: Contains subchart for deploying Kadalu-Operator and Kadalu CSI-Nodeplugin
+    digest: 1d6ea26bc580c24cccf7fb2e3ec126b7e3bb6935dd3d23dd6ad1c2a82456ffbb
+    home: https://github.com/dellnoantechnp/helm-chart-xxl-job-admin
+    icon: https://kadalu.io/static/css/logo.png
+    keywords:
+    - GlusterFS
+    - Kadalu
+    - CSI-driver
+    - Kubernetes
+    - Operator
+    kubeVersion: '>=1.16.0-0'
+    maintainers:
+    - email: dellnoantechnp@gmail.com
+      name: dellnoantechnp
+    name: kadalu-operator
+    sources:
+    - https://github.com/dellnoantechnp/helm-chart-xxl-job-admin
+    - https://github.com/kadalu/kadalu
+    type: application
+    urls:
+    - https://github.com/dellnoantechnp/helm-chart-xxl-job-admin/releases/download/kadalu-operator-1.2.2/kadalu-operator-1.2.2.tgz
+    version: 1.2.2
+  - annotations:
+      category: Storage
+    apiVersion: v2
+    appVersion: 1.2.0
     created: "2024-03-01T10:48:45.728702377Z"
     dependencies:
     - name: common
@@ -1223,4 +1256,4 @@ entries:
     urls:
     - https://github.com/dellnoantechnp/helm-chart-xxl-job-admin/releases/download/zookeeper-7.6.1/zookeeper-7.6.1.tgz
     version: 7.6.1
-generated: "2024-03-12T09:09:28.37289919Z"
+generated: "2024-03-15T06:51:13.186422466Z"
