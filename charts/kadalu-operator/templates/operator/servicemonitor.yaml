@@ -31,7 +31,7 @@ spec:
       app.kubernetes.io/component: kadalu-operator
   endpoints:
     - port: {{ .Values.operator.containerPort.name }}
-      path: "/metrics/"
+      path: "/metrics"
       {{- if .Values.operator.serviceMonitor.interval }}
       interval: {{ .Values.operator.serviceMonitor.interval }}
       {{- end }}
