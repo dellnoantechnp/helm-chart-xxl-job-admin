@@ -1,0 +1,21 @@
+apiVersion: v1
+appVersion: 4.0.2
+annotations:
+  artifacthub.io/images: |
+    - name: nfs-subdir-external-provisioner
+      image: registry.k8s.io/sig-storage/nfs-subdir-external-provisioner:v4.0.2
+  artifacthub.io/links: |
+    - name: Chart Source
+      url: https://github.com/kubernetes-sigs/nfs-subdir-external-provisioner/tree/master/charts/nfs-subdir-external-provisioner
+description: nfs-subdir-external-provisioner is an automatic provisioner that used your *already configured* NFS server, automatically creating Persistent Volumes.
+name: nfs-subdir-external-provisioner
+home: https://github.com/kubernetes-sigs/nfs-subdir-external-provisioner
+version: 4.0.18
+kubeVersion: ">=1.9.0-0"
+icon: https://raw.githubusercontent.com/dellnoantechnp/helm-chart-xxl-job-admin/master/assets/stacks/nfs-subdir-external-provisioner/nfs-subdir-external-provisioner.png
+sources:
+- https://github.com/kubernetes-sigs/nfs-subdir-external-provisioner
+keywords:
+- nfs
+- storage
+- provisioner
