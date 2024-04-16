@@ -605,6 +605,34 @@ entries:
     urls:
     - https://charts.bitnami.com/bitnami/mongodb-sharded-4.0.21.tgz
     version: 4.0.21
+  nfs-subdir-external-provisioner:
+  - annotations:
+      artifacthub.io/images: |
+        - name: nfs-subdir-external-provisioner
+          image: registry.k8s.io/sig-storage/nfs-subdir-external-provisioner:v4.0.2
+      artifacthub.io/links: |
+        - name: Chart Source
+          url: https://github.com/kubernetes-sigs/nfs-subdir-external-provisioner/tree/master/charts/nfs-subdir-external-provisioner
+    apiVersion: v1
+    appVersion: 4.0.2
+    created: "2024-04-16T09:24:46.257387911Z"
+    description: nfs-subdir-external-provisioner is an automatic provisioner that
+      used your *already configured* NFS server, automatically creating Persistent
+      Volumes.
+    digest: 8d0b65189aa26235faf9ee50c69fbb828551b7b75911df5989f6b2320e82de3f
+    home: https://github.com/kubernetes-sigs/nfs-subdir-external-provisioner
+    icon: https://raw.githubusercontent.com/dellnoantechnp/helm-chart-xxl-job-admin/master/assets/stacks/nfs-subdir-external-provisioner/nfs-subdir-external-provisioner.png
+    keywords:
+    - nfs
+    - storage
+    - provisioner
+    kubeVersion: '>=1.9.0-0'
+    name: nfs-subdir-external-provisioner
+    sources:
+    - https://github.com/kubernetes-sigs/nfs-subdir-external-provisioner
+    urls:
+    - https://github.com/dellnoantechnp/helm-chart-xxl-job-admin/releases/download/nfs-subdir-external-provisioner-4.0.18/nfs-subdir-external-provisioner-4.0.18.tgz
+    version: 4.0.18
   prometheusalert:
   - annotations:
       artifacthub.io/images: |
@@ -1348,4 +1376,4 @@ entries:
     urls:
     - https://github.com/dellnoantechnp/helm-chart-xxl-job-admin/releases/download/zookeeper-7.6.1/zookeeper-7.6.1.tgz
     version: 7.6.1
-generated: "2024-03-27T06:41:00.172497692Z"
+generated: "2024-04-16T09:24:46.257493332Z"
