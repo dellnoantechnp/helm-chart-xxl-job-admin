@@ -54,3 +54,14 @@ AlertmanagerConfig namespace
 {{ .Release.Namespace }}
 {{- end -}}
 {{- end -}}
+
+
+{{/*
+Return true if a configmap object should be created on values
+*/}}
+{{- define "app.primary.createConfigmap" -}}
+{{- if and .Values.config.app_conf }}
+    {{- true -}}
+{{- else -}}
+{{- end -}}
+{{- end -}}

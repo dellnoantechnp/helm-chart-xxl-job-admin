@@ -6,7 +6,7 @@ annotations:
     - name: Chart Source
       url: https://github.com/dellnoantechnp.github.io/tree/main/charts/xxl-job-admin
 apiVersion: v2
-appVersion: 4.9
+appVersion: 4.9.1
 name: prometheusalert
 description: A Alert-Center for Prometheus Grafana and Graylog, alert message deliver to Wechat/Feishu/Lark/email/DingTalk/workWechat/webhook/telegram ...
 home: https://github.com/feiyu563/PrometheusAlert
@@ -18,4 +18,10 @@ maintainers:
 sources:
 - https://github.com/feiyu563/PrometheusAlert
 type: application
-version: 1.2.3
+dependencies:
+  - name: common
+    repository: oci://registry-1.docker.io/bitnamicharts
+    tags:
+      - bitnami-common
+    version: 2.x.x
+version: 1.3.0

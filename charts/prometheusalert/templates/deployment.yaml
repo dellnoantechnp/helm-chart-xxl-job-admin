@@ -32,7 +32,7 @@ spec:
             value: "Asia/Shanghai"
           ports:
             - name: http
-              containerPort: 8080
+              containerPort: {{ .Values.pod.containerPort }}
               protocol: TCP
           volumeMounts:
           - name: prometheus-alert-center-conf
@@ -44,26 +44,16 @@ spec:
           - name: prometheus-alert-center-conf
             mountPath: /app/db/init.sql
             subPath: init.sql
-          livenessProbe:
-            httpGet:
-              path: /health
-              port: http
-            failureThreshold: 3
-            initialDelaySeconds: 10
-            periodSeconds: 20
-            successThreshold: 1
-            timeoutSeconds: 3
-          readinessProbe:
-            httpGet:
-              path: /health
-              port: http
-            failureThreshold: 3
-            initialDelaySeconds: 10
-            periodSeconds: 20
-            successThreshold: 1
-            timeoutSeconds: 3
+          {{- if .Values.pod.livenessProbe }}
+          livenessProbe: {{ toYaml .Values.pod.livenessProbe | nindent 12 }}
+          {{- end }}
+          {{- if .Values.pod.readinessProbe }}
+          readinessProbe: {{ toYaml .Values.pod.readinessProbe | nindent 12 }}
+          {{- end }}
+          {{- if or (hasKey .Values.pod.resources "requests") (hasKey .Values.pod.resources "limits") }}
           resources:
-            {{- toYaml .Values.resources | nindent 12 }}
+            {{- toYaml .Values.pod.resources | nindent 12 }}
+          {{- end }}
     {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}

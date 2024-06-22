@@ -17,6 +17,37 @@ nameOverride: ""
 
 fullnameOverride: ""
 
+pod:
+  containerPort: 8000
+
+  livenessProbe:
+    httpGet:
+      path: /health
+      port: http
+    failureThreshold: 3
+    initialDelaySeconds: 10
+    periodSeconds: 20
+    successThreshold: 1
+    timeoutSeconds: 3
+  readinessProbe:
+    httpGet:
+      path: /health
+      port: http
+    failureThreshold: 3
+    initialDelaySeconds: 10
+    periodSeconds: 20
+    successThreshold: 1
+    timeoutSeconds: 3
+
+  resources: {}
+  #resources:
+  #  limits:
+  #    cpu: 500m
+  #    memory: 512Mi
+  #  requests:
+  #    cpu: 10m
+  #    memory: 128Mi
+
 service:
   type: ClusterIP
   port: 8080
@@ -31,13 +62,6 @@ ingress:
       paths: ["/"]
   tls: []
 
-resources: 
-  limits:
-   cpu: 500m
-   memory: 512Mi
-  requests:
-   cpu: 10m
-   memory: 128Mi
 
 ## @param affinity Affinity for pod assignment
 ## Ref: https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#affinity-and-anti-affinity
@@ -194,7 +218,7 @@ config:
     #监听地址
     httpaddr = "0.0.0.0"
     #监听端口
-    httpport = 8080
+    httpport = {{ .Values.pod.containerPort | default "8000" }}
     # 运行模式 dev|prod
     runmode = dev
     #设置代理 proxy = http://123.123.123.123:8080
@@ -218,7 +242,7 @@ config:
     #故障恢复是否启用电话通知0为关闭,1为开启
     phonecallresolved=0
     #是否前台输出file or console
-    logtype=file
+    logtype=console
     #日志文件路径
     logpath=logs/prometheusalertcenter.log
     #转换Prometheus,graylog告警消息的时区为CST时区(如默认已经是CST时区，请勿开启)
@@ -490,7 +514,7 @@ config:
     INSERT INTO prometheus_alert_d_b (id, tpltype, tpluse, tplname, tpl, created) VALUES (1, 'dd', 'Prometheus', 'prometheus-dd', '{{ $var := .externalURL}}
     {{ range $k,$v:=.alerts }}
     {{if eq $v.status "resolved"}}
-    ## <font color="#3FB950">**Prometheus 恢复通知**</font>
+    ## <font color="#16a329">**Prometheus 恢复通知**</font>
     ---
     * 🟡【告警名称】{{$v.labels.alertname}}
     * 🚨【告警级别】{{ $v.labels.severity}}
@@ -498,8 +522,8 @@ config:
     * 🧭【开始时间】{{GetCSTtime $v.startsAt}}
     * 🧭【结束时间】{{GetCSTtime $v.endsAt}}
     * 🏷️【命名空间】{{$v.labels.namespace}}
-    * 📡【实例名称】{{$v.labels.host}}{{$v.labels.pod}}{{$v.labels.job}}{{$v.labels.deployment}}{{$v.labels.statefulset}}
-    * 📝【告警详情】{{ $v.annotations.message }}{{ $v.annotations.description}};{{$v.annotations.summary}}
+    * 📡【实例名称】{{$v.labels.host}}/{{$v.labels.pod}}/{{$v.labels.job}}/{{$v.labels.deployment}}/{{$v.labels.statefulset}}
+    * 📝【告警详情】{{ $v.annotations.message }}/{{ $v.annotations.description}};{{$v.annotations.summary}}
     {{else}}
     ##  <font color="#FF0000">**Prometheus 告警通知**</font>
     ---
@@ -508,8 +532,8 @@ config:
     * 🔥【告警状态】{{$v.status}}
     * 🧭【开始时间】{{GetCSTtime $v.startsAt}}
     * 🏷️【命名空间】{{$v.labels.namespace}}
-    * 📡【实例名称】{{$v.labels.host}}{{$v.labels.pod}}{{$v.labels.job}}{{$v.labels.deployment}}{{$v.labels.statefulset}}
-    * 📝【告警详情】{{ $v.annotations.message }}{{ $v.annotations.description}};{{$v.annotations.summary}}
+    * 📡【实例名称】{{$v.labels.host}}/{{$v.labels.pod}}/{{$v.labels.job}}/{{$v.labels.deployment}}/{{$v.labels.statefulset}}
+    * 📝【告警详情】{{ $v.annotations.message }}/{{ $v.annotations.description}};{{$v.annotations.summary}}
       {{ end }}
       {{ end }}
       {{ $urimsg:="" }}
