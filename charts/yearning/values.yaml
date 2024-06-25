@@ -23,7 +23,7 @@ pod:
 
   livenessProbe:
     httpGet:
-      path: /health
+      path: /
       port: http
     failureThreshold: 3
     initialDelaySeconds: 10
@@ -32,7 +32,7 @@ pod:
     timeoutSeconds: 3
   readinessProbe:
     httpGet:
-      path: /health
+      path: /
       port: http
     failureThreshold: 3
     initialDelaySeconds: 10

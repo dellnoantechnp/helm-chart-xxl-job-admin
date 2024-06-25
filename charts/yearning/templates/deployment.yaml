@@ -28,7 +28,7 @@ spec:
             - bash
             - "-c"
           args:
-            - "/opt/Yearning init && /opt/Yearning run"
+            - "/opt/Yearning install && /opt/Yearning run"
           {{- if (hasKey .Values.pod.envs "MYSQL_ADDR") }}
           env:
             {{- range $i, $value := .Values.pod.envs }}
