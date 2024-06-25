@@ -1,0 +1,27 @@
+annotations:
+  artifacthub.io/images: |
+    - name: yeelabs/yearning
+      image: yeelabs/yearning:v3.1.7
+  artifacthub.io/links: |
+    - name: Project Source
+      url: https://github.com/cookieY/Yearning
+apiVersion: v2
+appVersion: v3.1.7
+name: yearning
+description: 🐳 A most popular sql audit platform for mysql and PostgreSQL
+home: https://github.com/cookieY/Yearning
+icon: https://raw.githubusercontent.com/cookieY/Yearning/master/logo_s.png
+maintainers:
+- email: dellnoantechnp@gmail.com
+  name: dellnoantechnp
+  url: https://github.com/dellnoantechnp
+sources:
+- https://github.com/cookieY/Yearning
+type: application
+dependencies:
+  - name: common
+    repository: oci://registry-1.docker.io/bitnamicharts
+    tags:
+      - bitnami-common
+    version: 2.x.x
+version: 0.1.0

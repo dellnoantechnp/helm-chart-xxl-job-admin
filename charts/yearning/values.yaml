@@ -1,0 +1,100 @@
+# Default values for Yearning.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+global:
+  imagePullSecrets: []
+    # - name: "registry-secret"
+
+replicaCount: 1
+
+image:
+  registry: docker.io
+  repository: yeelabs/yearning
+  tag: v3.1.7
+  pullPolicy: IfNotPresent
+
+nameOverride: ""
+
+fullnameOverride: ""
+
+pod:
+  containerPort: 8000
+
+  livenessProbe:
+    httpGet:
+      path: /health
+      port: http
+    failureThreshold: 3
+    initialDelaySeconds: 10
+    periodSeconds: 20
+    successThreshold: 1
+    timeoutSeconds: 3
+  readinessProbe:
+    httpGet:
+      path: /health
+      port: http
+    failureThreshold: 3
+    initialDelaySeconds: 10
+    periodSeconds: 20
+    successThreshold: 1
+    timeoutSeconds: 3
+
+  envs:
+    # envs.MYSQL_USER: yearning backend db user
+    MYSQL_USER: yearning
+
+    # envs.MYSQL_PASSWORD: yearning backend db password
+    MYSQL_PASSWORD: yearning_passwd
+
+    # envs.MYSQL_ADDR: yearning backend mysql endpoint
+    MYSQL_ADDR: mysql_address
+
+    # envs.MYSQL_DB: yearning backend db name
+    MYSQL_DB: yearning
+
+    # envs.SECRET_KEY: specify a 16 ascii code for secret key
+    SECRET_KEY: dbcjqheupqjsuwsm
+
+    IS_DOCKER: is_docker
+
+  resources: {}
+  #resources:
+  #  limits:
+  #    cpu: 500m
+  #    memory: 512Mi
+  #  requests:
+  #    cpu: 10m
+  #    memory: 128Mi
+
+service:
+  type: ClusterIP
+  port: 8000
+
+ingress:
+  enabled: false
+  annotations: {}
+    # kubernetes.io/ingress.class: nginx
+    # kubernetes.io/tls-acme: "true"
+  hosts:
+    - host: yearning.local
+      paths: ["/"]
+  tls: []
+
+
+## @param affinity Affinity for pod assignment
+## Ref: https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#affinity-and-anti-affinity
+## Note: podAffinityPreset, podAntiAffinityPreset, and nodeAffinityPreset will be ignored when it's set
+##
+affinity: {}
+
+## @param nodeSelector Node labels for pod assignment
+## Ref: https://kubernetes.io/docs/user-guide/node-selection/
+##
+nodeSelector: {}
+
+## @param tolerations Tolerations for pod assignment
+## Ref: https://kubernetes.io/docs/concepts/configuration/taint-and-toleration/
+##
+tolerations: []
+

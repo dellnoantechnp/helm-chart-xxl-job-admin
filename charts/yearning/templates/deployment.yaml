@@ -1,0 +1,61 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ template "yearning.fullname" . }}
+  labels:
+    {{- include "yearning.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: {{ include "yearning.name" . }}
+      app.kubernetes.io/instance: {{ .Release.Name }}
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: {{ include "yearning.name" . }}
+        app.kubernetes.io/instance: {{ .Release.Name }}
+    spec:
+      {{- if .Values.global.imagePullSecrets }}
+      imagePullSecrets:
+        {{ toYaml .Values.global.imagePullSecrets }}
+      {{- end }}
+      containers:
+        - name: {{ .Chart.Name }}
+          image: "{{ .Values.image.registry }}/{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          command:
+            - bash
+            - "-c"
+          args:
+            - "/opt/Yearning init && /opt/Yearning run"
+          {{- if (hasKey .Values.pod.envs "MYSQL_ADDR") }}
+          env:
+            {{- toYaml .Values.pod.envs | nindent 12 }}
+          {{- end }}
+          ports:
+            - name: http
+              containerPort: {{ .Values.pod.containerPort }}
+              protocol: TCP
+          {{- if .Values.pod.livenessProbe }}
+          livenessProbe: {{ toYaml .Values.pod.livenessProbe | nindent 12 }}
+          {{- end }}
+          {{- if .Values.pod.readinessProbe }}
+          readinessProbe: {{ toYaml .Values.pod.readinessProbe | nindent 12 }}
+          {{- end }}
+          {{- if or (hasKey .Values.pod.resources "requests") (hasKey .Values.pod.resources "limits") }}
+          resources:
+            {{- toYaml .Values.pod.resources | nindent 12 }}
+          {{- end }}
+    {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+    {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+    {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
