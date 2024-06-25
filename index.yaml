@@ -1360,6 +1360,37 @@ entries:
           url: https://github.com/cookieY/Yearning
     apiVersion: v2
     appVersion: v3.1.7
+    created: "2024-06-25T03:29:03.796244148Z"
+    dependencies:
+    - name: common
+      repository: oci://registry-1.docker.io/bitnamicharts
+      tags:
+      - bitnami-common
+      version: 2.x.x
+    description: "\U0001F433 A most popular sql audit platform for mysql and PostgreSQL"
+    digest: 40155272ba3bbe47d750c4254fd11b483e25de377f5ddb07e54ab167827232f0
+    home: https://github.com/cookieY/Yearning
+    icon: https://raw.githubusercontent.com/cookieY/Yearning/master/logo_s.png
+    maintainers:
+    - email: dellnoantechnp@gmail.com
+      name: dellnoantechnp
+      url: https://github.com/dellnoantechnp
+    name: yearning
+    sources:
+    - https://github.com/cookieY/Yearning
+    type: application
+    urls:
+    - https://github.com/dellnoantechnp/helm-chart-xxl-job-admin/releases/download/yearning-0.1.2/yearning-0.1.2.tgz
+    version: 0.1.2
+  - annotations:
+      artifacthub.io/images: |
+        - name: yeelabs/yearning
+          image: yeelabs/yearning:v3.1.7
+      artifacthub.io/links: |
+        - name: Project Source
+          url: https://github.com/cookieY/Yearning
+    apiVersion: v2
+    appVersion: v3.1.7
     created: "2024-06-25T03:12:38.481773264Z"
     dependencies:
     - name: common
@@ -1471,4 +1502,4 @@ entries:
     urls:
     - https://github.com/dellnoantechnp/helm-chart-xxl-job-admin/releases/download/zookeeper-7.6.1/zookeeper-7.6.1.tgz
     version: 7.6.1
-generated: "2024-06-25T03:12:38.481876225Z"
+generated: "2024-06-25T03:29:03.796361528Z"
