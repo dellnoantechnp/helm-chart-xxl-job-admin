@@ -31,7 +31,10 @@ spec:
             - "/opt/Yearning init && /opt/Yearning run"
           {{- if (hasKey .Values.pod.envs "MYSQL_ADDR") }}
           env:
-            {{- toYaml .Values.pod.envs | nindent 12 }}
+            {{- range $i, $value := .Values.pod.envs }}
+            - name: {{ $i }}
+              value: {{ $value | quote }}
+            {{- end }}
           {{- end }}
           ports:
             - name: http
