@@ -513,9 +513,9 @@ config:
     -- ----------------------------
     INSERT INTO prometheus_alert_d_b (id, tpltype, tpluse, tplname, tpl, created) VALUES (1, 'dd', 'Prometheus', 'prometheus-dd', '{{ $var := .externalURL}}
     {{ range $k,$v:=.alerts }}
+    ---
     {{if eq $v.status "resolved"}}
     ## <font color="#16a329">**Prometheus 恢复通知**</font>
-    ---
     * 🟡【告警名称】{{$v.labels.alertname}}
     * 🚨【告警级别】{{ $v.labels.severity}}
     * ✅【告警状态】{{$v.status}}
@@ -526,7 +526,6 @@ config:
     * 📝【告警详情】{{ $v.annotations.message }}/{{ $v.annotations.description}};{{$v.annotations.summary}}
     {{else}}
     ##  <font color="#FF0000">**Prometheus 告警通知**</font>
-    ---
     * 🟡【告警名称】{{$v.labels.alertname}}
     * 🚨【告警级别】{{ $v.labels.severity}}
     * 🔥【告警状态】{{$v.status}}
