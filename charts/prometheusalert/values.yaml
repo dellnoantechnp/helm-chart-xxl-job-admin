@@ -511,34 +511,42 @@ config:
     -- ----------------------------
     -- Records of prometheus_alert_d_b
     -- ----------------------------
-    INSERT INTO prometheus_alert_d_b (id, tpltype, tpluse, tplname, tpl, created) VALUES (1, 'dd', 'Prometheus', 'prometheus-dd', '{{ $var := .externalURL}}
+    INSERT INTO prometheus_alert_d_b (id, tpltype, tpluse, tplname, tpl, created) VALUES (1, 'dd', 'Prometheus', 'prometheus-dd', '{{ $var := .externalURL }}
     {{ range $k,$v:=.alerts }}
+    {{ if eq $v.status "resolved" }}
     ---
-    {{if eq $v.status "resolved"}}
     ## <font color="#16a329">**Prometheus 恢复通知**</font>
-    * 🟡【告警名称】{{$v.labels.alertname}}
-    * 🚨【告警级别】{{ $v.labels.severity}}
-    * ✅【告警状态】{{$v.status}}
-    * 🧭【开始时间】{{GetCSTtime $v.startsAt}}
-    * 🧭【结束时间】{{GetCSTtime $v.endsAt}}
+    * 🟡【告警名称】{{ $v.labels.alertname }}
+    * 🚨【告警级别】{{ $v.labels.severity }}
+    * ✅【告警状态】{{ $v.status }}
+    * 🧭【开始时间】{{ GetCSTtime $v.startsAt }}
+    * 🧭【结束时间】{{ GetCSTtime $v.endsAt }}
+    {{- if $v.labels.namespace }}
     * 🏷️【命名空间】{{$v.labels.namespace}}
+    {{- end }}
+    {{- if (or $v.labels.host $v.labels.pod $v.labels.job $v.labels.deployment $v.labels.statefulset) }}
     * 📡【实例名称】{{$v.labels.host}}/{{$v.labels.pod}}/{{$v.labels.job}}/{{$v.labels.deployment}}/{{$v.labels.statefulset}}
-    * 📝【告警详情】{{ $v.annotations.message }}/{{ $v.annotations.description}};{{$v.annotations.summary}}
+    {{- end }}
+    * 📝【告警详情】{{ $v.annotations.summary }}/{{ $v.annotations.description}};{{$v.annotations.message}}
     {{else}}
     ##  <font color="#FF0000">**Prometheus 告警通知**</font>
-    * 🟡【告警名称】{{$v.labels.alertname}}
-    * 🚨【告警级别】{{ $v.labels.severity}}
-    * 🔥【告警状态】{{$v.status}}
-    * 🧭【开始时间】{{GetCSTtime $v.startsAt}}
+    * 🟡【告警名称】{{ $v.labels.alertname }}
+    * 🚨【告警级别】{{ $v.labels.severity }}
+    * 🔥【告警状态】{{ $v.status }}
+    * 🧭【开始时间】{{ GetCSTtime $v.startsAt}}
+    {{- if $v.labels.namespace }}
     * 🏷️【命名空间】{{$v.labels.namespace}}
+    {{- end }}
+    {{- if (or $v.labels.host $v.labels.pod $v.labels.job $v.labels.deployment $v.labels.statefulset) }}
     * 📡【实例名称】{{$v.labels.host}}/{{$v.labels.pod}}/{{$v.labels.job}}/{{$v.labels.deployment}}/{{$v.labels.statefulset}}
-    * 📝【告警详情】{{ $v.annotations.message }}/{{ $v.annotations.description}};{{$v.annotations.summary}}
-      {{ end }}
-      {{ end }}
-      {{ $urimsg:="" }}
-      {{ range $key,$value:=.commonLabels }}
-        {{$urimsg = print $urimsg $key "%3D%22" $value "%22%2C" }}
-      {{end}}
+    {{- end }}
+    * 📝【告警详情】{{ $v.annotations.summary }}/{{ $v.annotations.description}};{{$v.annotations.message}}
+    {{ end }}
+    {{ end }}
+    {{ $urimsg:="" }}
+    {{ range $key,$value:=.commonLabels }}
+    {{$urimsg = print $urimsg $key "%3D%22" $value "%22%2C" }}
+    {{end}}
     ---
     🔇*[屏蔽该告警]({{$var}}/#/silences/new?filter=%7B{{SplitString $urimsg 0 -3}}%7D)*', '2024-02-27 10:00:00');
     INSERT INTO prometheus_alert_d_b (id, tpltype, tpluse, tplname, tpl, created) VALUES (2, 'wx', 'Prometheus', 'prometheus-wx', '{{ $var := .externalURL}}{{ range $k,$v:=.alerts }}
