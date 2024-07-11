@@ -20,12 +20,12 @@ metadata:
   labels:
     {{- include "apollo.portal.labels" . | nindent 4 }}
 spec:
-  type: {{ .Values.service.type }}
+  type: {{ .Values.portal.service.type }}
   ports:
     - name: http
       protocol: TCP
-      port: {{ .Values.service.port }}
-      targetPort: {{ .Values.service.targetPort }}
+      port: {{ .Values.portal.service.port }}
+      targetPort: {{ .Values.portal.service.targetPort }}
   selector:
     app: {{ include "apollo.portal.fullName" . }}
-  sessionAffinity: {{ .Values.service.sessionAffinity }}
+  sessionAffinity: {{ .Values.portal.service.sessionAffinity }}

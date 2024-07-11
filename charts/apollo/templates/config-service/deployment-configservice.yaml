@@ -13,31 +13,15 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
----
-# configmap for apollo-configservice
-kind: ConfigMap
-apiVersion: v1
-metadata:
-  {{- $configServiceFullName := include "apollo.configService.fullName" . }}
-  name: {{ $configServiceFullName }}
-data:
-  application-github.properties: |
-    spring.datasource.url = jdbc:mysql://{{include "apollo.configdb.serviceName" .}}:{{include "apollo.configdb.servicePort" .}}/{{ .Values.configdb.dbName }}{{ if .Values.configdb.connectionStringProperties }}?{{ .Values.configdb.connectionStringProperties }}{{ end }}
-    spring.datasource.username = {{ required "configdb.userName is required!" .Values.configdb.userName }}
-    spring.datasource.password = {{ required "configdb.password is required!" .Values.configdb.password }}
-    apollo.config-service.url = {{ include "apollo.configService.serviceUrl" .}}
-    apollo.admin-service.url = {{ include "apollo.adminService.serviceUrl" .}}
-    {{- if .Values.configService.config.contextPath }}
-    server.servlet.context-path = {{ .Values.configService.config.contextPath }}
-    {{- end }}
-
----
+{{- $configServiceFullName := include "apollo.configService.fullName" . }}
 kind: Deployment
 apiVersion: apps/v1
 metadata:
   name: {{ $configServiceFullName }}
   labels:
     {{- include "apollo.service.labels" . | nindent 4 }}
+  annotations:
+    checksum/config: {{ include (print $.Template.BasePath "/config-service/configmap-configservice.yaml") . | sha256sum }}
 spec:
   replicas: {{ .Values.configService.replicaCount }}
   selector:

@@ -27,6 +27,34 @@ Ingress:
 {{- end }}
 {{- end }}
 
+
+Portal url for current release:
+{{- if contains "NodePort" .Values.portal.service.type }}
+  export NODE_PORT=$(kubectl get --namespace {{ .Release.Namespace }} -o jsonpath="{.spec.ports[0].nodePort}" services {{ include "apollo.portal.fullName" . }})
+  export NODE_IP=$(kubectl get nodes --namespace {{ .Release.Namespace }} -o jsonpath="{.items[0].status.addresses[0].address}")
+  echo http://$NODE_IP:$NODE_PORT
+{{- else if contains "LoadBalancer" .Values.portal.service.type }}
+     NOTE: It may take a few minutes for the LoadBalancer IP to be available.
+           You can watch the status of by running 'kubectl get --namespace {{ .Release.Namespace }} svc -w {{ include "apollo.portal.fullName" . }}'
+  export SERVICE_IP=$(kubectl get svc --namespace {{ .Release.Namespace }} {{ include "apollo.portal.serviceName" . }} --template "{{"{{ range (index .status.loadBalancer.ingress 0) }}{{.}}{{ end }}"}}")
+  echo http://$SERVICE_IP:{{ .Values.portal.service.port }}
+{{- else if contains "ClusterIP" .Values.portal.service.type }}
+  export POD_NAME=$(kubectl get pods --namespace {{ .Release.Namespace }} -l "app={{ include "apollo.portal.fullName" . }}" -o jsonpath="{.items[0].metadata.name}")
+  echo "Visit http://127.0.0.1:8070 to use your application"
+  kubectl --namespace {{ .Release.Namespace }} port-forward $POD_NAME 8070:8070
+{{- end }}
+
+{{- if .Values.portal.ingress.enabled }}
+
+Ingress:
+{{- range $host := .Values.portal.ingress.hosts }}
+  {{- range .paths }}
+  http{{ if $.Values.portal.ingress.tls }}s{{ end }}://{{ $host.host }}{{ . }}
+  {{- end }}
+{{- end }}
+{{- end }}
+
+
 Urls registered to meta service:
 Config service: {{ include "apollo.configService.serviceUrl" .}}
 Admin service: {{ include "apollo.adminService.serviceUrl" .}}

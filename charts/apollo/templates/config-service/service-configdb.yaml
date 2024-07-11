@@ -13,7 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-{{- if .Values.configdb.service.enabled -}}
+{{- if .Values.db.configdb.service.enabled -}}
 ---
 # service definition for mysql
 kind: Service
@@ -25,12 +25,12 @@ metadata:
 spec:
   type: {{ .Values.configdb.service.type }}
 {{- if eq .Values.configdb.service.type "ExternalName" }}
-  externalName: {{ required "configdb.host is required!" .Values.configdb.host }}
+  externalName: {{ required "configdb.host is required!" .Values.db.configdb.host }}
 {{- else }}
   ports:
     - protocol: TCP
-      port: {{ .Values.configdb.service.port }}
-      targetPort: {{ .Values.configdb.port }}
+      port: {{ .Values.db.configdb.service.port }}
+      targetPort: {{ .Values.db.configdb.port }}
 ---
 kind: Endpoints
 apiVersion: v1
@@ -38,9 +38,9 @@ metadata:
   name: {{include "apollo.configdb.serviceName" .}}
 subsets:
   - addresses:
-      - ip: {{ required "configdb.host is required!" .Values.configdb.host }}
+      - ip: {{ required "configdb.host is required!" .Values.db.configdb.host }}
     ports:
       - protocol: TCP
-        port: {{ .Values.configdb.port }}
+        port: {{ .Values.db.configdb.port }}
 {{- end }}
 {{- end }}

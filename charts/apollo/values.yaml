@@ -13,23 +13,48 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-configdb:
-  name: apollo-configdb
-  # apolloconfigdb host
-  host: ""
-  port: 3306
-  dbName: ApolloConfigDB
-  # apolloconfigdb user name
-  userName: ""
-  # apolloconfigdb password
-  password: ""
-  connectionStringProperties: characterEncoding=utf8
-  service:
-    # whether to create a Service for this host or not
-    enabled: false
-    fullNameOverride: ""
+db:
+  configdb:
+    name: apollo-configdb
+    # apolloconfigdb host
+    host: "x.x.x.x"
     port: 3306
-    type: ClusterIP
+    dbName: ApolloConfigDB
+    # apolloconfigdb user name
+    userName: "abc"
+    # apolloconfigdb password
+    password: "abc"
+    connectionStringProperties: characterEncoding=utf8&useSSL=false
+
+    ## @param service: create a externalName service for foreign database endpoint
+    ##
+    service:
+      # whether to create a Service for this host or not
+      enabled: false
+      fullNameOverride: ""
+      port: 3306
+      type: ClusterIP
+
+  portaldb:
+    name: apollo-portaldb
+    # apolloportaldb host
+    host: "x.x.x.x"
+    port: 3306
+    dbName: ApolloPortalDB
+    # apolloportaldb user name
+    userName: ""
+    # apolloportaldb password
+    password: ""
+    connectionStringProperties: characterEncoding=utf8&useSSL=false
+
+    ## @param service: create a externalName service for foreign database endpoint
+    ##
+    service:
+      # whether to create a Service for this host or not
+      enabled: false
+      fullNameOverride: ""
+      port: 3306
+      type: ClusterIP
 
 configService:
   name: apollo-configservice
@@ -44,8 +69,18 @@ configService:
   service:
     fullNameOverride: ""
     port: 8080
+    ## @param nodePort: when type is NodePort or LoadBalancer, use this to assign a port number.
+    ## Normal port range in 30000-32767.
+    nodePort: ""
     targetPort: 8080
+    ## @param type for Service type, choice one in ClusterIP, NodePort, LoadBalancer.
+    ##
     type: ClusterIP
+
+    ## @param loadBalancerIP externalTrafficPolicy: only on service type is LoadBalancer
+    loadBalancerIP: ""
+    externalTrafficPolicy: Cluster
+
   ingress:
     ingressClassName: null
     enabled: false
@@ -72,7 +107,13 @@ configService:
   # environment variables passed to the container, e.g. JAVA_OPTS
   env: {}
   strategy: {}
-  resources: {}
+  resources:
+    requests:
+      cpu: 200m
+      memory: 1Gi
+    limits:
+      cpu: 2
+      memory: 2Gi
   nodeSelector: {}
   tolerations: []
   affinity: {}
@@ -88,14 +129,25 @@ adminService:
     tag: ""
     pullPolicy: IfNotPresent
   imagePullSecrets: []
+
   service:
     fullNameOverride: ""
     port: 8090
-    targetPort: 8090
+    ## @param nodePort: when type is NodePort or LoadBalancer, use this to assign a port number.
+    ## Normal port range in 30000-32767.
+    nodePort: ""
+
+    ## @param type for Service type, choice one in ClusterIP, NodePort, LoadBalancer.
+    ##
     type: ClusterIP
+
+    ## @param loadBalancerIP externalTrafficPolicy: only on service type is LoadBalancer
+    loadBalancerIP: ""
+    externalTrafficPolicy: Cluster
+
   ingress:
-    ingressClassName: null
     enabled: false
+    ingressClassName: null
     annotations: { }
     hosts:
       - host: ""
@@ -115,8 +167,71 @@ adminService:
   # environment variables passed to the container, e.g. JAVA_OPTS
   env: {}
   strategy: {}
-  resources: {}
+  resources:
+    requests:
+      cpu: 200m
+      memory: 1Gi
+    limits:
+      cpu: 2
+      memory: 2Gi
   nodeSelector: {}
   tolerations: []
   affinity: {}
   annotations: {}
+
+portal:
+  ## @param enabled: boolean value for install portal web-ui.
+  ##
+  enabled: true
+
+  name: apollo-portal
+  fullNameOverride: ""
+  replicaCount: 1
+  containerPort: 8070
+  image:
+    repository: apolloconfig/apollo-portal
+    tag: ""
+    pullPolicy: IfNotPresent
+  imagePullSecrets: [ ]
+  service:
+    fullNameOverride: ""
+    port: 8070
+    targetPort: 8070
+    type: ClusterIP
+    sessionAffinity: ClientIP
+  ingress:
+    ingressClassName: null
+    enabled: false
+    annotations: { }
+    hosts:
+      - host: ""
+        paths: [ ]
+    tls: [ ]
+  liveness:
+    initialDelaySeconds: 100
+    periodSeconds: 10
+  readiness:
+    initialDelaySeconds: 30
+    periodSeconds: 5
+  # environment variables passed to the container, e.g. JAVA_OPTS
+  env: { }
+  strategy: { }
+  resources: { }
+  nodeSelector: { }
+  tolerations: [ ]
+  affinity: { }
+  annotations: { }
+
+  config:
+    # spring profiles to activate
+    profiles: "github,auth"
+    # specify the env names, e.g. dev,pro
+    envs: ""
+    # specify the meta servers, e.g.
+    # dev: http://apollo-configservice-dev:8080
+    # pro: http://apollo-configservice-pro:8080
+    metaServers: { }
+    # specify the context path, e.g. /apollo
+    contextPath: ""
+    # extra config files for apollo-portal, e.g. application-ldap.yml
+    files: { }

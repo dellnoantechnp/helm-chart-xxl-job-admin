@@ -13,7 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-{{- if .Values.portaldb.service.enabled -}}
+{{- if .Values.db.portaldb.service.enabled -}}
 ---
 # service definition for mysql
 kind: Service
@@ -23,14 +23,14 @@ metadata:
   labels:
     {{- include "apollo.portal.labels" . | nindent 4 }}
 spec:
-  type: {{ .Values.portaldb.service.type }}
-{{- if eq .Values.portaldb.service.type "ExternalName" }}
-  externalName: {{ required "portaldb.host is required!" .Values.portaldb.host }}
+  type: {{ .Values.db.portaldb.service.type }}
+{{- if eq .Values.db.portaldb.service.type "ExternalName" }}
+  externalName: {{ required "portaldb.host is required!" .Values.db.portaldb.host }}
 {{- else }}
   ports:
     - protocol: TCP
-      port: {{ .Values.portaldb.service.port }}
-      targetPort: {{ .Values.portaldb.port }}
+      port: {{ .Values.db.portaldb.service.port }}
+      targetPort: {{ .Values.db.portaldb.port }}
 ---
 kind: Endpoints
 apiVersion: v1

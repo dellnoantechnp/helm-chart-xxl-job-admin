@@ -13,46 +13,21 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
----
-# configmap for apollo-portal
-kind: ConfigMap
-apiVersion: v1
+apiVersion: apps/v1
+kind: Deployment
 metadata:
   {{- $portalFullName := include "apollo.portal.fullName" . }}
   name: {{ $portalFullName }}
-data:
-  application-github.properties: |
-    spring.datasource.url = jdbc:mysql://{{include "apollo.portaldb.serviceName" .}}:{{include "apollo.portaldb.servicePort" .}}/{{ .Values.portaldb.dbName }}{{ if .Values.portaldb.connectionStringProperties }}?{{ .Values.portaldb.connectionStringProperties }}{{ end }}
-    spring.datasource.username = {{ required "portaldb.userName is required!" .Values.portaldb.userName }}
-    spring.datasource.password = {{ required "portaldb.password is required!" .Values.portaldb.password }}
-    {{- if .Values.config.envs }}
-    apollo.portal.envs = {{ .Values.config.envs }}
-    {{- end }}
-    {{- if .Values.config.contextPath }}
-    server.servlet.context-path = {{ .Values.config.contextPath }}
-    {{- end }}
-  apollo-env.properties: |
-    {{- range $env, $address := .Values.config.metaServers }}
-    {{ $env }}.meta = {{ $address }}
-    {{- end }}
-{{- range $fileName, $content := .Values.config.files }}
-{{ $fileName | indent 2 }}: |
-{{ $content | indent 4 }}
-{{- end }}
-
----
-kind: Deployment
-apiVersion: apps/v1
-metadata:
-  name: {{ $portalFullName }}
   labels:
     {{- include "apollo.portal.labels" . | nindent 4 }}
+  annotations:
+    checksum/config: {{ include (print $.Template.BasePath "/portal/configmap-portal.yaml") . | sha256sum }}
 spec:
-  replicas: {{ .Values.replicaCount }}
+  replicas: {{ .Values.portal.replicaCount }}
   selector:
     matchLabels:
       app: {{ $portalFullName }}
-  {{- with .Values.strategy }}
+  {{- with .Values.portal.strategy }}
   strategy:
     {{- toYaml . | nindent 4 }}
   {{- end }}
@@ -60,12 +35,12 @@ spec:
     metadata:
       labels:
         app: {{ $portalFullName }}
-      {{- with .Values.annotations }}
+      {{- with .Values.portal.annotations }}
       annotations:
         {{- toYaml . | nindent 8 }}
       {{- end }}
     spec:
-      {{- with .Values.imagePullSecrets }}
+      {{- with .Values.portal.imagePullSecrets }}
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
       {{- end }}
@@ -78,23 +53,23 @@ spec:
                 path: application-github.properties
               - key: apollo-env.properties
                 path: apollo-env.properties
-            {{- range $fileName, $content := .Values.config.files }}
+            {{- range $fileName, $content := .Values.portal.config.files }}
               - key: {{ $fileName }}
                 path: {{ $fileName }}
             {{- end }}
             defaultMode: 420
       containers:
-        - name: {{ .Values.name }}
-          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
-          imagePullPolicy: {{ .Values.image.pullPolicy }}
+        - name: {{ .Values.portal.name }}
+          image: "{{ .Values.portal.image.repository }}:{{ .Values.portal.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.portal.image.pullPolicy }}
           ports:
             - name: http
-              containerPort: {{ .Values.containerPort }}
+              containerPort: {{ .Values.portal.containerPort }}
               protocol: TCP
           env:
             - name: SPRING_PROFILES_ACTIVE
-              value: {{ .Values.config.profiles | quote }}
-          {{- range $key, $value := .Values.env }}
+              value: {{ .Values.portal.config.profiles | quote }}
+          {{- range $key, $value := .Values.portal.env }}
             - name: {{ $key }}
               value: {{ $value }}
           {{- end }}
@@ -105,33 +80,33 @@ spec:
             - name: configmap-{{ $portalFullName }}
               mountPath: /apollo-portal/config/apollo-env.properties
               subPath: apollo-env.properties
-          {{- range $fileName, $content := .Values.config.files }}
+          {{- range $fileName, $content := .Values.portal.config.files }}
             - name: configmap-{{ $portalFullName }}
               mountPath: /apollo-portal/config/{{ $fileName }}
               subPath: {{ $fileName }}
           {{- end }}
           livenessProbe:
             tcpSocket:
-              port: {{ .Values.containerPort }}
-            initialDelaySeconds: {{ .Values.liveness.initialDelaySeconds }}
-            periodSeconds: {{ .Values.liveness.periodSeconds }}
+              port: {{ .Values.portal.containerPort }}
+            initialDelaySeconds: {{ .Values.portal.liveness.initialDelaySeconds }}
+            periodSeconds: {{ .Values.portal.liveness.periodSeconds }}
           readinessProbe:
             httpGet:
-              path: {{ .Values.config.contextPath }}/health
-              port: {{ .Values.containerPort }}
-            initialDelaySeconds: {{ .Values.readiness.initialDelaySeconds }}
-            periodSeconds: {{ .Values.readiness.periodSeconds }}
+              path: {{ .Values.portal.config.contextPath }}/health
+              port: {{ .Values.portal.containerPort }}
+            initialDelaySeconds: {{ .Values.portal.readiness.initialDelaySeconds }}
+            periodSeconds: {{ .Values.portal.readiness.periodSeconds }}
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
-    {{- with .Values.nodeSelector }}
+    {{- with .Values.portal.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
     {{- end }}
-    {{- with .Values.affinity }}
+    {{- with .Values.portal.affinity }}
       affinity:
         {{- toYaml . | nindent 8 }}
     {{- end }}
-    {{- with .Values.tolerations }}
+    {{- with .Values.portal.tolerations }}
       tolerations:
         {{- toYaml . | nindent 8 }}
     {{- end }}
