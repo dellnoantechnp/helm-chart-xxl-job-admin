@@ -21,9 +21,9 @@ db:
     port: 3306
     dbName: ApolloConfigDB
     # apolloconfigdb user name
-    userName: ""
+    userName: "abc"
     # apolloconfigdb password
-    password: ""
+    password: "abc"
     connectionStringProperties: characterEncoding=utf8&useSSL=false
 
     ## @param service: create a externalName service for foreign database endpoint
@@ -34,6 +34,13 @@ db:
       fullNameOverride: ""
       port: 3306
       type: ClusterIP
+
+    autoInitDatabase:
+      enabled: true
+      initContainer:
+        registry: "docker.io"
+        repository: mysql
+        tag: latest
 
   portaldb:
     name: apollo-portaldb
@@ -42,9 +49,9 @@ db:
     port: 3306
     dbName: ApolloPortalDB
     # apolloportaldb user name
-    userName: ""
+    userName: "abc"
     # apolloportaldb password
-    password: ""
+    password: "abc"
     connectionStringProperties: characterEncoding=utf8&useSSL=false
 
     ## @param service: create a externalName service for foreign database endpoint
@@ -55,6 +62,13 @@ db:
       fullNameOverride: ""
       port: 3306
       type: ClusterIP
+
+    autoInitDatabase:
+      enabled: true
+      initContainer:
+        registry: "docker.io"
+        repository: mysql
+        tag: latest
 
 configService:
   name: apollo-configservice
@@ -223,15 +237,23 @@ portal:
   annotations: { }
 
   config:
-    # spring profiles to activate
+    ## @param profiles: spring profiles to activate
+    ##
     profiles: "github,auth"
-    # specify the env names, e.g. dev,pro
-    envs: ""
-    # specify the meta servers, e.g.
-    # dev: http://apollo-configservice-dev:8080
-    # pro: http://apollo-configservice-pro:8080
+
+    ## @param envs: specify the env names, e.g. dev,pro
+    ##
+    envs: "dev"
+
+    ## @param metaServers: specify the meta servers, e.g.
+    ## dev: http://apollo-configservice-dev:8080
+    ## pro: http://apollo-configservice-pro:8080
     metaServers: { }
-    # specify the context path, e.g. /apollo
+
+    ## @param contextPath: specify the context path, e.g. /apollo
+    ##
     contextPath: ""
-    # extra config files for apollo-portal, e.g. application-ldap.yml
+
+    ## @param files: extra config files for apollo-portal, e.g. application-ldap.yml
+    ##
     files: { }

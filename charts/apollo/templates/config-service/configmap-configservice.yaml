@@ -16,3 +16,7 @@ data:
     {{- if .Values.configService.config.contextPath }}
     server.servlet.context-path = {{ .Values.configService.config.contextPath }}
     {{- end }}
+  {{- if .Values.db.configdb.autoInitDatabase.enabled }}
+  init-database.sql: |
+    {{- .Files.Get "init-db/apolloconfigdb.sql" | nindent 4 }}
+  {{- end }}

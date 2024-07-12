@@ -58,7 +58,51 @@ spec:
               - key: {{ $fileName }}
                 path: {{ $fileName }}
             {{- end }}
+            {{- if .Values.db.portaldb.autoInitDatabase.enabled }}
+              - key: init-database.sql
+                path: init-database.sql
+            {{- end }}
             defaultMode: 420
+      {{- if .Values.db.portaldb.autoInitDatabase.enabled }}
+      initContainers:
+        - name: init-database
+          image: "{{ .Values.db.portaldb.autoInitDatabase.initContainer.registry }}/{{ .Values.db.portaldb.autoInitDatabase.initContainer.repository }}:{{ .Values.db.portaldb.autoInitDatabase.initContainer.tag }}"
+          env:
+            - name: MYSQL_HOST
+              value: {{ .Values.db.portaldb.host }}
+          command:
+            - bash
+            - "-ec"
+          args:
+            - |
+              echo "INFO: Start to init database."
+              cat > /tmp/.my.cnf << EOF
+              [client]
+              host={{ .Values.db.portaldb.host }}
+              user={{ .Values.db.portaldb.userName | quote }}
+              password={{ .Values.db.portaldb.password | quote }}
+              database={{ .Values.db.portaldb.dbName }}
+              EOF
+              echo "INFO: Checking the database, if it's exist ..."
+              if mysql --defaults-file=/tmp/.my.cnf -E --connect-timeout=30 -w -e 'SHOW TABLES FROM {{ .Values.db.portaldb.dbName }}' | grep -q : ; then
+                echo "INFO: {{ .Values.db.portaldb.dbName }} was exists. skipping to initial SQL table."
+              else
+              #if [[ $? -eq 1 ]]; then
+                echo "INFO: {{ .Values.db.portaldb.dbName }} is not exists. creating and init SQL file ..."
+                echo "INFO: CREATE DATABASE"
+                mysql --defaults-file=/tmp/.my.cnf -E --connect-timeout=30 -w -e 'CREATE DATABASE "{{ .Values.db.portaldb.dbName }}" DEFAULT CHARSET utf8mb4'
+                echo "INFO: CREATE TABLES"
+                mysql --defaults-file=/tmp/.my.cnf -E --connect-timeout=30 -w {{ .Values.db.portaldb.dbName }} < /docker-entrypoint-initdb.d/init-database.sql
+              fi
+              echo "INFO: starting app container ..."
+          volumeMounts:
+            - name: configmap-{{ $portalFullName }}
+              mountPath: /tmp/application-github.properties
+              subPath: application-github.properties
+            - name: configmap-{{ $portalFullName }}
+              mountPath: /docker-entrypoint-initdb.d/init-database.sql
+              subPath: init-database.sql
+      {{- end }}
       containers:
         - name: {{ .Values.portal.name }}
           image: "{{ .Values.portal.image.repository }}:{{ .Values.portal.image.tag | default .Chart.AppVersion }}"

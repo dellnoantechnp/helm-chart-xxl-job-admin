@@ -19,8 +19,15 @@ data:
     {{- range $env, $address := .Values.portal.config.metaServers }}
     {{ $env }}.meta = {{ $address }}
     {{- end }}
-{{- range $fileName, $content := .Values.portal.config.files }}
-{{ $fileName | indent 2 }}: |
-{{ $content | indent 4 }}
-{{- end }}
+    {{- if not .Values.portal.config.metaServers }}
+    {{ .Values.portal.config.envs }}: {{ include "apollo.configService.serviceUrl" . }}{{ .Values.configService.config.contextPath }}
+    {{- end }}
+    {{- range $fileName, $content := .Values.portal.config.files }}
+    {{ $fileName | nindent 4 }}: |
+    {{ $content | nindent 4 }}
+    {{- end }}
+  {{- if .Values.db.portaldb.autoInitDatabase.enabled }}
+  init-database.sql: |
+    {{- .Files.Get "init-db/apolloportaldb.sql" | nindent 4 }}
+  {{- end }}
 {{- end }}

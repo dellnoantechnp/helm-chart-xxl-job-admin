@@ -51,7 +51,51 @@ spec:
             items:
               - key: application-github.properties
                 path: application-github.properties
+              {{- if .Values.db.configdb.autoInitDatabase.enabled }}
+              - key: init-database.sql
+                path: init-database.sql
+              {{- end }}
             defaultMode: 420
+      {{- if .Values.db.configdb.autoInitDatabase.enabled }}
+      initContainers:
+        - name: init-database
+          image: "{{ .Values.db.configdb.autoInitDatabase.initContainer.registry }}/{{ .Values.db.configdb.autoInitDatabase.initContainer.repository }}:{{ .Values.db.configdb.autoInitDatabase.initContainer.tag }}"
+          env:
+            - name: MYSQL_HOST
+              value: {{ .Values.db.configdb.host }}
+          command:
+            - bash
+            - "-ec"
+          args:
+            - |
+              echo "INFO: Start to init database."
+              cat > /tmp/.my.cnf << EOF
+              [client]
+              host={{ .Values.db.configdb.host }}
+              user={{ .Values.db.configdb.userName | quote }}
+              password={{ .Values.db.configdb.password | quote }}
+              database={{ .Values.db.configdb.dbName }}
+              EOF
+              echo "INFO: Checking the database, if it's exist ..."
+              if mysql --defaults-file=/tmp/.my.cnf -E --connect-timeout=30 -w -e 'SHOW TABLES FROM {{ .Values.db.configdb.dbName }}' | grep -q : ; then
+                echo "INFO: {{ .Values.db.configdb.dbName }} was exists. skipping to initial SQL table."
+              else
+              #if [[ $? -eq 1 ]]; then
+                echo "INFO: {{ .Values.db.configdb.dbName }} is not exists. creating and init SQL file ..."
+                echo "INFO: CREATE DATABASE"
+                mysql --defaults-file=/tmp/.my.cnf -E --connect-timeout=30 -w -e 'CREATE DATABASE "{{ .Values.db.configdb.dbName }}" DEFAULT CHARSET utf8mb4'
+                echo "INFO: CREATE TABLES"
+                mysql --defaults-file=/tmp/.my.cnf -E --connect-timeout=30 -w {{ .Values.db.configdb.dbName }} < /docker-entrypoint-initdb.d/init-database.sql
+              fi
+              echo "INFO: starting app container ..."
+          volumeMounts:
+            - name: volume-configmap-{{ $configServiceFullName }}
+              mountPath: /tmp/application-github.properties
+              subPath: application-github.properties
+            - name: volume-configmap-{{ $configServiceFullName }}
+              mountPath: /docker-entrypoint-initdb.d/init-database.sql
+              subPath: init-database.sql
+      {{- end }}
       containers:
         - name: {{ .Values.configService.name }}
           image: "{{ .Values.configService.image.repository }}:{{ .Values.configService.image.tag | default .Chart.AppVersion }}"
