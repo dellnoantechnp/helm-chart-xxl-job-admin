@@ -1,3 +1,4 @@
+{{- if .Values.portal.enabled }}
 #
 # Copyright 2021 Apollo Authors
 #
@@ -29,3 +30,4 @@ spec:
   selector:
     app: {{ include "apollo.portal.fullName" . }}
   sessionAffinity: {{ .Values.portal.service.sessionAffinity }}
+{{- end }}

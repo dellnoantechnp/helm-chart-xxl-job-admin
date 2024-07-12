@@ -1,3 +1,4 @@
+{{- if .Values.portal.enabled }}
 #
 # Copyright 2021 Apollo Authors
 #
@@ -42,5 +43,6 @@ subsets:
     ports:
       - protocol: TCP
         port: {{ .Values.portaldb.port }}
+{{- end }}
 {{- end }}
 {{- end }}

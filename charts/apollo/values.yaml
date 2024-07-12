@@ -21,9 +21,9 @@ db:
     port: 3306
     dbName: ApolloConfigDB
     # apolloconfigdb user name
-    userName: "abc"
+    userName: ""
     # apolloconfigdb password
-    password: "abc"
+    password: ""
     connectionStringProperties: characterEncoding=utf8&useSSL=false
 
     ## @param service: create a externalName service for foreign database endpoint
