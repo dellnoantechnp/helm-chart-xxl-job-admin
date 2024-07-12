@@ -9,8 +9,8 @@ metadata:
 data:
   application-github.properties: |
     spring.datasource.url = jdbc:mysql://{{include "apollo.configdb.serviceName" .}}:{{include "apollo.configdb.servicePort" .}}/{{ .Values.db.configdb.dbName }}{{ if .Values.db.configdb.connectionStringProperties }}?{{ .Values.db.configdb.connectionStringProperties }}{{ end }}
-    spring.datasource.username = {{ required "configdb.userName is required!" .Values.db.configdb.userName | quote }}
-    spring.datasource.password = {{ required "configdb.password is required!" .Values.db.configdb.password | quote }}
+    spring.datasource.username = {{ required "configdb.userName is required!" .Values.db.configdb.userName  }}
+    spring.datasource.password = {{ required "configdb.password is required!" .Values.db.configdb.password  }}
     {{- if .Values.adminService.config.contextPath }}
     server.servlet.context-path = {{ .Values.adminService.config.contextPath }}
     {{- end }}
