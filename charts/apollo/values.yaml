@@ -21,9 +21,9 @@ db:
     port: 3306
     dbName: ApolloConfigDB
     # apolloconfigdb user name
-    userName: "abc"
+    userName: ""
     # apolloconfigdb password
-    password: "abc"
+    password: ""
     connectionStringProperties: characterEncoding=utf8&useSSL=false
 
     ## @param service: create a externalName service for foreign database endpoint
@@ -35,8 +35,10 @@ db:
       port: 3306
       type: ClusterIP
 
+    ## @param autoInitDatabase: auto init base table schema.
+    ##
     autoInitDatabase:
-      enabled: true
+      enabled: false
       initContainer:
         registry: "docker.io"
         repository: mysql
@@ -49,9 +51,9 @@ db:
     port: 3306
     dbName: ApolloPortalDB
     # apolloportaldb user name
-    userName: "abc"
+    userName: ""
     # apolloportaldb password
-    password: "abc"
+    password: ""
     connectionStringProperties: characterEncoding=utf8&useSSL=false
 
     ## @param service: create a externalName service for foreign database endpoint
@@ -63,8 +65,10 @@ db:
       port: 3306
       type: ClusterIP
 
+    ## @param autoInitDatabase: auto init base table schema.
+    ##
     autoInitDatabase:
-      enabled: true
+      enabled: false
       initContainer:
         registry: "docker.io"
         repository: mysql
@@ -196,7 +200,7 @@ adminService:
 portal:
   ## @param enabled: boolean value for install portal web-ui.
   ##
-  enabled: true
+  enabled: false
 
   name: apollo-portal
   fullNameOverride: ""
