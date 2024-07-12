@@ -65,23 +65,6 @@ entries:
     urls:
     - https://github.com/dellnoantechnp/helm-chart-xxl-job-admin/releases/download/apollo-0.7.1/apollo-0.7.1.tgz
     version: 0.7.1
-  apollo-portal:
-  - apiVersion: v2
-    appVersion: 2.2.0
-    created: "2024-07-11T14:31:45.553567951Z"
-    description: A Helm chart for Apollo Portal
-    digest: e5f876f237c5196c17674ed7707657f37fe6fb2c3bdc9a5feab06cbbcdf271c7
-    home: https://github.com/apolloconfig/apollo
-    icon: https://raw.githubusercontent.com/apolloconfig/apollo/master/apollo-portal/src/main/resources/static/img/logo-simple.png
-    maintainers:
-    - email: nobodyiam@gmail.com
-      name: nobodyiam
-      url: https://github.com/nobodyiam
-    name: apollo-portal
-    type: application
-    urls:
-    - https://github.com/dellnoantechnp/helm-chart-xxl-job-admin/releases/download/apollo-portal-0.7.0/apollo-portal-0.7.0.tgz
-    version: 0.7.0
   canal-server:
   - annotations:
       artifacthub.io/links: |
