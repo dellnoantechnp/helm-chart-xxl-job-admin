@@ -1,8 +1,9 @@
+{{- if .Values.portal.enabled }}
 {{- if .Values.portal.serviceMonitor.enabled }}
 apiVersion: monitoring.coreos.com/v1
 kind: ServiceMonitor
 metadata:
-  name: {{ template "common.names.fullname" . }}
+  name: {{ include "apollo.portal.fullName" . }}
   {{- if .Values.portal.serviceMonitor.namespace }}
   namespace: {{ .Values.portal.serviceMonitor.namespace }}
   {{- else }}
@@ -50,4 +51,5 @@ spec:
   namespaceSelector:
     matchNames:
       - {{ template "apollo.release.namespace" . }}
+{{- end }}
 {{- end }}

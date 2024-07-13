@@ -2,7 +2,7 @@
 apiVersion: monitoring.coreos.com/v1
 kind: ServiceMonitor
 metadata:
-  name: {{ template "common.names.fullname" . }}
+  name: {{ include "apollo.adminService.fullName" . }}
   {{- if .Values.adminService.serviceMonitor.namespace }}
   namespace: {{ .Values.adminService.serviceMonitor.namespace }}
   {{- else }}
