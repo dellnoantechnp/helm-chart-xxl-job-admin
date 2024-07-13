@@ -14,7 +14,7 @@
   <img width="250" alt="Yearning" height="118" src="https://raw.githubusercontent.com/dellnoantechnp/helm-chart-xxl-job-admin/main/assets/stacks/yearning/img/logo.jpg">
 </p>
 <p align="center">
-  <img width="250" alt="Apollo" height="101" src="https://raw.githubusercontent.com/dellnoantechnp/helm-chart-xxl-job-admin/main/assets/stacks/apollo/img/logo-simple.png">
+  <img width="250" alt="Apollo" height="90" src="https://raw.githubusercontent.com/dellnoantechnp/helm-chart-xxl-job-admin/main/assets/stacks/apollo/img/logo-simple.png">
 </p>
 
 # This helm chart repository include charts:
