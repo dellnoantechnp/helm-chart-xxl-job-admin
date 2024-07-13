@@ -19,6 +19,7 @@ apiVersion: v1
 metadata:
   name: {{ include "apollo.portal.serviceName" . }}
   labels:
+    app.kubernetes.io/component: apollo-portal
     {{- include "apollo.portal.labels" . | nindent 4 }}
 spec:
   type: {{ .Values.portal.service.type }}

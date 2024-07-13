@@ -18,6 +18,7 @@ kind: Service
 metadata:
   name: {{ include "apollo.adminService.serviceName" . }}
   labels:
+    app.kubernetes.io/component: adminService
     {{- include "apollo.service.labels" . | nindent 4 }}
 spec:
 {{- with .Values.adminService.service }}

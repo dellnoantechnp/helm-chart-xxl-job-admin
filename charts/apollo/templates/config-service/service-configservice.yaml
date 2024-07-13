@@ -18,6 +18,7 @@ kind: Service
 metadata:
   name: {{ include "apollo.configService.serviceName" . }}
   labels:
+    app.kubernetes.io/component: configService
     {{- include "apollo.service.labels" . | nindent 4 }}
 spec:
 {{- with .Values.configService.service }}
