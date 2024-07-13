@@ -11,6 +11,10 @@
 <p align="center">
   <img width="250" alt="kafka" height="130" src="https://kafka.apache.org/logos/kafka_logo--simple.png">
   <img width="250" alt="canal-server" height="150" src="https://raw.githubusercontent.com/dellnoantechnp/helm-chart-xxl-job-admin/main/assets/stacks/canal/img/canal-512x512.png">
+  <img width="250" alt="Yearning" height="118" src="https://raw.githubusercontent.com/dellnoantechnp/helm-chart-xxl-job-admin/main/assets/stacks/yearning/img/logo.jpg">
+</p>
+<p align="center">
+  <img width="250" alt="Apollo" height="101" src="https://raw.githubusercontent.com/dellnoantechnp/helm-chart-xxl-job-admin/main/assets/stacks/apollo/img/logo-simple.png">
 </p>
 
 # This helm chart repository include charts:
@@ -27,6 +31,12 @@
 - [x] Kadalu-Operator-*v1.1.7*: 
   - Project: [https://github.com/kadalu/kadalu](https://github.com/kadalu/kadalu)
   - About: A lightweight Persistent storage solution for Kubernetes using GlusterFS in background. 
+- [x] Yearning-*v3.1.7*
+  - Project: [https://github.com/cookieY/Yearning](https://github.com/cookieY/Yearning)
+  - About: A most popular sql audit platform for mysql.
+- [x] Apollo-*v2.2.0*
+  - Project: [https://github.com/apolloconfig/apollo](https://github.com/apolloconfig/apollo)
+  - About: Apollo is a reliable configuration management system suitable for microservice configuration management scenarios.
 
 
 
