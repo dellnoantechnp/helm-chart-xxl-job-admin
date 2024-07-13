@@ -30,7 +30,7 @@ spec:
       {{- end }}
       app.kubernetes.io/component: adminService
   endpoints:
-    - port: {{ .Values.adminService.service.port | quote }}
+    - port: http
       path: {{ .Values.adminService.serviceMonitor.metricPath | default "/metrics" }}
       {{- if .Values.adminService.serviceMonitor.interval }}
       interval: {{ .Values.adminService.serviceMonitor.interval }}

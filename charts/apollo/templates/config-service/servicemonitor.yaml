@@ -30,7 +30,7 @@ spec:
       {{- end }}
       app.kubernetes.io/component: configService
   endpoints:
-    - port: {{ .Values.configService.service.port | quote }}
+    - port: http
       path: {{ .Values.configService.serviceMonitor.metricPath | default "/metrics" }}
       {{- if .Values.configService.serviceMonitor.interval }}
       interval: {{ .Values.configService.serviceMonitor.interval }}
