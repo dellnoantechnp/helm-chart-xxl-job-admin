@@ -212,3 +212,15 @@ Service port for portaldb
 {{- .Values.db.portaldb.port -}}
 {{- end -}}
 {{- end -}}
+
+
+{{/*
+Return Kadalu-operator Namespace to use
+*/}}
+{{- define "apollo.release.namespace" -}}
+{{- if .Values.namespaceOverride -}}
+    {{- .Values.namespaceOverride -}}
+{{- else -}}
+    {{- .Release.Namespace -}}
+{{- end -}}
+{{- end -}}

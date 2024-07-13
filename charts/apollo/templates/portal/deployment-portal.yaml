@@ -20,11 +20,13 @@ metadata:
   {{- $portalFullName := include "apollo.portal.fullName" . }}
   name: {{ $portalFullName }}
   labels:
+    app.kubernetes.io/component: apollo-portal
     {{- include "apollo.portal.labels" . | nindent 4 }}
 spec:
   replicas: {{ .Values.portal.replicaCount }}
   selector:
     matchLabels:
+      app.kubernetes.io/component: apollo-portal
       app: {{ $portalFullName }}
   {{- with .Values.portal.strategy }}
   strategy:
@@ -33,7 +35,9 @@ spec:
   template:
     metadata:
       labels:
+        app.kubernetes.io/component: apollo-portal
         app: {{ $portalFullName }}
+        {{- include "apollo.portal.labels" . | nindent 8 }}
       annotations:
         checksum/config: {{ include (print $.Template.BasePath "/portal/configmap-portal.yaml") . | sha256sum }}
       {{- with .Values.portal.annotations }}

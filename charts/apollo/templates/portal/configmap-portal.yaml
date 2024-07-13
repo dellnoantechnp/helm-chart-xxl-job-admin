@@ -5,6 +5,9 @@ metadata:
   {{- $portalFullName := include "apollo.portal.fullName" . }}
   {{- $serviceUrl := include "apollo.configService.serviceUrl" . }}
   name: {{ $portalFullName }}
+  labels:
+    app.kubernetes.io/component: apollo-portal
+    {{- include "apollo.portal.labels" . | nindent 4 }}
 data:
   application-github.properties: |
     spring.datasource.url = jdbc:mysql://{{include "apollo.portaldb.serviceName" .}}:{{include "apollo.portaldb.servicePort" .}}/{{ .Values.db.portaldb.dbName }}{{ if .Values.db.portaldb.connectionStringProperties }}?{{ .Values.db.portaldb.connectionStringProperties }}{{ end }}

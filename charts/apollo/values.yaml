@@ -21,9 +21,9 @@ db:
     port: 3306
     dbName: ApolloConfigDB
     # apolloconfigdb user name
-    userName: "abc"
+    userName: ""
     # apolloconfigdb password
-    password: "abc"
+    password: ""
     connectionStringProperties: characterEncoding=utf8&useSSL=false
 
     ## @param service: create a externalName service for foreign database endpoint
@@ -51,9 +51,9 @@ db:
     port: 3306
     dbName: ApolloPortalDB
     # apolloportaldb user name
-    userName: "abc"
+    userName: ""
     # apolloportaldb password
-    password: "abc"
+    password: ""
     connectionStringProperties: characterEncoding=utf8&useSSL=false
 
     ## @param service: create a externalName service for foreign database endpoint
@@ -118,7 +118,7 @@ configService:
     profiles: "github,kubernetes"
     # override apollo.config-service.url: config service url to be accessed by apollo-client 
     configServiceUrlOverride: ""
-    # override apollo.admin-service.url: admin service url to be accessed by apollo-portal 
+    # override apollo.admin-service.url: admin service url to be accessed by apollo-portal
     adminServiceUrlOverride: ""
     # specify the context path, e.g. /apollo
     contextPath: ""
@@ -136,6 +136,46 @@ configService:
   tolerations: []
   affinity: {}
   annotations: {}
+
+  ## Prometheus Operator ServiceMonitor configuration
+  ##
+  serviceMonitor:
+    ## @param metrics.serviceMonitor.enabled Create ServiceMonitor Resource for scraping metrics using Prometheus Operator
+    ##
+    enabled: false
+    ## @param metrics.serviceMonitor.namespace Namespace for the ServiceMonitor Resource (defaults to the Release Namespace)
+    ##
+    namespace: ""
+    ## @param metrics.serviceMonitor.interval Interval at which metrics should be scraped.
+    ## ref: https://github.com/coreos/prometheus-operator/blob/master/Documentation/api.md#endpoint
+    ##
+    interval: ""
+    ## @param metrics.serviceMonitor.scrapeTimeout Timeout after which the scrape is ended
+    ## ref: https://github.com/coreos/prometheus-operator/blob/master/Documentation/api.md#endpoint
+    ##
+    scrapeTimeout: ""
+    ## @param metrics.serviceMonitor.additionalLabels Additional labels that can be used so ServiceMonitor will be discovered by Prometheus
+    ##
+    additionalLabels: { }
+    ## @param metricPath specify metric path. default /metrics
+    ##
+    metricPath: /prometheus
+    ## @param metrics.serviceMonitor.selector Prometheus instance selector labels
+    ## ref: https://github.com/bitnami/charts/tree/master/bitnami/prometheus-operator#prometheus-configuration
+    ##
+    selector: { }
+    ## @param metrics.serviceMonitor.relabelings RelabelConfigs to apply to samples before scraping
+    ##
+    relabelings: [ ]
+    ## @param metrics.serviceMonitor.metricRelabelings MetricRelabelConfigs to apply to samples before ingestion
+    ##
+    metricRelabelings: [ ]
+    ## @param metrics.serviceMonitor.honorLabels Specify honorLabels parameter to add the scrape endpoint
+    ##
+    honorLabels: false
+    ## @param metrics.serviceMonitor.jobLabel The name of the label on the target service to use as the job name in prometheus.
+    ##
+    jobLabel: ""
 
 adminService:
   name: apollo-adminservice
@@ -197,10 +237,50 @@ adminService:
   affinity: {}
   annotations: {}
 
+  ## Prometheus Operator ServiceMonitor configuration
+  ##
+  serviceMonitor:
+    ## @param metrics.serviceMonitor.enabled Create ServiceMonitor Resource for scraping metrics using Prometheus Operator
+    ##
+    enabled: false
+    ## @param metrics.serviceMonitor.namespace Namespace for the ServiceMonitor Resource (defaults to the Release Namespace)
+    ##
+    namespace: ""
+    ## @param metrics.serviceMonitor.interval Interval at which metrics should be scraped.
+    ## ref: https://github.com/coreos/prometheus-operator/blob/master/Documentation/api.md#endpoint
+    ##
+    interval: ""
+    ## @param metrics.serviceMonitor.scrapeTimeout Timeout after which the scrape is ended
+    ## ref: https://github.com/coreos/prometheus-operator/blob/master/Documentation/api.md#endpoint
+    ##
+    scrapeTimeout: ""
+    ## @param metrics.serviceMonitor.additionalLabels Additional labels that can be used so ServiceMonitor will be discovered by Prometheus
+    ##
+    additionalLabels: { }
+    ## @param metricPath specify metric path. default /metrics
+    ##
+    metricPath: /prometheus
+    ## @param metrics.serviceMonitor.selector Prometheus instance selector labels
+    ## ref: https://github.com/bitnami/charts/tree/master/bitnami/prometheus-operator#prometheus-configuration
+    ##
+    selector: { }
+    ## @param metrics.serviceMonitor.relabelings RelabelConfigs to apply to samples before scraping
+    ##
+    relabelings: [ ]
+    ## @param metrics.serviceMonitor.metricRelabelings MetricRelabelConfigs to apply to samples before ingestion
+    ##
+    metricRelabelings: [ ]
+    ## @param metrics.serviceMonitor.honorLabels Specify honorLabels parameter to add the scrape endpoint
+    ##
+    honorLabels: false
+    ## @param metrics.serviceMonitor.jobLabel The name of the label on the target service to use as the job name in prometheus.
+    ##
+    jobLabel: ""
+
 portal:
   ## @param enabled: boolean value for install portal web-ui.
   ##
-  enabled: true
+  enabled: false
 
   name: apollo-portal
   fullNameOverride: ""
@@ -247,7 +327,7 @@ portal:
 
     ## @param envs: specify the env names, e.g. dev,pro
     ##
-    envs: "dev, prod"
+    envs: "dev"
 
     ## @param metaServers: specify the meta servers, e.g.
     ## dev: http://apollo-configservice-dev:8080
@@ -261,3 +341,44 @@ portal:
     ## @param files: extra config files for apollo-portal, e.g. application-ldap.yml
     ##
     files: { }
+
+
+  ## Prometheus Operator ServiceMonitor configuration
+  ##
+  serviceMonitor:
+    ## @param metrics.serviceMonitor.enabled Create ServiceMonitor Resource for scraping metrics using Prometheus Operator
+    ##
+    enabled: false
+    ## @param metrics.serviceMonitor.namespace Namespace for the ServiceMonitor Resource (defaults to the Release Namespace)
+    ##
+    namespace: ""
+    ## @param metrics.serviceMonitor.interval Interval at which metrics should be scraped.
+    ## ref: https://github.com/coreos/prometheus-operator/blob/master/Documentation/api.md#endpoint
+    ##
+    interval: ""
+    ## @param metrics.serviceMonitor.scrapeTimeout Timeout after which the scrape is ended
+    ## ref: https://github.com/coreos/prometheus-operator/blob/master/Documentation/api.md#endpoint
+    ##
+    scrapeTimeout: ""
+    ## @param metrics.serviceMonitor.additionalLabels Additional labels that can be used so ServiceMonitor will be discovered by Prometheus
+    ##
+    additionalLabels: { }
+    ## @param metricPath specify metric path. default /metrics
+    ##
+    metricPath: /prometheus
+    ## @param metrics.serviceMonitor.selector Prometheus instance selector labels
+    ## ref: https://github.com/bitnami/charts/tree/master/bitnami/prometheus-operator#prometheus-configuration
+    ##
+    selector: { }
+    ## @param metrics.serviceMonitor.relabelings RelabelConfigs to apply to samples before scraping
+    ##
+    relabelings: [ ]
+    ## @param metrics.serviceMonitor.metricRelabelings MetricRelabelConfigs to apply to samples before ingestion
+    ##
+    metricRelabelings: [ ]
+    ## @param metrics.serviceMonitor.honorLabels Specify honorLabels parameter to add the scrape endpoint
+    ##
+    honorLabels: false
+    ## @param metrics.serviceMonitor.jobLabel The name of the label on the target service to use as the job name in prometheus.
+    ##
+    jobLabel: ""

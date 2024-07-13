@@ -19,6 +19,7 @@ apiVersion: apps/v1
 metadata:
   name: {{ $configServiceFullName }}
   labels:
+    app.kubernetes.io/component: configService
     {{- include "apollo.service.labels" . | nindent 4 }}
 spec:
   replicas: {{ .Values.configService.replicaCount }}
@@ -33,6 +34,8 @@ spec:
     metadata:
       labels:
         app: {{ $configServiceFullName }}
+        app.kubernetes.io/component: configService
+        {{- include "apollo.service.labels" . | nindent 8 }}
       annotations:
         checksum/config: {{ include (print $.Template.BasePath "/config-service/configmap-configservice.yaml") . | sha256sum }}
       {{- with .Values.configService.annotations }}

@@ -1,0 +1,53 @@
+{{- if .Values.adminService.serviceMonitor.enabled }}
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: {{ template "common.names.fullname" . }}
+  {{- if .Values.adminService.serviceMonitor.namespace }}
+  namespace: {{ .Values.adminService.serviceMonitor.namespace }}
+  {{- else }}
+  namespace: {{ .Release.Namespace }}
+  {{- end }}
+  labels: {{- include "common.labels.standard" . | nindent 4 }}
+    app.kubernetes.io/component: adminService
+    {{- if .Values.adminService.serviceMonitor.additionalLabels }}
+    {{- include "common.tplvalues.render" ( dict "value" .Values.adminService.serviceMonitor.additionalLabels "context" $ ) | nindent 4 }}
+    {{- end }}
+    {{- if .Values.commonLabels }}
+    {{- include "common.tplvalues.render" ( dict "value" .Values.commonLabels "context" $ ) | nindent 4 }}
+    {{- end }}
+  {{- if .Values.commonAnnotations }}
+  annotations: {{- include "common.tplvalues.render" ( dict "value" .Values.commonAnnotations "context" $ ) | nindent 4 }}
+  {{- end }}
+spec:
+  {{- if .Values.adminService.serviceMonitor.jobLabel }}
+  jobLabel: {{ .Values.adminService.serviceMonitor.jobLabel }}
+  {{- end }}
+  selector:
+    matchLabels: {{- include "common.labels.matchLabels" . | nindent 6 }}
+      {{- if .Values.adminService.serviceMonitor.selector }}
+      {{- include "common.tplvalues.render" (dict "value" .Values.adminService.serviceMonitor.selector "context" $) | nindent 6 }}
+      {{- end }}
+      app.kubernetes.io/component: adminService
+  endpoints:
+    - port: {{ .Values.adminService.service.port }}
+      path: {{ .Values.adminService.serviceMonitor.metricPath | default "/metrics" }}
+      {{- if .Values.adminService.serviceMonitor.interval }}
+      interval: {{ .Values.adminService.serviceMonitor.interval }}
+      {{- end }}
+      {{- if .Values.adminService.serviceMonitor.scrapeTimeout }}
+      scrapeTimeout: {{ .Values.adminService.serviceMonitor.scrapeTimeout }}
+      {{- end }}
+      {{- if .Values.adminService.serviceMonitor.relabelings }}
+      relabelings: {{- include "common.tplvalues.render" ( dict "value" .Values.adminService.serviceMonitor.relabelings "context" $) | nindent 6 }}
+      {{- end }}
+      {{- if .Values.adminService.serviceMonitor.metricRelabelings }}
+      metricRelabelings: {{- include "common.tplvalues.render" ( dict "value" .Values.adminService.serviceMonitor.metricRelabelings "context" $) | nindent 6 }}
+      {{- end }}
+      {{- if .Values.adminService.serviceMonitor.honorLabels }}
+      honorLabels: {{ .Values.adminService.serviceMonitor.honorLabels }}
+      {{- end }}
+  namespaceSelector:
+    matchNames:
+      - {{ template "apollo.release.namespace" . }}
+{{- end }}

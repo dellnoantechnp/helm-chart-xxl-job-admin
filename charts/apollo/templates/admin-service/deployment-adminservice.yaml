@@ -19,6 +19,7 @@ metadata:
   {{- $adminServiceFullName := include "apollo.adminService.fullName" . }}
   name: {{ $adminServiceFullName }}
   labels:
+    app.kubernetes.io/component: adminService
     {{- include "apollo.service.labels" . | nindent 4 }}
 spec:
   replicas: {{ .Values.adminService.replicaCount }}
@@ -32,6 +33,8 @@ spec:
   template:
     metadata:
       labels:
+        app.kubernetes.io/component: adminService
+        {{- include "apollo.service.labels" . | nindent 8 }}
         app: {{ $adminServiceFullName }}
       annotations:
         checksum/config: {{ include (print $.Template.BasePath "/admin-service/configmap-adminservice.yaml") . | sha256sum }}
