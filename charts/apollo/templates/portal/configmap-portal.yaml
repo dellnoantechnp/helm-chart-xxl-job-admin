@@ -3,6 +3,7 @@ kind: ConfigMap
 apiVersion: v1
 metadata:
   {{- $portalFullName := include "apollo.portal.fullName" . }}
+  {{- $serviceUrl := include "apollo.configService.serviceUrl" . }}
   name: {{ $portalFullName }}
 data:
   application-github.properties: |
@@ -19,9 +20,17 @@ data:
     {{- range $env, $address := .Values.portal.config.metaServers }}
     {{ $env }}.meta = {{ $address }}
     {{- end }}
+
     {{- if not .Values.portal.config.metaServers }}
-    {{ .Values.portal.config.envs }}: {{ include "apollo.configService.serviceUrl" . }}{{ .Values.configService.config.contextPath }}
+    {{- if contains "," .Values.portal.config.envs }}
+    {{- range $index, $env := (regexSplit "," .Values.portal.config.envs -1) }}
+    {{ $env }} = {{ $serviceUrl }}{{ $.Values.configService.config.contextPath }}
     {{- end }}
+    {{- else }}
+    {{ .Values.portal.config.envs }} = {{ $serviceUrl }}{{ .Values.configService.config.contextPath }}
+    {{- end }}
+    {{- end }}
+
     {{- range $fileName, $content := .Values.portal.config.files }}
     {{ $fileName | nindent 4 }}: |
     {{ $content | nindent 4 }}
