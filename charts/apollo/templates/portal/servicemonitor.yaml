@@ -31,7 +31,7 @@ spec:
       {{- end }}
       app.kubernetes.io/component: apollo-portal
   endpoints:
-    - port: {{ .Values.portal.service.port }}
+    - port: {{ .Values.portal.service.port | quote}}
       path: {{ .Values.portal.serviceMonitor.metricPath | default "/metrics" }}
       {{- if .Values.portal.serviceMonitor.interval }}
       interval: {{ .Values.portal.serviceMonitor.interval }}
