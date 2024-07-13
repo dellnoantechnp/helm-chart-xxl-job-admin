@@ -21,9 +21,9 @@ db:
     port: 3306
     dbName: ApolloConfigDB
     # apolloconfigdb user name
-    userName: ""
+    userName: "abc"
     # apolloconfigdb password
-    password: ""
+    password: "abc"
     connectionStringProperties: characterEncoding=utf8&useSSL=false
 
     ## @param service: create a externalName service for foreign database endpoint
@@ -51,9 +51,9 @@ db:
     port: 3306
     dbName: ApolloPortalDB
     # apolloportaldb user name
-    userName: ""
+    userName: "abc"
     # apolloportaldb password
-    password: ""
+    password: "abc"
     connectionStringProperties: characterEncoding=utf8&useSSL=false
 
     ## @param service: create a externalName service for foreign database endpoint
@@ -200,7 +200,7 @@ adminService:
 portal:
   ## @param enabled: boolean value for install portal web-ui.
   ##
-  enabled: false
+  enabled: true
 
   name: apollo-portal
   fullNameOverride: ""
@@ -247,7 +247,7 @@ portal:
 
     ## @param envs: specify the env names, e.g. dev,pro
     ##
-    envs: "dev"
+    envs: "dev, prod"
 
     ## @param metaServers: specify the meta servers, e.g.
     ## dev: http://apollo-configservice-dev:8080

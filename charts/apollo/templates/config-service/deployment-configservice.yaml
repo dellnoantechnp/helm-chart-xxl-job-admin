@@ -20,8 +20,6 @@ metadata:
   name: {{ $configServiceFullName }}
   labels:
     {{- include "apollo.service.labels" . | nindent 4 }}
-  annotations:
-    checksum/config: {{ include (print $.Template.BasePath "/config-service/configmap-configservice.yaml") . | sha256sum }}
 spec:
   replicas: {{ .Values.configService.replicaCount }}
   selector:
@@ -35,8 +33,9 @@ spec:
     metadata:
       labels:
         app: {{ $configServiceFullName }}
-      {{- with .Values.configService.annotations }}
       annotations:
+        checksum/config: {{ include (print $.Template.BasePath "/config-service/configmap-configservice.yaml") . | sha256sum }}
+      {{- with .Values.configService.annotations }}
         {{- toYaml . | nindent 8 }}
       {{- end }}
     spec:

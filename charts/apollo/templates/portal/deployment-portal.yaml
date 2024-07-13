@@ -21,8 +21,6 @@ metadata:
   name: {{ $portalFullName }}
   labels:
     {{- include "apollo.portal.labels" . | nindent 4 }}
-  annotations:
-    checksum/config: {{ include (print $.Template.BasePath "/portal/configmap-portal.yaml") . | sha256sum }}
 spec:
   replicas: {{ .Values.portal.replicaCount }}
   selector:
@@ -36,8 +34,9 @@ spec:
     metadata:
       labels:
         app: {{ $portalFullName }}
-      {{- with .Values.portal.annotations }}
       annotations:
+        checksum/config: {{ include (print $.Template.BasePath "/portal/configmap-portal.yaml") . | sha256sum }}
+      {{- with .Values.portal.annotations }}
         {{- toYaml . | nindent 8 }}
       {{- end }}
     spec:
