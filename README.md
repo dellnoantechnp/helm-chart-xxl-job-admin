@@ -20,7 +20,7 @@
 # This helm chart repository include charts:
 - [x] xxl-job-admin web
 - [x] rocketmq
-- [x] prometheusAlert-*v4.9*
+- [x] prometheusAlert-*v4.9.1*
   - Project: [https://github.com/feiyu563/PrometheusAlert](https://github.com/feiyu563/PrometheusAlert)
   - About: A Alert-Center for Prometheus Grafana and Graylog, alert message deliver to Wechat/Feishu/Lark/email/DingTalk/workWechat/webhook/telegram ...
 - [x] kafka-*2.8.1*
@@ -28,7 +28,7 @@
 - [x] canal-server-*1.1.6*  
   - Project: [https://github.com/alibaba/canal](https://github.com/alibaba/canal)
   - About: Subscription MySQL binlog to mysql/kafka/es/hbase/rocketMQ. 
-- [x] Kadalu-Operator-*v1.1.7*: 
+- [x] Kadalu-Operator-*v1.1.7*
   - Project: [https://github.com/kadalu/kadalu](https://github.com/kadalu/kadalu)
   - About: A lightweight Persistent storage solution for Kubernetes using GlusterFS in background. 
 - [x] Yearning-*v3.1.7*
