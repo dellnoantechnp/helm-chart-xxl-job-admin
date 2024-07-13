@@ -22,12 +22,13 @@ data:
     {{- end }}
 
     {{- if not .Values.portal.config.metaServers }}
+    {{ "# Auto generator metaServers" }}
     {{- if contains "," .Values.portal.config.envs }}
     {{- range $index, $env := (regexSplit "," .Values.portal.config.envs -1) }}
-    {{ $env }} = {{ $serviceUrl }}{{ $.Values.configService.config.contextPath }}
+    {{ trim $env }}.meta = {{ $serviceUrl }}{{ $.Values.configService.config.contextPath }}
     {{- end }}
     {{- else }}
-    {{ .Values.portal.config.envs }} = {{ $serviceUrl }}{{ .Values.configService.config.contextPath }}
+    {{ trim .Values.portal.config.envs }}.meta = {{ $serviceUrl }}{{ .Values.configService.config.contextPath }}
     {{- end }}
     {{- end }}
 

@@ -16,7 +16,8 @@ maintainers:
   url: https://github.com/dellnoantechnp/helm-chart-xxl-job-admin
 name: apollo
 type: application
-version: 0.8.2
+kubeVersion: ">=1.18.0"
+version: 0.8.3
 dependencies:
   - name: common
     repository: oci://registry-1.docker.io/bitnamicharts
