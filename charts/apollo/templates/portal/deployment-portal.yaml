@@ -90,11 +90,8 @@ spec:
               if mysql --defaults-file=/tmp/.my.cnf -E --connect-timeout=30 -w -e 'SHOW TABLES FROM {{ .Values.db.portaldb.dbName }}' | grep -q : ; then
                 echo "INFO: {{ .Values.db.portaldb.dbName }} was exists. skipping to initial SQL table."
               else
-              #if [[ $? -eq 1 ]]; then
                 echo "INFO: {{ .Values.db.portaldb.dbName }} is not exists. creating and init SQL file ..."
-                echo "INFO: CREATE DATABASE"
-                mysql --defaults-file=/tmp/.my.cnf -E --connect-timeout=30 -w -e 'CREATE DATABASE "{{ .Values.db.portaldb.dbName }}" DEFAULT CHARSET utf8mb4'
-                echo "INFO: CREATE TABLES"
+                echo "INFO: Creating TABLES ..."
                 mysql --defaults-file=/tmp/.my.cnf -E --connect-timeout=30 -w {{ .Values.db.portaldb.dbName }} < /docker-entrypoint-initdb.d/init-database.sql
               fi
               echo "INFO: starting app container ..."

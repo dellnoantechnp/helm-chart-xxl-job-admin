@@ -169,13 +169,42 @@ configService:
     relabelings: [ ]
     ## @param metrics.serviceMonitor.metricRelabelings MetricRelabelConfigs to apply to samples before ingestion
     ##
-    metricRelabelings: [ ]
+    metricRelabelings:
+      - action: replace
+        sourceLabels:
+          - __meta_kubernetes_pod_label_app.kubernetes.io_component
+        separator: ";"
+        replacement: ".*"
+        targetLabel: component
     ## @param metrics.serviceMonitor.honorLabels Specify honorLabels parameter to add the scrape endpoint
     ##
     honorLabels: false
     ## @param metrics.serviceMonitor.jobLabel The name of the label on the target service to use as the job name in prometheus.
     ##
     jobLabel: ""
+
+  ## Prometheus Operator PrometheusRule configuration
+  ##
+  prometheusRule:
+    ## @param metrics.prometheusRule.enabled Create a PrometheusRule for Prometheus Operator
+    ##
+    enabled: false
+    ## @param metrics.prometheusRule.namespace Namespace for the PrometheusRule Resource (defaults to the Release Namespace)
+    ##
+    namespace: ""
+    ## @param metrics.prometheusRule.additionalLabels Additional labels that can be used so PrometheusRule will be discovered by Prometheus
+    ##
+    additionalLabels: { }
+    ## @param metrics.prometheusRule.rules PrometheusRule definitions
+    ##  - alert: RequestExceptionTooMany
+    ##    annotations:
+    ##      subject: Apollo adminService too many exceptions on http request.
+    ##      message: The metric http_server_requests_seconds_count has too many code 5xx exception, firing exception is {{ $labels.exception }} to {{ $labels.uri }}.
+    ##    expr: sum(increase(http_server_requests_seconds_count{component="configService", status="500"}[5m])) by (exception, uri) > 10
+    ##    for: 5m
+    ##    labels:
+    ##      severity: warning
+
 
 adminService:
   name: apollo-adminservice
@@ -269,13 +298,52 @@ adminService:
     relabelings: [ ]
     ## @param metrics.serviceMonitor.metricRelabelings MetricRelabelConfigs to apply to samples before ingestion
     ##
-    metricRelabelings: [ ]
+    metricRelabelings:
+      - action: replace
+        sourceLabels:
+          - __meta_kubernetes_pod_label_app.kubernetes.io_component
+        separator: ";"
+        replacement: ".*"
+        targetLabel: component
     ## @param metrics.serviceMonitor.honorLabels Specify honorLabels parameter to add the scrape endpoint
     ##
     honorLabels: false
     ## @param metrics.serviceMonitor.jobLabel The name of the label on the target service to use as the job name in prometheus.
     ##
     jobLabel: ""
+
+  ## Prometheus Operator PrometheusRule configuration
+  ##
+  prometheusRule:
+    ## @param metrics.prometheusRule.enabled Create a PrometheusRule for Prometheus Operator
+    ##
+    enabled: false
+    ## @param metrics.prometheusRule.namespace Namespace for the PrometheusRule Resource (defaults to the Release Namespace)
+    ##
+    namespace: ""
+    ## @param metrics.prometheusRule.additionalLabels Additional labels that can be used so PrometheusRule will be discovered by Prometheus
+    ##
+    additionalLabels: { }
+    ## @param metrics.prometheusRule.rules PrometheusRule definitions
+    ##  - alert: RequestExceptionTooMany
+    ##    annotations:
+    ##      subject: Apollo adminService too many exceptions on http request.
+    ##      message: The metric http_server_requests_seconds_count has too many code 5xx exception, firing exception is {{ $labels.exception }} to {{ $labels.uri }}.
+    ##    expr: sum(increase(http_server_requests_seconds_count{component="adminService", status="500"}[5m])) by (exception, uri) > 10
+    ##    for: 5m
+    ##    labels:
+    ##      severity: warning
+    ##
+    rules:
+      - alert: RequestExceptionTooMany
+        annotations:
+          subject: Apollo adminService too many exceptions on http request.
+          message: The metric http_server_requests_seconds_count has too many code 5xx exception, firing exception is {{ $labels.exception }} to {{ $labels.uri }}.
+        expr: sum(increase(http_server_requests_seconds_count{component="adminService", status="500"}[5m])) by (exception, uri) > 10
+        for: 5m
+        labels:
+          severity: warning
+
 
 portal:
   ## @param enabled: boolean value for install portal web-ui.
@@ -375,10 +443,39 @@ portal:
     relabelings: [ ]
     ## @param metrics.serviceMonitor.metricRelabelings MetricRelabelConfigs to apply to samples before ingestion
     ##
-    metricRelabelings: [ ]
+    metricRelabelings:
+      - action: replace
+        sourceLabels:
+          - __meta_kubernetes_pod_label_app.kubernetes.io_component
+        separator: ";"
+        replacement: ".*"
+        targetLabel: component
     ## @param metrics.serviceMonitor.honorLabels Specify honorLabels parameter to add the scrape endpoint
     ##
     honorLabels: false
     ## @param metrics.serviceMonitor.jobLabel The name of the label on the target service to use as the job name in prometheus.
     ##
     jobLabel: ""
+
+  ## Prometheus Operator PrometheusRule configuration
+  ##
+  prometheusRule:
+    ## @param metrics.prometheusRule.enabled Create a PrometheusRule for Prometheus Operator
+    ##
+    enabled: false
+    ## @param metrics.prometheusRule.namespace Namespace for the PrometheusRule Resource (defaults to the Release Namespace)
+    ##
+    namespace: ""
+    ## @param metrics.prometheusRule.additionalLabels Additional labels that can be used so PrometheusRule will be discovered by Prometheus
+    ##
+    additionalLabels: { }
+    ## @param metrics.prometheusRule.rules PrometheusRule definitions
+    ##  - alert: RequestExceptionTooMany
+    ##    annotations:
+    ##      subject: Apollo adminService too many exceptions on http request.
+    ##      message: The metric http_server_requests_seconds_count has too many code 5xx exception, firing exception is {{ $labels.exception }} to {{ $labels.uri }}.
+    ##    expr: sum(increase(http_server_requests_seconds_count{component="apollo-portal", status="500"}[5m])) by (exception, uri) > 10
+    ##    for: 5m
+    ##    labels:
+    ##      severity: warning
+    ##

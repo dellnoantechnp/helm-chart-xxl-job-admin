@@ -1,0 +1,29 @@
+{{- if and .Values.configService.serviceMonitor.enabled .Values.configService.prometheusRule.enabled .Values.configService.prometheusRule.rules }}
+{{- with .Values.configService }}
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: {{ include "apollo.configService.fullName" $ }}
+  {{- if .prometheusRule.namespace }}
+  namespace: {{ .prometheusRule.namespace }}
+  {{- else }}
+  namespace: {{ $.Release.Namespace }}
+  {{- end }}
+  labels: {{- include "common.labels.standard" $ | nindent 4 }}
+    app.kubernetes.io/component: configService
+    {{- if $.Values.commonLabels }}
+    {{- include "common.tplvalues.render" ( dict "value" .Values.commonLabels "context" $ ) | nindent 4 }}
+    {{- end }}
+    {{- if .prometheusRule.additionalLabels }}
+    {{- include "common.tplvalues.render" ( dict "value" .prometheusRule.additionalLabels "context" $ ) | nindent 4 }}
+    {{- end }}
+  {{- if $.Values.commonAnnotations }}
+  annotations: {{- include "common.tplvalues.render" ( dict "value" $.Values.commonAnnotations "context" $ ) | nindent 4 }}
+  {{- end }}
+spec:
+  groups:
+    - name: {{ include "apollo.configService.fullName" $ }}
+      rules: {{- toYaml .prometheusRule.rules | nindent 8 }}
+{{- end }}
+{{- end }}
+
