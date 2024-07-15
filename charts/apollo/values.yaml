@@ -172,7 +172,7 @@ configService:
     metricRelabelings:
       - action: replace
         sourceLabels:
-          - __meta_kubernetes_pod_label_app.kubernetes.io_component
+          - __meta_kubernetes_pod_label_app_kubernetes_io_component
         separator: ";"
         replacement: ".*"
         targetLabel: component
@@ -301,7 +301,7 @@ adminService:
     metricRelabelings:
       - action: replace
         sourceLabels:
-          - __meta_kubernetes_pod_label_app.kubernetes.io_component
+          - __meta_kubernetes_pod_label_app_kubernetes_io_component
         separator: ";"
         replacement: ".*"
         targetLabel: component
@@ -446,7 +446,7 @@ portal:
     metricRelabelings:
       - action: replace
         sourceLabels:
-          - __meta_kubernetes_pod_label_app.kubernetes.io_component
+          - __meta_kubernetes_pod_label_app_kubernetes_io_component
         separator: ";"
         replacement: ".*"
         targetLabel: component
