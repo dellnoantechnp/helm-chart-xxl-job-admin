@@ -6,7 +6,7 @@ annotations:
     - name: Project Source
       url: https://github.com/cookieY/Yearning
 apiVersion: v2
-appVersion: v3.1.7
+appVersion: v3.1.8
 name: yearning
 description: 🐳 A most popular sql audit platform for mysql and PostgreSQL
 home: https://github.com/cookieY/Yearning
@@ -24,4 +24,4 @@ dependencies:
     tags:
       - bitnami-common
     version: 2.x.x
-version: 0.1.2
+version: 0.1.3
