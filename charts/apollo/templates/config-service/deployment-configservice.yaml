@@ -115,7 +115,8 @@ spec:
               mountPath: /apollo-configservice/config/application-github.properties
               subPath: application-github.properties
           livenessProbe:
-            tcpSocket:
+            httpGet:
+              path: {{ .Values.configService.config.contextPath }}/health
               port: {{ .Values.configService.containerPort }}
             initialDelaySeconds: {{ .Values.configService.liveness.initialDelaySeconds }}
             periodSeconds: {{ .Values.configService.liveness.periodSeconds }}

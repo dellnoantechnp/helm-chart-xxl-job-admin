@@ -131,7 +131,8 @@ spec:
               subPath: {{ $fileName }}
           {{- end }}
           livenessProbe:
-            tcpSocket:
+            httpGet:
+              path: {{ .Values.portal.config.contextPath }}/health
               port: {{ .Values.portal.containerPort }}
             initialDelaySeconds: {{ .Values.portal.liveness.initialDelaySeconds }}
             periodSeconds: {{ .Values.portal.liveness.periodSeconds }}
