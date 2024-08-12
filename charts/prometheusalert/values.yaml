@@ -545,7 +545,8 @@ config:
     {{ end }}
     {{ $urimsg:="" }}
     {{ range $key,$value:=.commonLabels }}
-    {{$urimsg = print $urimsg $key "%3D%22" $value "%22%2C" }}
+      {{ $url_value := urlquery $value}}
+      {{$urimsg = print $urimsg $key "%3D%22" $url_value "%22%2C" }}
     {{end}}
     ---
     🔇*[屏蔽该告警]({{$var}}/#/silences/new?filter=%7B{{SplitString $urimsg 0 -3}}%7D)*', '2024-02-27 10:00:00');
