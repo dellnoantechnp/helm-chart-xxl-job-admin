@@ -25,10 +25,9 @@ spec:
           image: "{{ .Values.image.registry }}/{{ .Values.image.repository }}:{{ include "yearning.version" . }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           command:
-            - bash
-            - "-c"
+            {{- .Values.pod.command  | toYaml | nindent 12 }}
           args:
-            - "/opt/Yearning install && /opt/Yearning run"
+            {{- .Values.pod.args | toYaml | nindent 12 }}
           ports:
             - name: http
               containerPort: {{ .Values.pod.containerPort }}

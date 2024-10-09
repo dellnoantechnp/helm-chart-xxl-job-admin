@@ -59,6 +59,15 @@ config:
 pod:
   containerPort: 8000
 
+  # container command
+  #
+  command: ["bash", "-c"]
+
+  # container command args
+  #
+  args:
+    - "/opt/Yearning install && /opt/Yearning run"
+
   livenessProbe:
     httpGet:
       path: /
