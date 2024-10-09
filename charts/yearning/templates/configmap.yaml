@@ -1,0 +1,42 @@
+{{- if .Values.config }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ template "yearning.fullname" . }}
+  labels:
+    {{- include "yearning.labels" . | nindent 4 }}
+data:
+  {{- with .Values.config }}
+  config.toml: |
+    [Mysql]
+    Db = {{ .mysql.Db | quote }}
+    Host = {{ .mysql.Host | quote }}
+    Port = {{ .mysql.Port | quote }}
+    Password = {{ .mysql.Password | quote }}
+    User = {{ .mysql.User | quote }}
+
+    [General]
+    # SecretKey is the salt for token/ database password encryption/decryption. Please keep it safe. must contain 16 characters
+    SecretKey = {{ .General.SecretKey | quote }}
+    # SQL checker rpc server address
+    RpcAddr = {{ .General.RpcAddr | quote }}
+    # debug,info,warn,error
+    LogLevel = {{ .General.LogLevel | quote }}
+    # en_US,zh_CN
+    Lang = {{ .General.Lang | quote }}
+
+    [Oidc]
+    Enable = {{ .Oidc.Enable }}
+    ClientId = {{ .Oidc.ClientId | quote }}
+    ClientSecret = {{ .Oidc.ClientSecret | quote }}
+    Scope = {{ .Oidc.Scope | quote }}
+    AuthUrl = {{ .Oidc.AuthUrl | quote }}
+    TokenUrl = {{ .Oidc.TokenUrl | quote }}
+    UserUrl = {{ .Oidc.UserUrl | quote }}
+    RedirectUrL = {{ .Oidc.RedirectUrl | quote }}
+    UserNameKey = {{ .Oidc.UserNameKey | quote }}
+    RealNameKey = {{ .Oidc.RealNameKey | quote }}
+    EmailKey = {{ .Oidc.EmailKey | quote }}
+    SessionKey = {{ .Oidc.SessionKey | quote }}
+  {{- end }}
+{{- end }}

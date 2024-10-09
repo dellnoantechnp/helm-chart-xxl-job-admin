@@ -22,20 +22,13 @@ spec:
       {{- end }}
       containers:
         - name: {{ .Chart.Name }}
-          image: "{{ .Values.image.registry }}/{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          image: "{{ .Values.image.registry }}/{{ .Values.image.repository }}:{{ include "yearning.version" . }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           command:
             - bash
             - "-c"
           args:
             - "/opt/Yearning install && /opt/Yearning run"
-          {{- if (hasKey .Values.pod.envs "MYSQL_ADDR") }}
-          env:
-            {{- range $i, $value := .Values.pod.envs }}
-            - name: {{ $i }}
-              value: {{ $value | quote }}
-            {{- end }}
-          {{- end }}
           ports:
             - name: http
               containerPort: {{ .Values.pod.containerPort }}
@@ -50,6 +43,10 @@ spec:
           resources:
             {{- toYaml .Values.pod.resources | nindent 12 }}
           {{- end }}
+          volumeMounts:
+            - mountPath: /opt/config.toml
+              name: config
+              subPath: config.toml
     {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
@@ -62,3 +59,7 @@ spec:
       tolerations:
         {{- toYaml . | nindent 8 }}
     {{- end }}
+      volumes:
+        - name: config
+          configMap:
+            name: {{ template "yearning.fullname" . }}

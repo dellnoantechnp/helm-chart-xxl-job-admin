@@ -11,12 +11,50 @@ replicaCount: 1
 image:
   registry: docker.io
   repository: yeelabs/yearning
-  tag: v3.1.7
+  tag: ""
   pullPolicy: IfNotPresent
 
 nameOverride: ""
 
 fullnameOverride: ""
+
+# Yearning config parameters.
+#
+config:
+  mysql:
+    Db: yearning
+    Host: 1.2.3.4
+    Port: 3306
+    User: yearning_user
+    Password: xxxxxxxx
+
+  General:
+    # SecretKey is the salt for token/database password encryption/decryption. Please keep it safe. must contain 16 characters
+    #
+    SecretKey: dbcjqheupqjsuwsm
+    # SQL checker rpc server address
+    #
+    RpcAddr: "127.0.0.1:50001"
+    # Set log level, choice one of debug, info, warn, error.
+    #
+    LogLevel: info
+    # WebUi Language, en_US,zh_CN
+    #
+    Lang: zh_CN
+
+  Oidc:
+    Enable: false
+    ClientId: yearning
+    ClientSecret: fefehelxxxxxxxxxxxxx
+    Scope: "openid profile"
+    AuthUrl: https://keycloak.internal.xxx.ca/auth/realms/master/protocol/openid-connect/auth
+    TokenUrl: https://keycloak.internal.xxx.ca/auth/realms/master/protocol/openid-connect/token
+    UserUrl: https://keycloak.internal.xxx.ca/auth/realms/master/protocol/openid-connect/userinfo
+    RedirectUrl: http://127.0.0.1:8000/oidc/_token-login
+    UserNameKey: preferred_username
+    RealNameKey: name
+    EmailKey: email
+    SessionKey: session_state
 
 pod:
   containerPort: 8000
@@ -40,6 +78,8 @@ pod:
     successThreshold: 1
     timeoutSeconds: 3
 
+  # (Deprecated): envs used to config yearning.
+  #
   envs:
     # envs.MYSQL_USER: yearning backend db user
     MYSQL_USER: yearning
@@ -57,6 +97,8 @@ pod:
     SECRET_KEY: dbcjqheupqjsuwsm
 
     IS_DOCKER: is_docker
+
+    Y_LANG: en_US
 
   resources: {}
   #resources:
@@ -82,18 +124,18 @@ ingress:
   tls: []
 
 
-## @param affinity Affinity for pod assignment
+## @param affinity: Affinity for pod assignment
 ## Ref: https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#affinity-and-anti-affinity
 ## Note: podAffinityPreset, podAntiAffinityPreset, and nodeAffinityPreset will be ignored when it's set
 ##
 affinity: {}
 
-## @param nodeSelector Node labels for pod assignment
+## @param nodeSelector: Node labels for pod assignment
 ## Ref: https://kubernetes.io/docs/user-guide/node-selection/
 ##
 nodeSelector: {}
 
-## @param tolerations Tolerations for pod assignment
+## @param tolerations: Tolerations for pod assignment
 ## Ref: https://kubernetes.io/docs/concepts/configuration/taint-and-toleration/
 ##
 tolerations: []

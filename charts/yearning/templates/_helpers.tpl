@@ -43,3 +43,10 @@ app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
 {{- end }}
 app.kubernetes.io/managed-by: {{ .Release.Service }}
 {{- end -}}
+
+{{/*
+Image tag
+*/}}
+{{- define "yearning.version" -}}
+{{- .Values.image.tag | default .Chart.AppVersion -}}
+{{- end -}}
