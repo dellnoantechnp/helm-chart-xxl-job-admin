@@ -7,7 +7,7 @@ metadata:
     {{- include "yearning.labels" . | nindent 4 }}
 data:
   {{- with .Values.config }}
-  config.toml: |
+  conf.toml: |
     [Mysql]
     Db = {{ .mysql.Db | quote }}
     Host = {{ .mysql.Host | quote }}
