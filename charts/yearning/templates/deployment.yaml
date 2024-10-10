@@ -32,6 +32,13 @@ spec:
             - name: http
               containerPort: {{ .Values.pod.containerPort }}
               protocol: TCP
+          {{- if .Values.pod.envs }}
+          env:
+            {{- range $i, $value := .Values.pod.envs }}
+            - name: {{ $i }}
+              value: {{ $value | quote }}
+            {{- end }}
+          {{- end }}
           {{- if .Values.pod.livenessProbe }}
           livenessProbe: {{ toYaml .Values.pod.livenessProbe | nindent 12 }}
           {{- end }}

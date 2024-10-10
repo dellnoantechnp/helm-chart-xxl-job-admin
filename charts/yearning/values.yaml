@@ -89,28 +89,29 @@ pod:
 
   # (Deprecated): envs used to config yearning.
   #
-  envs:
-    # envs.MYSQL_USER: yearning backend db user
-    MYSQL_USER: yearning
+  envs: {}
+    # # envs.MYSQL_USER: yearning backend db user
+    # MYSQL_USER: yearning
 
-    # envs.MYSQL_PASSWORD: yearning backend db password
-    MYSQL_PASSWORD: yearning_passwd
+    # # envs.MYSQL_PASSWORD: yearning backend db password
+    # MYSQL_PASSWORD: yearning_passwd
 
-    # envs.MYSQL_ADDR: yearning backend mysql endpoint
-    MYSQL_ADDR: mysql_address
+    # # envs.MYSQL_ADDR: yearning backend mysql endpoint
+    # MYSQL_ADDR: mysql_address
 
-    # envs.MYSQL_DB: yearning backend db name
-    MYSQL_DB: yearning
+    # # envs.MYSQL_DB: yearning backend db name
+    # MYSQL_DB: yearning
 
-    # envs.SECRET_KEY: specify a 16 ascii code for secret key
-    SECRET_KEY: dbcjqheupqjsuwsm
+    # # envs.SECRET_KEY: specify a 16 ascii code for secret key
+    # SECRET_KEY: dbcjqheupqjsuwsm
 
-    IS_DOCKER: is_docker
+    # IS_DOCKER: is_docker
 
-    Y_LANG: en_US
+    # Y_LANG: en_US
 
+  # Pod resources define.
+  #
   resources: {}
-  #resources:
   #  limits:
   #    cpu: 500m
   #    memory: 512Mi
