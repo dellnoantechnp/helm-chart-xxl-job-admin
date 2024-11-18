@@ -19,6 +19,9 @@ data:
     {{- if .Values.portal.config.contextPath }}
     server.servlet.context-path = {{ .Values.portal.config.contextPath }}
     {{- end }}
+    {{- if .Values.portal.config.extendedConfigs }}
+    {{ .Values.portal.config.extendedConfigs }}
+    {{- end }}
   apollo-env.properties: |
     {{- range $env, $address := .Values.portal.config.metaServers }}
     {{ $env }}.meta = {{ $address }}

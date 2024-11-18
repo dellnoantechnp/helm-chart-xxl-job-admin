@@ -123,6 +123,8 @@ configService:
     # specify the context path, e.g. /apollo
     contextPath: ""
   # environment variables passed to the container, e.g. JAVA_OPTS
+  # e.g:
+  #   key: value
   env: {}
   strategy: {}
   resources:
@@ -254,6 +256,8 @@ adminService:
     # specify the context path, e.g. /apollo
     contextPath: ""
   # environment variables passed to the container, e.g. JAVA_OPTS
+  # e.g:
+  #   key: value
   env: {}
   strategy: {}
   resources:
@@ -374,6 +378,8 @@ portal:
     initialDelaySeconds: 30
     periodSeconds: 5
   # environment variables passed to the container, e.g. JAVA_OPTS
+  # e.g:
+  #   key: value
   env: { }
   strategy: { }
   resources: { }
@@ -399,6 +405,12 @@ portal:
     ## @param contextPath: specify the context path, e.g. /apollo
     ##
     contextPath: ""
+
+    ## @param extendedConfigs: extend config line in application-github.properties
+    ## e.g.
+    ##  extendedConfigs: |-
+    ##    superAdmin = apollo
+    extendedConfigs: ""
 
     ## @param files: extra config files for apollo-portal, e.g. application-ldap.yml
     ##
