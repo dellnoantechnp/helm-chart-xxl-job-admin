@@ -10,6 +10,39 @@ entries:
           url: https://github.com/dellnoantechnp/helm-chart-xxl-job-admin/tree/main/charts
     apiVersion: v2
     appVersion: 2.2.0
+    created: "2024-11-18T07:11:06.832396251Z"
+    dependencies:
+    - name: common
+      repository: oci://registry-1.docker.io/bitnamicharts
+      tags:
+      - bitnami-common
+      version: 2.x.x
+    description: This Helm chart for Apollo Config Service, Apollo Admin Service and
+      Apollo portal.
+    digest: 7a699793846923b2393b6b833c492fe4aa263c28221bd6a5877c7a27c54fa12a
+    home: https://github.com/apolloconfig/apollo
+    icon: https://raw.githubusercontent.com/apolloconfig/apollo/master/apollo-portal/src/main/resources/static/img/logo-simple.png
+    kubeVersion: '>=1.18.0'
+    maintainers:
+    - email: dellnoantechnp@gmail.com
+      name: dellnoantechnp
+      url: https://github.com/dellnoantechnp/helm-chart-xxl-job-admin
+    name: apollo
+    sources:
+    - https://github.com/apolloconfig/apollo
+    type: application
+    urls:
+    - https://github.com/dellnoantechnp/helm-chart-xxl-job-admin/releases/download/apollo-0.9.0/apollo-0.9.0.tgz
+    version: 0.9.0
+  - annotations:
+      artifacthub.io/images: |
+        - name: apolloconfig/apollo-adminservice:2.2.0
+          image: apolloconfig/apollo-adminservice:2.2.0
+      artifacthub.io/links: |
+        - name: Chart Source
+          url: https://github.com/dellnoantechnp/helm-chart-xxl-job-admin/tree/main/charts
+    apiVersion: v2
+    appVersion: 2.2.0
     created: "2024-07-31T02:47:23.573573425Z"
     dependencies:
     - name: common
@@ -2112,4 +2145,4 @@ entries:
     urls:
     - https://github.com/dellnoantechnp/helm-chart-xxl-job-admin/releases/download/zookeeper-7.6.1/zookeeper-7.6.1.tgz
     version: 7.6.1
-generated: "2024-10-10T02:43:15.768167827Z"
+generated: "2024-11-18T07:11:06.832565205Z"
