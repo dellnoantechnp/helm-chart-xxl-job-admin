@@ -20,7 +20,7 @@ data:
     server.servlet.context-path = {{ .Values.portal.config.contextPath }}
     {{- end }}
     {{- if .Values.portal.config.extendedConfigs }}
-    {{ .Values.portal.config.extendedConfigs }}
+    {{- .Values.portal.config.extendedConfigs | nindent 4 }}
     {{- end }}
   apollo-env.properties: |
     {{- range $env, $address := .Values.portal.config.metaServers }}
