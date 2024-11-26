@@ -17,7 +17,7 @@ data:
     server.servlet.context-path = {{ .Values.configService.config.contextPath }}
     {{- end }}
     {{- if .Values.configService.config.extendedConfigs }}
-    {{ .Values.portal.config.extendedConfigs }}
+    {{ .Values.configService.config.extendedConfigs }}
     {{- end }}
   {{- if .Values.db.configdb.autoInitDatabase.enabled }}
   init-database.sql: |
