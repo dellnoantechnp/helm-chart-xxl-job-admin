@@ -14,3 +14,6 @@ data:
     {{- if .Values.adminService.config.contextPath }}
     server.servlet.context-path = {{ .Values.adminService.config.contextPath }}
     {{- end }}
+    {{- if .Values.adminService.config.extendedConfigs }}
+    {{- .Values.adminService.config.extendedConfigs | nindent 4 }}
+    {{- end }}

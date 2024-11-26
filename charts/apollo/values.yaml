@@ -262,6 +262,13 @@ adminService:
     profiles: "github,kubernetes"
     # specify the context path, e.g. /apollo
     contextPath: ""
+
+    ## @param extendedConfigs: extend config line in application-github.properties
+    ## e.g.
+    ##  extendedConfigs: |-
+    ##    superAdmin = apollo
+    extendedConfigs: ""
+
   # environment variables passed to the container, e.g. JAVA_OPTS
   # e.g:
   #   key: value
