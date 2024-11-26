@@ -122,6 +122,13 @@ configService:
     adminServiceUrlOverride: ""
     # specify the context path, e.g. /apollo
     contextPath: ""
+
+    ## @param extendedConfigs: extend config line in application-github.properties
+    ## e.g.
+    ##  extendedConfigs: |-
+    ##    spring.datasource.hikari.minimum-idle = 5
+    extendedConfigs: ""
+
   # environment variables passed to the container, e.g. JAVA_OPTS
   # e.g:
   #   key: value
