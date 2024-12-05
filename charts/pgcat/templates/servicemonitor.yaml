@@ -1,0 +1,24 @@
+{{- if and .Values.configuration.general.enable_prometheus_exporter .Values.configuration.general.prometheus_exporter_port }}
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: {{ include "pgcat.fullname" . }}
+  {{- if .Values.serviceMonitor.namespace }}
+  namespace: {{ .Values.serviceMonitor.namespace }}
+  {{- else }}
+  namespace: {{ .Release.Namespace }}
+  {{- end }}
+  labels:
+    {{- include "pgcat.labels" . | nindent 4 }}
+spec:
+  {{- if .Values.serviceMonitor.jobLabel }}
+  jobLabel: {{ .Values.serviceMonitor.jobLabel }}
+  {{- end }}
+  selector:
+    matchLabels:
+      app.kubernetes.io/component: apollo-portal
+  endpoints:
+    - port: http
+      path: {{ .Values.serviceMonitor.metricPath | default "/metrics" }}
+
+{{- end }}
