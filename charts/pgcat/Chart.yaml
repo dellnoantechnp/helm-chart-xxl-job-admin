@@ -14,4 +14,4 @@ dependencies:
       - bitnami-common
     version: 2.x.x
 name: pgcat
-version: 0.2.8
+version: 0.2.9
