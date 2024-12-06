@@ -1157,6 +1157,26 @@ entries:
     urls:
     - https://github.com/dellnoantechnp/helm-chart-xxl-job-admin/releases/download/nfs-subdir-external-provisioner-4.0.18/nfs-subdir-external-provisioner-4.0.18.tgz
     version: 4.0.18
+  pgcat:
+  - apiVersion: v2
+    appVersion: 1.2.0
+    created: "2024-12-06T02:30:43.435886215Z"
+    dependencies:
+    - name: common
+      repository: oci://registry-1.docker.io/bitnamicharts
+      tags:
+      - bitnami-common
+      version: 2.x.x
+    description: A Helm chart for PgCat a PostgreSQL pooler and proxy (like PgBouncer)
+      with support for sharding, load balancing, failover and mirroring.
+    digest: 7b4e670a827271e88ad37a2e324bc2784f5a65aff86b59aa4109eb18215652b1
+    maintainers:
+    - email: team@postgresml.org
+      name: PostgresML
+    name: pgcat
+    urls:
+    - https://github.com/dellnoantechnp/helm-chart-xxl-job-admin/releases/download/pgcat-0.2.7/pgcat-0.2.7.tgz
+    version: 0.2.7
   prometheusalert:
   - annotations:
       artifacthub.io/images: |
@@ -2277,4 +2297,4 @@ entries:
     urls:
     - https://github.com/dellnoantechnp/helm-chart-xxl-job-admin/releases/download/zookeeper-7.6.1/zookeeper-7.6.1.tgz
     version: 7.6.1
-generated: "2024-11-26T08:13:37.741999065Z"
+generated: "2024-12-06T02:30:43.43605465Z"
