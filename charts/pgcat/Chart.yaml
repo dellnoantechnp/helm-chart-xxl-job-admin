@@ -3,6 +3,8 @@ appVersion: 1.2.0
 description: A Helm chart for PgCat a PostgreSQL pooler and proxy (like PgBouncer)
   with support for sharding, load balancing, failover and mirroring.
 maintainers:
+- email: dellnoantechnp@gmail.com
+  name: dellnoantechnp
 - email: team@postgresml.org
   name: PostgresML
 dependencies:
@@ -12,4 +14,4 @@ dependencies:
       - bitnami-common
     version: 2.x.x
 name: pgcat
-version: 0.2.7
+version: 0.2.8

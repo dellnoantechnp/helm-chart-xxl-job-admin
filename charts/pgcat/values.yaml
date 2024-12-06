@@ -443,12 +443,12 @@ prometheusRule:
   ##
   additionalLabels: { }
   ## @param metrics.prometheusRule.rules PrometheusRule definitions
-  ##  - alert: RequestExceptionTooMany
+  ##  - alert: PgCat_Server_Error_Warning
   ##    annotations:
-  ##      subject: Apollo adminService too many exceptions on http request.
-  ##      message: The metric http_server_requests_seconds_count has too many code 5xx exception, firing exception is {{ $labels.exception }} to {{ $labels.uri }}.
-  ##    expr: sum(increase(http_server_requests_seconds_count{component="adminService", status="500"}[5m])) by (exception, uri) > 10
-  ##    for: 5m
+  ##      subject: pgcat instance too many exceptions on http request.
+  ##      message: The metric pgcat_servers_error_count has too many error, firing exception is {{ $labels.pool }} to {{ $labels.database }}.
+  ##    expr: pgcat_servers_error_count{pool="test-pool"}[1m] > 5
+  ##    for: 1m
   ##    labels:
   ##      severity: warning
   ##
