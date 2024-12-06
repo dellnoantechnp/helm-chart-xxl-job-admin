@@ -161,7 +161,7 @@ configuration:
     port: 6432
 
     ## @param configuration.general.enable_prometheus_exporter Whether to enable prometheus exporter or not.
-    enable_prometheus_exporter: true
+    enable_prometheus_exporter: false
 
     ## @param configuration.general.prometheus_exporter_port Port at which prometheus exporter listens on.
     prometheus_exporter_port: 9930
@@ -249,9 +249,7 @@ configuration:
       pool_mode: "transaction",
       users:
       [
-        {
-          username: "user", password: "pass", pool_size: 5, statement_timeout: 0
-        }
+        {username: "user", password: "pass", pool_size: 5, statement_timeout: 0}
       ],
       shards:
       [

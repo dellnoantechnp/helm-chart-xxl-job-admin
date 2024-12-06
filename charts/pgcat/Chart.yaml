@@ -5,5 +5,11 @@ description: A Helm chart for PgCat a PostgreSQL pooler and proxy (like PgBounce
 maintainers:
 - email: team@postgresml.org
   name: PostgresML
+dependencies:
+  - name: common
+    repository: oci://registry-1.docker.io/bitnamicharts
+    tags:
+      - bitnami-common
+    version: 2.x.x
 name: pgcat
-version: 0.2.6
+version: 0.2.7
