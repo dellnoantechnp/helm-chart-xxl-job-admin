@@ -26,6 +26,10 @@ spec:
       serviceAccountName: {{ include "pgcat.serviceAccountName" . }}
       securityContext:
         {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      {{- if .Values.topologySpreadConstraints }}
+      topologySpreadConstraints:
+      {{- .Values.topologySpreadConstraints | toYaml | nindent 6 }}
+      {{- end }}
       containers:
         - name: {{ .Chart.Name }}
           securityContext:

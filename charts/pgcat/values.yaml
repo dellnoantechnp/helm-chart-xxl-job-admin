@@ -148,6 +148,24 @@ tolerations: []
 ##
 affinity: {}
 
+## You can define one or multiple topologySpreadConstraints entries to instruct the kube-scheduler
+##   how to place each incoming Pod in relation to the existing Pods across your cluster.
+## ref: https://kubernetes.io/docs/concepts/scheduling-eviction/topology-spread-constraints/#topologyspreadconstraints-field
+##
+## @topologySpreadConstraints
+# topologySpreadConstraints:
+#   - maxSkew: 1
+#     topologyKey: kubernetes.io/hostname
+#     whenUnsatisfiable: [ScheduleAnyway|DoNotSchedule]
+#     labelSelector:
+#       matchLabels:
+#         app.kubernetes.io/instance: my-pgcat
+#     matchLabelKeys: <list>             # optional; beta since v1.27
+#     nodeAffinityPolicy: [Honor|Ignore] # optional; beta since v1.26
+#     nodeTaintsPolicy: [Honor|Ignore]   # optional; beta since v1.26
+topologySpreadConstraints: {}
+
+
 ## PgCat configuration
 ## @param configuration [object]
 configuration:
