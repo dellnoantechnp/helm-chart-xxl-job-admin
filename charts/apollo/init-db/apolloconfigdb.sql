@@ -118,6 +118,7 @@ CREATE TABLE `Cluster` (
   `DataChange_CreatedTime` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `DataChange_LastModifiedBy` varchar(64) DEFAULT '' COMMENT '最后修改人邮箱前缀',
   `DataChange_LastTime` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '最后修改时间',
+  `Comment` varchar(64) DEFAULT NULL COMMENT '备注',
   PRIMARY KEY (`Id`),
   UNIQUE KEY `UK_AppId_Name_DeletedAt` (`AppId`,`Name`,`DeletedAt`),
   KEY `IX_ParentClusterId` (`ParentClusterId`),
