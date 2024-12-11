@@ -1193,6 +1193,28 @@ entries:
   pgcat:
   - apiVersion: v2
     appVersion: 1.2.0
+    created: "2024-12-11T02:44:59.813034218Z"
+    dependencies:
+    - name: common
+      repository: oci://registry-1.docker.io/bitnamicharts
+      tags:
+      - bitnami-common
+      version: 2.x.x
+    description: A Helm chart for PgCat a PostgreSQL pooler and proxy (like PgBouncer)
+      with support for sharding, load balancing, failover and mirroring.
+    digest: 1b517847db84b005a624263e2c2cc0dee2df73726cd04ca3c7370e44d1182589
+    kubeVersion: '>=1.26.0'
+    maintainers:
+    - email: dellnoantechnp@gmail.com
+      name: dellnoantechnp
+    - email: team@postgresml.org
+      name: PostgresML
+    name: pgcat
+    urls:
+    - https://github.com/dellnoantechnp/helm-chart-xxl-job-admin/releases/download/pgcat-0.3.1/pgcat-0.3.1.tgz
+    version: 0.3.1
+  - apiVersion: v2
+    appVersion: 1.2.0
     created: "2024-12-10T11:00:41.932065449Z"
     dependencies:
     - name: common
@@ -2436,4 +2458,4 @@ entries:
     urls:
     - https://github.com/dellnoantechnp/helm-chart-xxl-job-admin/releases/download/zookeeper-7.6.1/zookeeper-7.6.1.tgz
     version: 7.6.1
-generated: "2024-12-10T11:00:41.93234847Z"
+generated: "2024-12-11T02:44:59.813204757Z"
