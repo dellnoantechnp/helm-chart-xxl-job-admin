@@ -1,0 +1,23 @@
+{{- if and .Values.serviceMonitor.enabled .Values.prometheusRule.enabled .Values.prometheusRule.rules }}
+{{- with .Values }}
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: {{ include "pgcat.fullname" $ }}
+  {{- if .prometheusRule.namespace }}
+  namespace: {{ .prometheusRule.namespace }}
+  {{- else }}
+  namespace: {{ $.Release.Namespace }}
+  {{- end }}
+  labels:
+    {{- include "pgcat.labels" $ | nindent 4 }}
+    {{- if .prometheusRule.additionalLabels }}
+    {{- toYaml .prometheusRule.additionalLabels | nindent 4 }}
+    {{- end }}
+spec:
+  groups:
+    - name: {{ include "pgcat.fullname" $ }}
+      rules: {{- toYaml .prometheusRule.rules | nindent 8 }}
+{{- end }}
+{{- end }}
+
