@@ -79,14 +79,21 @@ spec:
               database={{ .Values.db.configdb.dbName }}
               EOF
               echo "INFO: Checking the database, if it's exist ..."
-              if mysql --defaults-file=/tmp/.my.cnf -E --connect-timeout=30 -w -e 'SHOW TABLES FROM {{ .Values.db.configdb.dbName }}' | grep -q : ; then
-                echo "INFO: {{ .Values.db.configdb.dbName }} was exists. skipping to initial SQL table."
+              result=$(mysql --defaults-file=/tmp/.my.cnf -E --connect-timeout=30 -w -e 'SHOW TABLES FROM {{ .Values.db.configdb.dbName }}')
+              if mysql --defaults-file=/tmp/.my.cnf -E --connect-timeout=30 -w -e 'SHOW TABLES FROM {{ .Values.db.configdb.dbName }}'; then
+                if mysql --defaults-file=/tmp/.my.cnf -E --connect-timeout=30 -w -e 'SHOW TABLES FROM {{ .Values.db.configdb.dbName }}' | grep -q : ; then
+                  echo "INFO: {{ .Values.db.configdb.dbName }} was exists. skipping to initial SQL table."
+                else
+                  echo "INFO: {{ .Values.db.configdb.dbName }} is not exists. creating and init SQL file ..."
+                  echo "INFO: Creating TABLES ..."
+                  mysql --defaults-file=/tmp/.my.cnf -E --connect-timeout=30 -w {{ .Values.db.configdb.dbName }} < /docker-entrypoint-initdb.d/init-database.sql
+                fi
               else
-                echo "INFO: {{ .Values.db.configdb.dbName }} is not exists. creating and init SQL file ..."
-                echo "INFO: Creating TABLES ..."
-                mysql --defaults-file=/tmp/.my.cnf -E --connect-timeout=30 -w {{ .Values.db.configdb.dbName }} < /docker-entrypoint-initdb.d/init-database.sql
+                echo "ERROR: Connect database failed ..."
+                exit 1
               fi
               echo "INFO: starting app container ..."
+              rm -f /tmp/.my.cnf
           volumeMounts:
             - name: volume-configmap-{{ $configServiceFullName }}
               mountPath: /tmp/application-github.properties

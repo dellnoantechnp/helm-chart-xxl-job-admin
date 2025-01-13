@@ -17,7 +17,7 @@ maintainers:
 name: apollo
 type: application
 kubeVersion: ">=1.18.0"
-version: 1.0.0
+version: 1.0.1
 dependencies:
   - name: common
     repository: oci://registry-1.docker.io/bitnamicharts
