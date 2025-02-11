@@ -1247,7 +1247,7 @@ entries:
     - https://github.com/dellnoantechnp/helm-chart-xxl-job-admin/releases/download/pgcat-0.3.2/pgcat-0.3.2.tgz
     version: 0.3.2
   - apiVersion: v2
-    appVersion: 1.2.0
+    appVersion: v1.2.0
     created: "2024-12-11T02:44:59.813034218Z"
     dependencies:
     - name: common
@@ -1269,7 +1269,7 @@ entries:
     - https://github.com/dellnoantechnp/helm-chart-xxl-job-admin/releases/download/pgcat-0.3.1/pgcat-0.3.1.tgz
     version: 0.3.1
   - apiVersion: v2
-    appVersion: 1.2.0
+    appVersion: v1.2.0
     created: "2024-12-10T11:00:41.932065449Z"
     dependencies:
     - name: common
@@ -1291,7 +1291,7 @@ entries:
     - https://github.com/dellnoantechnp/helm-chart-xxl-job-admin/releases/download/pgcat-0.3.0/pgcat-0.3.0.tgz
     version: 0.3.0
   - apiVersion: v2
-    appVersion: 1.2.0
+    appVersion: v1.2.0
     created: "2024-12-06T03:10:00.086258243Z"
     dependencies:
     - name: common
@@ -1312,7 +1312,7 @@ entries:
     - https://github.com/dellnoantechnp/helm-chart-xxl-job-admin/releases/download/pgcat-0.2.11/pgcat-0.2.11.tgz
     version: 0.2.11
   - apiVersion: v2
-    appVersion: 1.2.0
+    appVersion: v1.2.0
     created: "2024-12-06T03:01:38.846024397Z"
     dependencies:
     - name: common
@@ -1333,7 +1333,7 @@ entries:
     - https://github.com/dellnoantechnp/helm-chart-xxl-job-admin/releases/download/pgcat-0.2.10/pgcat-0.2.10.tgz
     version: 0.2.10
   - apiVersion: v2
-    appVersion: 1.2.0
+    appVersion: v1.2.0
     created: "2024-12-06T02:56:10.225501599Z"
     dependencies:
     - name: common
@@ -1354,7 +1354,7 @@ entries:
     - https://github.com/dellnoantechnp/helm-chart-xxl-job-admin/releases/download/pgcat-0.2.9/pgcat-0.2.9.tgz
     version: 0.2.9
   - apiVersion: v2
-    appVersion: 1.2.0
+    appVersion: v1.2.0
     created: "2024-12-06T02:44:42.87181431Z"
     dependencies:
     - name: common
@@ -1375,7 +1375,7 @@ entries:
     - https://github.com/dellnoantechnp/helm-chart-xxl-job-admin/releases/download/pgcat-0.2.8/pgcat-0.2.8.tgz
     version: 0.2.8
   - apiVersion: v2
-    appVersion: 1.2.0
+    appVersion: v1.2.0
     created: "2024-12-06T02:30:43.435886215Z"
     dependencies:
     - name: common
