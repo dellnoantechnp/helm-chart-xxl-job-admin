@@ -36,7 +36,11 @@ INSERT INTO prometheus_alert_d_b (id, tpltype, tpluse, tplname, tpl, created) VA
 ![Prometheus](https://raw.githubusercontent.com/feiyu563/PrometheusAlert/master/doc/alert-center.png)
 {{end}}
 {{ end }}
-{{ $urimsg:=""}}{{ range $key,$value:=.commonLabels }}{{ $url_value:= urlquery $value }}{{$urimsg =  print $urimsg $key "%3D%22" $url_value "%22%2C" }}{{end}}[*** 点我屏蔽该告警]({{$var}}/#/silences/new?filter=%7B{{SplitString $urimsg 0 -3}}%7D)', '2022-05-26 10:00:05');
+{{ $urimsg:=""}}
+{{ range $key,$value:=.commonLabels }}
+  {{ $url_value:= urlquery $value }}
+  {{$urimsg =  print $urimsg $key "%3D%22" $url_value "%22%2C" }}
+{{end}}[*** 点我屏蔽该告警]({{$var}}/#/silences/new?filter=%7B{{SplitString $urimsg 0 -3}}%7D)', '2022-05-26 10:00:05');
 INSERT INTO prometheus_alert_d_b (id, tpltype, tpluse, tplname, tpl, created) VALUES (2, 'wx', 'Prometheus', 'prometheus-wx', '{{ $var := .externalURL}}{{ range $k,$v:=.alerts }}{{if eq $v.status "resolved"}}[PROMETHEUS-恢复信息]({{$v.generatorURL}})
 > **[{{$v.labels.alertname}}]({{$var}})**
 > <font color="info">告警级别:</font> {{$v.labels.level}}
