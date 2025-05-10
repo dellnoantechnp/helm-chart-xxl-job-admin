@@ -1,0 +1,49 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "mailhog.fullname" . }}
+  {{- with .Values.service.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+  labels:
+    {{- include "mailhog.labels" . | nindent 4 }}
+  namespace: {{ .Release.Namespace | quote }}
+spec:
+  type: "{{ .Values.service.type }}"
+  {{- with .Values.service.clusterIP }}
+  clusterIP: "{{ . }}"
+  {{- end }}
+  {{- with .Values.service.externalIPs }}
+  externalIPs:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+  {{- with .Values.service.loadBalancerIP }}
+  loadBalancerIP: "{{ . }}"
+  {{- end }}
+  {{- with .Values.service.loadBalancerSourceRanges }}
+  loadBalancerSourceRanges:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+  ports:
+    {{- $httpPortName := .Values.containerPort.http.name }}
+    {{- $smtpPortName := .Values.containerPort.smtp.name }}
+    - name: {{ $httpPortName }}
+      port: {{ .Values.service.port.http }}
+      protocol: TCP
+      targetPort: {{- if .Values.service.namedTargetPort }} {{ $httpPortName }} {{- else }} {{ .Values.containerPort.http.port }} {{- end }}
+      {{- if (and (eq .Values.service.type "NodePort") (not (empty .Values.service.nodePort.http))) }}
+      nodePort: {{ .Values.service.nodePort.http }}
+      {{- end }}
+    - name: {{ $smtpPortName }}
+      port: {{ .Values.service.port.smtp }}
+      protocol: TCP
+      targetPort: {{- if .Values.service.namedTargetPort }} {{ $smtpPortName }} {{- else }} {{ .Values.containerPort.smtp.port }} {{- end }}
+      {{- if (and (eq .Values.service.type "NodePort") (not (empty .Values.service.nodePort.smtp))) }}
+      nodePort: {{ .Values.service.nodePort.smtp }}
+      {{- end }}
+    {{- if .Values.service.extraPorts }}
+      {{- toYaml .Values.service.extraPorts | nindent 4 }}
+    {{- end }}
+  selector:
+    {{- include "mailhog.selectorLabels" . | nindent 4 }}
