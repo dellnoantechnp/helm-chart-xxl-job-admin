@@ -103,7 +103,7 @@ spec:
           {{- if .Values.starttls.envs }}
           env:
           {{- range $key, $value := .Values.starttls.envs }}
-            - name: {{ $key | quote }}
+            - name: {{ $key }}
               value: {{ $value | quote }}
           {{- end }}
           {{- end }}
@@ -111,13 +111,14 @@ spec:
             - containerPort: {{ .Values.starttls.port }}
               name: tcp-stunnel
               protocol: TCP
+          {{- if .Values.starttls.volumeMounts }}
           volumeMounts:
-            - mountPath: /etc/stunnel/stunnel.pem
-              name: starttls-cert
-              subPath: stunnel.pem
-            - mountPath: /etc/stunnel/stunnel.key
-              name: starttls-cert
-              subPath: stunnel.key
+            {{- .Values.starttls.volumeMounts | toYaml | nindent 12 }}
+          {{- end }}
+          {{- if .Values.starttls.containerSecurityContext }}
+          securityContext:
+            {{- .Values.starttls.containerSecurityContext | toYaml | nindent 12 }}
+          {{- end }}
         {{- end }}
       {{- with .Values.extraContainers }}
         {{- toYaml . | nindent 8 }}

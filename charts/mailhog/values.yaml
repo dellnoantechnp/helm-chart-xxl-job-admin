@@ -32,6 +32,11 @@ automountServiceAccountToken: false
 service:
   annotations: {}
   extraPorts: []
+#  extraPorts:
+#    - name: tcp-starttls
+#      targetPort: tcp-stunnel
+#      port: 587
+#      protocol: TCP
   clusterIP: ""
   externalIPs: []
   loadBalancerIP: ""
@@ -91,18 +96,32 @@ auth:
   fileContents: ""
 
 starttls:
-  enabled: true
+  enabled: false
   image:
     repository: dweomer/stunnel
     tag: ""
     imagePullPolicy: IfNotPresent
-  port: 465
+  port: 587
   envs:
-    STUNNEL_SERVICE: smtps
-    STUNNEL_ACCEPT: 465
+    STUNNEL_SERVICE: mailhog-starttls
+    STUNNEL_ACCEPT: 587
     STUNNEL_CONNECT: localhost:1025
-  volumeMounts:
+    STUNNEL_PROTOCOL: smtp
 
+  containerSecurityContext:
+    runAsUser: 0
+    runAsNonRoot: false
+
+  # tls certs mountPath
+  # require defined extraVolumes configure.
+  #
+  volumeMounts:
+    - mountPath: /etc/stunnel/stunnel.pem
+      name: starttls-cert
+      subPath: stunnel.pem
+    - mountPath: /etc/stunnel/stunnel.key
+      name: starttls-cert
+      subPath: stunnel.key
 
 # JSON file defining outgoing SMTP servers
 outgoingSMTP:
@@ -134,15 +153,16 @@ podLabels: {}
 
 extraEnv: []
 
-extraVolumes:
-  - name: starttls-cert
-    secret:
-      secretName: example-secret
-      items:
-        - key: tls.crt
-          path: stunnel.pem
-        - key: tls.key
-          path: stunnel.key
+extraVolumes: []
+#extraVolumes:
+#  - name: starttls-cert
+#    secret:
+#      secretName: example.com-tls-secret
+#      items:
+#        - key: tls.crt
+#          path: stunnel.pem
+#        - key: tls.key
+#          path: stunnel.key
 
 # ref: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/#configure-probes
 livenessProbe:
