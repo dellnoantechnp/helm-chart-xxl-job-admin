@@ -1160,6 +1160,33 @@ entries:
     urls:
     - https://github.com/dellnoantechnp/helm-chart-xxl-job-admin/releases/download/kafka-14.9.3/kafka-14.9.3.tgz
     version: 14.9.3
+  mailhog:
+  - apiVersion: v2
+    appVersion: v1.0.1
+    created: "2025-05-11T08:32:24.692168959Z"
+    description: An e-mail testing tool for developers, enhanced STARTTLS Support.
+    digest: 4f4fa8717ed220b146d32f45fc9d19553a3ecab79e6625763decd649e45ef299
+    home: http://iankent.uk/project/mailhog/
+    icon: https://raw.githubusercontent.com/mailhog/MailHog-UI/master/assets/images/hog.png
+    keywords:
+    - mailhog
+    - mail
+    - smtp
+    - email
+    - e-mail
+    - testing
+    maintainers:
+    - email: unguiculus@gmail.com
+      name: unguiculus
+    - email: dellnoantechnp@gmail.com
+      name: dellnoantechnp
+    name: mailhog
+    sources:
+    - https://github.com/mailhog/MailHog
+    type: application
+    urls:
+    - https://github.com/dellnoantechnp/helm-chart-xxl-job-admin/releases/download/mailhog-5.9.1/mailhog-5.9.1.tgz
+    version: 5.9.1
   mongodb-sharded:
   - annotations:
       category: Database
@@ -2545,4 +2572,4 @@ entries:
     urls:
     - https://github.com/dellnoantechnp/helm-chart-xxl-job-admin/releases/download/zookeeper-7.6.1/zookeeper-7.6.1.tgz
     version: 7.6.1
-generated: "2025-02-26T12:38:58.49704801Z"
+generated: "2025-05-11T08:32:24.692525683Z"
