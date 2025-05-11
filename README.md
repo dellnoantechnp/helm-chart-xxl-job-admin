@@ -15,6 +15,7 @@
 </p>
 <p align="center">
   <img width="250" alt="Apollo" height="90" src="https://raw.githubusercontent.com/dellnoantechnp/helm-chart-xxl-job-admin/main/assets/stacks/apollo/img/logo-simple.png">
+  <img width="209" alt="Apollo" height="154" src="https://raw.githubusercontent.com/mailhog/MailHog-UI/master/assets/images/hog.png">
 </p>
 
 # This helm chart repository include charts:
@@ -37,7 +38,9 @@
 - [x] Apollo-*v2.2.0*
   - Project: [https://github.com/apolloconfig/apollo](https://github.com/apolloconfig/apollo)
   - About: Apollo is a reliable configuration management system suitable for microservice configuration management scenarios.
-
+- [x] MailHog-*v1.0.1*
+  - Project: https://github.com/mailhog/MailHog
+  - About: Web and API based SMTP testing
 
 
 # Helm Charts repository
