@@ -590,6 +590,24 @@ entries:
     urls:
     - https://github.com/dellnoantechnp/helm-chart-xxl-job-admin/releases/download/apollo-0.7.1/apollo-0.7.1.tgz
     version: 0.7.1
+  atlas-operator:
+  - apiVersion: v2
+    appVersion: 0.7.11
+    created: "2025-08-04T08:29:49.06602425Z"
+    description: '[Legacy charts] The Atlas Kubernetes Operator from oci://ghcr.io/ariga/charts/atlas-operator'
+    digest: ab19e701460f69d298d84f0939b8474f29b23e5fc329ce33a35fac21346f79d4
+    home: https://github.com/ariga/atlas-operator
+    maintainers:
+    - name: ariga/atlas-operator
+    - name: dellnoantechnp
+    name: atlas-operator
+    sources:
+    - https://github.com/ariga/atlas-operator
+    - oci://ghcr.io/ariga/charts/atlas-operator
+    type: application
+    urls:
+    - https://github.com/dellnoantechnp/helm-chart-xxl-job-admin/releases/download/atlas-operator-0.7.11/atlas-operator-0.7.11.tgz
+    version: 0.7.11
   canal-server:
   - annotations:
       artifacthub.io/links: |
@@ -2572,4 +2590,4 @@ entries:
     urls:
     - https://github.com/dellnoantechnp/helm-chart-xxl-job-admin/releases/download/zookeeper-7.6.1/zookeeper-7.6.1.tgz
     version: 7.6.1
-generated: "2025-05-11T08:32:24.692525683Z"
+generated: "2025-08-04T08:29:49.0661902Z"
