@@ -1,0 +1,13 @@
+apiVersion: v2
+appVersion: 0.7.11
+description: "[Legacy charts] The Atlas Kubernetes Operator from oci://ghcr.io/ariga/charts/atlas-operator"
+name: atlas-operator
+type: application
+version: 0.7.11
+maintainers:
+  - name: ariga/atlas-operator
+  - name: dellnoantechnp
+sources:
+  - https://github.com/ariga/atlas-operator
+  - oci://ghcr.io/ariga/charts/atlas-operator
+home: https://github.com/ariga/atlas-operator
