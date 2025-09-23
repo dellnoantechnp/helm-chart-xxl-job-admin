@@ -20,6 +20,17 @@ metadata:
   labels:
     app.kubernetes.io/component: configService
     {{- include "apollo.service.labels" . | nindent 4 }}
+    {{- if .Values.configService.service.extraLabels }}
+    {{- range $key, $value := .Values.configService.service.extraLabels }}
+    {{ $key }}: {{ $value | quote }}
+    {{- end }}
+    {{- end }}
+  {{- if .Values.configService.service.extraAnnotations }}
+  annotations:
+    {{- range $key, $value := .Values.configService.service.extraAnnotations }}
+    {{ $key }}: {{ $value | quote }}
+    {{- end }}
+  {{- end }}
 spec:
 {{- with .Values.configService.service }}
   type: {{ .type }}

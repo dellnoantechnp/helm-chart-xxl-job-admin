@@ -20,6 +20,17 @@ metadata:
   labels:
     app.kubernetes.io/component: adminService
     {{- include "apollo.service.labels" . | nindent 4 }}
+    {{- if .Values.adminService.service.extraLabels }}
+    {{- range $key, $value := .Values.adminService.service.extraLabels }}
+    {{ $key }}: {{ $value | quote }}
+    {{- end }}
+    {{- end }}
+  {{- if .Values.adminService.service.extraAnnotations }}
+  annotations:
+    {{- range $key, $value := .Values.adminService.service.extraAnnotations }}
+    {{ $key }}: {{ $value | quote }}
+    {{- end }}
+  {{- end }}
 spec:
 {{- with .Values.adminService.service }}
   type: {{ .type }}

@@ -99,6 +99,20 @@ configService:
     loadBalancerIP: ""
     externalTrafficPolicy: Cluster
 
+    ## @param extraLabels for extra labels.
+    ## e.g:
+    ##   extraLabels:
+    ##     name: value
+    ##
+    extraLabels: {}
+
+    ## @param extraAnnotations for extra annotations.
+    ## e.g:
+    ##   extraAnnotations:
+    ##     name: value
+    ##
+    extraAnnotations: {}
+
   ingress:
     ingressClassName: null
     enabled: false
@@ -243,6 +257,20 @@ adminService:
     loadBalancerIP: ""
     externalTrafficPolicy: Cluster
 
+    ## @param extraLabels for extra labels.
+    ## e.g:
+    ##   extraLabels:
+    ##     name: value
+    ##
+    extraLabels: {}
+
+    ## @param extraAnnotations for extra annotations.
+    ## e.g:
+    ##   extraAnnotations:
+    ##     name: value
+    ##
+    extraAnnotations: {}
+
   ingress:
     enabled: false
     ingressClassName: null
@@ -377,6 +405,21 @@ portal:
     targetPort: 8070
     type: ClusterIP
     sessionAffinity: ClientIP
+
+    ## @param extraLabels for extra labels.
+    ## e.g:
+    ##   extraLabels:
+    ##     name: value
+    ##
+    extraLabels: {}
+
+    ## @param extraAnnotations for extra annotations.
+    ## e.g:
+    ##   extraAnnotations:
+    ##     name: value
+    ##
+    extraAnnotations: {}
+
   ingress:
     ingressClassName: null
     enabled: false
