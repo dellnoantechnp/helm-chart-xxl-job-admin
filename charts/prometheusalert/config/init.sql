@@ -367,4 +367,20 @@ preTriggerLevel: {{.PreTriggerLevel}}
 ruleId: {{.RuleId}}
 dimensions: {{.Dimensions}}
 **当前值：{{.CurValue}}**', '2021-07-14 06:57:31');
+INSERT INTO prometheus_alert_d_b (id, tpltype, tpluse, tplname, tpl, created) VALUES (47, 'dd', 'Other', 'argocd-dd', '{{ $v := .notification }}
+{{ if and (eq $v.Health "Healthy") (ne $v.Sync_status "Unknown") }}
+✅ <font color="green">**{{ $v.Title }}**</font>                                                                                                                                                                                                             ]
+{{ else if  eq $v.Health "Degraded" }}                                                                                                                                                                                                                      ]
+⚠️️️️ <font color="carol">**{{ $v.Title }}**</font>                                                                                                                                                                                                             ]
+{{ else }}                                                                                                                                                                                                                                                  ]
+❗ <font color="Tomato">**{{ $v.Title }}**</font>                                                                                                                                                                                                            ]
+{{ end }}                                                                                                                                                                                                                                                   ]
+---
+* App:  {{ $v.App }}
+* Revision: {{ $v.Revision }}
+* Sync_status: {{ $v.Sync_status }}
+* Health: **{{ $v.Health }}**
+* Duration: {{ $v.Duration }}
+---                                                                                                                           ️️️
+?[Application Detail]({{ $v.Link }})', '2025-09-14 16:07:00');
 SELECT "Sql execute complete. then please restart PrometheusAlert program." as Info;

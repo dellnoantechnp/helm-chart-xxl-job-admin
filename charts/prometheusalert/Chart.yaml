@@ -1,7 +1,7 @@
 annotations:
   artifacthub.io/images: |
-    - name: feiyu563/prometheus-alert:latest
-      image: feiyu563/prometheus-alert:latest
+    - name: feiyu563/prometheus-alert:v4.9.1
+      image: feiyu563/prometheus-alert:v4.9.1
   artifacthub.io/links: |
     - name: Chart Source
       url: https://github.com/dellnoantechnp.github.io/tree/main/charts/xxl-job-admin
@@ -24,4 +24,4 @@ dependencies:
     tags:
       - bitnami-common
     version: 2.x.x
-version: 1.3.4
+version: 1.3.5

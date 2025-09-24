@@ -47,12 +47,13 @@ cd PrometheusAlert/example/windows/
 ```
 kubectl app -n monitoring -f https://raw.githubusercontent.com/feiyu563/PrometheusAlert/master/example/kubernetes/PrometheusAlert-Deployment.yaml
 ```
-- 使用helm部署
+- 使用helm部署 **[推荐]**
 ```
-git clone https://github.com/feiyu563/PrometheusAlert.git
-cd PrometheusAlert/example/helm/prometheusalert
-#如需修改配置文件,请更新config中的app.conf
-helm install -n monitoring .
+helm repo add prometheusalert https://dellnoantechnp.github.io/helm-chart-xxl-job-admin/
+helm pull prometheusalert/prometheusalert --untar
+cd prometheusalert
+#如需修改配置文件,请更新 values.yml 中 config.app_config
+helm install -n monitoring prometheusalert .
 ```
 配置说明
 ----
@@ -116,6 +117,8 @@ groups:
 最终告警效果:
 
 ![prometheus1](https://raw.githubusercontent.com/feiyu563/PrometheusAlert/master/doc/images/prometheus.png)
+
+![alert-card](https://raw.githubusercontent.com/dellnoantechnp/helm-chart-xxl-job-admin/main/assets/stacks/prometheus-alert/img/alert-card.png)
 
 --------------------------------------
  **2. Grafana 接入配置**
