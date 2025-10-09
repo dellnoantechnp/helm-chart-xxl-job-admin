@@ -885,6 +885,33 @@ entries:
   common:
   - annotations:
       category: Infrastructure
+      licenses: Apache-2.0
+    apiVersion: v2
+    appVersion: 2.30.2
+    created: "2025-10-09T07:25:29.851597524Z"
+    description: A Library Helm Chart for grouping common logic between bitnami charts.
+      This chart is not deployable by itself.
+    digest: 9803d70a9c278ce03110eb5d5fac3251fa7d2feae9585f5bebd87b9b1410d351
+    home: https://bitnami.com
+    icon: https://dyltqmyl993wv.cloudfront.net/downloads/logos/bitnami-mark.png
+    keywords:
+    - common
+    - helper
+    - template
+    - function
+    - bitnami
+    maintainers:
+    - name: Broadcom, Inc. All Rights Reserved.
+      url: https://github.com/bitnami/charts
+    name: common
+    sources:
+    - https://github.com/bitnami/charts/tree/main/bitnami/common
+    type: library
+    urls:
+    - https://github.com/dellnoantechnp/helm-chart-xxl-job-admin/releases/download/common-2.30.2/common-2.30.2.tgz
+    version: 2.30.2
+  - annotations:
+      category: Infrastructure
     apiVersion: v2
     appVersion: 1.14.2
     created: "2023-11-17T06:16:18.153823395Z"
@@ -2655,4 +2682,4 @@ entries:
     urls:
     - https://github.com/dellnoantechnp/helm-chart-xxl-job-admin/releases/download/zookeeper-7.6.1/zookeeper-7.6.1.tgz
     version: 7.6.1
-generated: "2025-09-24T08:32:12.865466239Z"
+generated: "2025-10-09T07:25:29.851800023Z"
