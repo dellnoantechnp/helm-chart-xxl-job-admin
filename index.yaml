@@ -882,6 +882,48 @@ entries:
     urls:
     - https://github.com/dellnoantechnp/helm-chart-xxl-job-admin/releases/download/canal-server-0.0.1/canal-server-0.0.1.tgz
     version: 0.0.1
+  cert-manager:
+  - annotations:
+      category: CertificateAuthority
+      images: |
+        - name: acmesolver
+          image: docker.io/bitnami/acmesolver:1.17.1-debian-12-r8
+        - name: cainjector
+          image: docker.io/bitnami/cainjector:1.17.1-debian-12-r6
+        - name: cert-manager
+          image: docker.io/bitnami/cert-manager:1.17.1-debian-12-r6
+        - name: cert-manager-webhook
+          image: docker.io/bitnami/cert-manager-webhook:1.17.1-debian-12-r6
+      licenses: Apache-2.0
+      tanzuCategory: clusterUtility
+    apiVersion: v2
+    appVersion: 1.17.1
+    created: "2025-10-09T07:46:17.910494363Z"
+    dependencies:
+    - name: common
+      repository: https://dellnoantechnp.github.io/helm-chart-xxl-job-admin/
+      tags:
+      - bitnami-common
+      version: 2.x.x
+    description: cert-manager is a Kubernetes add-on to automate the management and
+      issuance of TLS certificates from various issuing sources.
+    digest: 5d9173bf2b7617c4a4b434a33911d43853541d1308e6d36dad402b6c18020092
+    home: https://bitnami.com
+    icon: https://dyltqmyl993wv.cloudfront.net/assets/stacks/cert-manager/img/cert-manager-stack-220x234.png
+    keywords:
+    - go
+    - security
+    - tls
+    - certificate
+    maintainers:
+    - name: Broadcom, Inc. All Rights Reserved.
+      url: https://github.com/bitnami/charts
+    name: cert-manager
+    sources:
+    - https://github.com/bitnami/charts/tree/main/bitnami/cert-manager
+    urls:
+    - https://github.com/dellnoantechnp/helm-chart-xxl-job-admin/releases/download/cert-manager-1.4.13/cert-manager-1.4.13.tgz
+    version: 1.4.13
   common:
   - annotations:
       category: Infrastructure
@@ -2682,4 +2724,4 @@ entries:
     urls:
     - https://github.com/dellnoantechnp/helm-chart-xxl-job-admin/releases/download/zookeeper-7.6.1/zookeeper-7.6.1.tgz
     version: 7.6.1
-generated: "2025-10-09T07:25:29.851800023Z"
+generated: "2025-10-09T07:46:17.910660744Z"
