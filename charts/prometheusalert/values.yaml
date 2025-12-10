@@ -10,7 +10,8 @@ replicaCount: 1
 
 image:
   # 支持配置自定义模版需要重出镜像，或者使用本人构建镜像：feiyu563/prometheusalert:v4.8.2
-  repository: feiyu563/prometheus-alert:master
+  repository: feiyu563/prometheus-alert
+  tag: ""
   pullPolicy: IfNotPresent
 
 nameOverride: ""
@@ -416,6 +417,8 @@ config:
     TG_CHANNAME=xxxxx
     #tg api地址, 可以配置为代理地址
     #TG_API_PROXY="https://api.telegram.org/bot%s/%s"
+    #TG_PARSE_MODE 设置为 "1"，代表启用 Markdown
+    TG_PARSE_MODE = "0"
   
     #---------------------↓workwechat接口-----------------------
     #是否开启workwechat告警通道,可同时开始多个通道 0为关闭,1为开启
@@ -507,6 +510,15 @@ config:
     # 自定义的告警组既可以写在这里，也可以写在单独的文件里。
     # 写在单独的告警组配置里更便于修改。
     # include "alertgroup.conf"
+    
+    #---------------------↓kafka地址-----------------------
+    # kafka服务器的地址
+    open-kafka=0
+    kafka_server = 127.0.0.1:9092
+    # 写入消息的kafka topic
+    kafka_topic = devops
+    # 用户标记该消息是来自PrometheusAlert,一般无需修改
+    kafka_key = PrometheusAlert
   init_sql: |
     -- ----------------------------
     -- Records of prometheus_alert_d_b
@@ -521,6 +533,7 @@ config:
     * ✅【告警状态】{{ $v.status }}
     * 🧭【开始时间】{{ GetCSTtime $v.startsAt }}
     * 🧭【结束时间】{{ GetCSTtime $v.endsAt }}
+    * 🧭【持续时间】{{ GetTimeDuration  $v.startsAt $v.endsAt }}
     {{- if $v.labels.namespace }}
     * 🏷️【命名空间】{{$v.labels.namespace}}
     {{- end }}
@@ -812,7 +825,7 @@ config:
     {{ end }}', '2020-11-20 08:05:04');
     INSERT INTO prometheus_alert_d_b (id, tpltype, tpluse, tplname, tpl, created) VALUES (43, 'workwechat', 'Prometheus', 'prometheus-wechatapp', '{{ $var := .externalURL}}{{ range $k,$v:=.alerts }}
     {{if eq $v.status "resolved"}}
-    [Prometheus恢复信息]($v.generatorURL}})
+    [Prometheus恢复信息]({{$v.generatorURL}})
     >**[{{$v.labels.alertname}}]({{$var}})**
     >告警级别: {{$v.labels.level}}
     开始时间: {{$v.startsAt}}
@@ -820,7 +833,7 @@ config:
     故障主机IP: {{$v.labels.instance}}
     **{{$v.annotations.description}}**
     {{else}}
-    [Prometheus告警信息]($v.generatorURL}})
+    [Prometheus告警信息]({{$v.generatorURL}})
     >**[{{$v.labels.alertname}}]({{$var}})**
     >告警级别: {{$v.labels.level}}
     开始时间: {{$v.startsAt}}
