@@ -1,0 +1,9 @@
+dependencies:
+- name: common
+  repository: https://dellnoantechnp.github.io/helm-chart-xxl-job-admin/
+  version: 2.30.2
+- name: redis
+  repository: https://dellnoantechnp.github.io/helm-chart-xxl-job-admin
+  version: 24.1.2
+digest: sha256:0eb3e923622e8639c1bd2fc54e5b0bd345c4e5ab64255e942b99cb7732af3cba
+generated: "2026-01-23T13:58:14.2870527+08:00"
