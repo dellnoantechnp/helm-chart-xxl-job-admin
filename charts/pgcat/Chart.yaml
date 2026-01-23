@@ -14,5 +14,5 @@ dependencies:
       - bitnami-common
     version: 2.x.x
 name: pgcat
-version: 0.3.2
-kubeVersion: ">=1.26.0"
+version: 0.3.3
+kubeVersion: ">=1.26.0-0"
