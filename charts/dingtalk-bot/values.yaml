@@ -63,16 +63,29 @@ image:
   debug: false
 
 
+containerPorts:
+  http: 8000
+
 replicaCount: 1
+
+config:
+  # argo-workflows config
+  ARGO_WORKFLOWS_DOMAIN: https://workflows.example.com
+  ARGO_WORKFLOWS_TOKEN: "xxx"
+  ARGO_WORKFLOWS_WORKER_NAMESPACE: workflows
+
+  # DingTalk IM config
+  DINGTALK_CLIENT_ID: "xxx"
+  DINGTALK_CLIENT_SECRET: "xxx"
+  DINGTALK_ROBOT_CODE: "xxx"
+
+  # Django debug
+  DJANGO_DEBUG: false
 
 
 imagePullSecrets: []
 nameOverride: ""
 fullnameOverride: ""
-
-
-redis:
-  enabled: false
 
 
 serviceAccount:
@@ -134,11 +147,11 @@ resources: {}
 
 livenessProbe:
   httpGet:
-    path: /
+    path: /health/live/
     port: http
 readinessProbe:
   httpGet:
-    path: /
+    path: /health/ready
     port: http
 
 autoscaling:
@@ -166,3 +179,23 @@ nodeSelector: {}
 tolerations: []
 
 affinity: {}
+
+
+redisExternal:
+
+  enabled: false
+  redisHost: ""
+  redisPassword: ""
+  redisDatabase: 1
+
+  # redisUrl: redis://:password@host:port/1
+
+
+redis:
+  enabled: false
+
+metrics:
+  enabled: true
+
+  containerPorts:
+    metrics: 8100
