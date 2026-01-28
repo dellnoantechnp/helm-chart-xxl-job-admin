@@ -36,7 +36,7 @@ global:
 diagnosticMode:
   ## @param diagnosticMode.enabled Enable diagnostic mode (all probes will be disabled and the command will be overridden)
   ##
-  enabled: true
+  enabled: false
   ## @param diagnosticMode.command Command to override all containers in the deployment
   ##
   command:
@@ -100,9 +100,13 @@ config:
 ## @param command Override default container command (useful when using custom images)
 ##
 command: []
+#command:
+#  - sleep
 ## @param args Override default container args (useful when using custom images)
 ##
 args: []
+#args:
+#  - "1800"
 
 imagePullSecrets: []
 nameOverride: ""
