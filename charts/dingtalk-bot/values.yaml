@@ -36,7 +36,7 @@ global:
 diagnosticMode:
   ## @param diagnosticMode.enabled Enable diagnostic mode (all probes will be disabled and the command will be overridden)
   ##
-  enabled: false
+  enabled: true
   ## @param diagnosticMode.command Command to override all containers in the deployment
   ##
   command:
@@ -57,14 +57,14 @@ diagnosticMode:
 ## @param image.debug Enable image debug mode
 ##
 image:
-  registry: ghcr.io
+  registry: fcr.fawve.cluster.ws
   repository: dellnoantechnp/dingtalk-bot
   tag: latest
   digest: ""
   ## Specify a imagePullPolicy
   ## ref: https://kubernetes.io/docs/concepts/containers/images/#pre-pulled-images
   ##
-  pullPolicy: IfNotPresent
+  pullPolicy: Always
   ## Optionally specify an array of imagePullSecrets.
   ## Secrets must be manually created in the namespace.
   ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
@@ -251,25 +251,71 @@ ingress:
   #      - chart-example.local
 
 resources: {}
-  # We usually recommend not to specify default resources and to leave this as a conscious
-  # choice for the user. This also increases chances charts run on environments with little
-  # resources, such as Minikube. If you do want to specify resources, uncomment the following
-  # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
-  # limits:
-  #   cpu: 100m
-  #   memory: 128Mi
-  # requests:
-  #   cpu: 100m
-  #   memory: 128Mi
 
+# We usually recommend not to specify default resources and to leave this as a conscious
+# choice for the user. This also increases chances charts run on environments with little
+# resources, such as Minikube. If you do want to specify resources, uncomment the following
+# lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+# limits:
+#   cpu: 100m
+#   memory: 128Mi
+# requests:
+#   cpu: 100m
+#   memory: 128Mi
+
+## Configure extra options for Redis(R) containers' liveness and readiness probes
+## ref: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-probes/#configure-probes
+## @param master.startupProbe.enabled Enable startupProbe on Redis(R) master nodes
+## @param master.startupProbe.initialDelaySeconds Initial delay seconds for startupProbe
+## @param master.startupProbe.periodSeconds Period seconds for startupProbe
+## @param master.startupProbe.timeoutSeconds Timeout seconds for startupProbe
+## @param master.startupProbe.failureThreshold Failure threshold for startupProbe
+## @param master.startupProbe.successThreshold Success threshold for startupProbe
+##
+startupProbe:
+  enabled: false
+  initialDelaySeconds: 20
+  periodSeconds: 5
+  timeoutSeconds: 5
+  successThreshold: 1
+  failureThreshold: 5
+## @param master.livenessProbe.enabled Enable livenessProbe on Redis(R) master nodes
+## @param master.livenessProbe.initialDelaySeconds Initial delay seconds for livenessProbe
+## @param master.livenessProbe.periodSeconds Period seconds for livenessProbe
+## @param master.livenessProbe.timeoutSeconds Timeout seconds for livenessProbe
+## @param master.livenessProbe.failureThreshold Failure threshold for livenessProbe
+## @param master.livenessProbe.successThreshold Success threshold for livenessProbe
+##
 livenessProbe:
-  httpGet:
-    path: /health/live/
-    port: http
+  enabled: false
+  initialDelaySeconds: 20
+  periodSeconds: 5
+  timeoutSeconds: 5
+  successThreshold: 1
+  failureThreshold: 5
+## @param master.readinessProbe.enabled Enable readinessProbe on Redis(R) master nodes
+## @param master.readinessProbe.initialDelaySeconds Initial delay seconds for readinessProbe
+## @param master.readinessProbe.periodSeconds Period seconds for readinessProbe
+## @param master.readinessProbe.timeoutSeconds Timeout seconds for readinessProbe
+## @param master.readinessProbe.failureThreshold Failure threshold for readinessProbe
+## @param master.readinessProbe.successThreshold Success threshold for readinessProbe
+##
 readinessProbe:
-  httpGet:
-    path: /health/ready
-    port: http
+  enabled: true
+  initialDelaySeconds: 20
+  periodSeconds: 5
+  timeoutSeconds: 1
+  successThreshold: 1
+  failureThreshold: 5
+## @param master.customStartupProbe Custom startupProbe that overrides the default one
+##
+customStartupProbe: {}
+## @param master.customLivenessProbe Custom livenessProbe that overrides the default one
+##
+customLivenessProbe: {}
+## @param master.customReadinessProbe Custom readinessProbe that overrides the default one
+##
+customReadinessProbe: {}
 
 autoscaling:
   enabled: false
@@ -292,19 +338,19 @@ volumeMounts: []
 #   readOnly: true
 
 
+redis:
+  enabled: true
+
 
 redisExternal:
-
   enabled: false
-  redisHost: ""
-  redisPassword: ""
+  redisHost: "1.1.1.1"
+  redisPort: 6379
+  redisPassword: "123456"
   redisDatabase: 1
 
   # redisUrl: redis://:password@host:port/1
 
-
-redis:
-  enabled: false
 
 metrics:
   enabled: true

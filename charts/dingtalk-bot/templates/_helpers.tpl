@@ -67,3 +67,40 @@ Return the proper dingtalk-bot image name
 {{- define "dingtalk-bot.image" -}}
 {{ include "common.images.image" (dict "imageRoot" .Values.image "global" .Values.global) }}
 {{- end -}}
+
+{{/*
+Return redis connection info as dict
+*/}}
+{{- define "dingtalk-bot.redis.config" -}}
+{{- if .Values.redis.enabled }}
+host: {{ printf "%s-master" (include "common.names.fullname" .) }}
+port: {{ .Values.redis.master.service.ports.redis }}
+password: {{ default "" .Values.redis.auth.password | quote }}
+database: 0
+
+{{- else if .Values.redisExternal.enabled }}
+host: {{ .Values.redisExternal.redisHost | quote }}
+port: {{ .Values.redisExternal.redisPort }}
+password: {{ .Values.redisExternal.redisPassword | quote }}
+database: {{ .Values.redisExternal.redisDatabase }}
+
+{{- else }}
+{{- fail "Either redis.enabled or redisExternal.enabled must be true" }}
+{{- end }}
+{{- end }}
+
+
+{{/*
+Render redis env vars
+*/}}
+{{- define "dingtalk-bot.env.redis" -}}
+{{- $redis := include "dingtalk-bot.redis.config" . | fromYaml -}}
+- name: REDIS_HOST
+  value: {{ $redis.host | quote }}
+- name: REDIS_PORT
+  value: {{ $redis.port | quote }}
+- name: REDIS_PASSWORD
+  value: {{ $redis.password | quote }}
+- name: REDIS_DATABASE
+  value: {{ $redis.database | quote }}
+{{- end }}
