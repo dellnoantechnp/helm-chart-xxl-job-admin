@@ -31,6 +31,21 @@ global:
   ##
   defaultFips: restricted
 
+## Enable diagnostic mode in the deployment
+##
+diagnosticMode:
+  ## @param diagnosticMode.enabled Enable diagnostic mode (all probes will be disabled and the command will be overridden)
+  ##
+  enabled: false
+  ## @param diagnosticMode.command Command to override all containers in the deployment
+  ##
+  command:
+    - sleep
+  ## @param diagnosticMode.args Args to override all containers in the deployment
+  ##
+  args:
+    - infinity
+
 ## Bitnami Redis(R) image
 ## ref: https://hub.docker.com/r/bitnami/redis/tags/
 ## @param image.registry [default: REGISTRY_NAME] Redis(R) image registry
@@ -44,7 +59,7 @@ global:
 image:
   registry: ghcr.io
   repository: dellnoantechnp/dingtalk-bot
-  tag: ""
+  tag: latest
   digest: ""
   ## Specify a imagePullPolicy
   ## ref: https://kubernetes.io/docs/concepts/containers/images/#pre-pulled-images
@@ -82,10 +97,17 @@ config:
   # Django debug
   DJANGO_DEBUG: false
 
+## @param command Override default container command (useful when using custom images)
+##
+command: []
+## @param args Override default container args (useful when using custom images)
+##
+args: []
 
 imagePullSecrets: []
 nameOverride: ""
 fullnameOverride: ""
+
 
 
 serviceAccount:
@@ -99,19 +121,114 @@ serviceAccount:
   # If not set and create is true, a name is generated using the fullname template
   name: ""
 
-podAnnotations: {}
+## Configure Pods Security Context
+## ref: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/#set-the-security-context-for-a-pod
+## @param podSecurityContext.enabled Enabled Redis(R) master pods' Security Context
+## @param podSecurityContext.fsGroupChangePolicy Set filesystem group change policy
+## @param podSecurityContext.sysctls Set kernel settings using the sysctl interface
+## @param podSecurityContext.supplementalGroups Set filesystem extra groups
+## @param podSecurityContext.fsGroup Set Redis(R) master pod's Security Context fsGroup
+##
+podSecurityContext:
+  enabled: true
+  fsGroupChangePolicy: Always
+  sysctls: []
+  supplementalGroups: []
+  fsGroup: 1001
+## Configure Container Security Context
+## ref: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/#set-the-security-context-for-a-pod
+## @param containerSecurityContext.enabled Enabled Redis(R) master containers' Security Context
+## @param containerSecurityContext.seLinuxOptions [object,nullable] Set SELinux options in container
+## @param containerSecurityContext.runAsUser Set Redis(R) master containers' Security Context runAsUser
+## @param containerSecurityContext.runAsGroup Set Redis(R) master containers' Security Context runAsGroup
+## @param containerSecurityContext.runAsNonRoot Set Redis(R) master containers' Security Context runAsNonRoot
+## @param containerSecurityContext.allowPrivilegeEscalation Is it possible to escalate Redis(R) pod(s) privileges
+## @param containerSecurityContext.readOnlyRootFilesystem Set container's Security Context read-only root filesystem
+## @param containerSecurityContext.seccompProfile.type Set Redis(R) master containers' Security Context seccompProfile
+## @param containerSecurityContext.capabilities.drop Set Redis(R) master containers' Security Context capabilities to drop
+##
+containerSecurityContext:
+  enabled: true
+  seLinuxOptions: {}
+  runAsUser: 1001
+  runAsGroup: 1001
+  runAsNonRoot: true
+  allowPrivilegeEscalation: false
+  readOnlyRootFilesystem: true
+  seccompProfile:
+    type: RuntimeDefault
+  capabilities:
+    drop: ["ALL"]
+
+## @param master.hostAliases Redis(R) master pods host aliases
+## https://kubernetes.io/docs/concepts/services-networking/add-entries-to-pod-etc-hosts-with-host-aliases/
+##
+hostAliases: []
+## @param master.podLabels Extra labels for Redis(R) master pods
+## ref: https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/
+##
 podLabels: {}
+## @param master.podAnnotations Annotations for Redis(R) master pods
+## ref: https://kubernetes.io/docs/concepts/overview/working-with-objects/annotations/
+##
+podAnnotations: {}
 
-podSecurityContext: {}
-  # fsGroup: 2000
+## @param master.podAffinityPreset Pod affinity preset. Ignored if `master.affinity` is set. Allowed values: `soft` or `hard`
+## ref: https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#inter-pod-affinity-and-anti-affinity
+##
+podAffinityPreset: ""
+## @param master.podAntiAffinityPreset Pod anti-affinity preset. Ignored if `master.affinity` is set. Allowed values: `soft` or `hard`
+## ref: https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#inter-pod-affinity-and-anti-affinity
+##
+podAntiAffinityPreset: soft
+## Node master.affinity preset
+## ref: https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#node-affinity
+##
+nodeAffinityPreset:
+  ## @param master.nodeAffinityPreset.type Node affinity preset type. Ignored if `master.affinity` is set. Allowed values: `soft` or `hard`
+  ##
+  type: ""
+  ## @param master.nodeAffinityPreset.key Node label key to match. Ignored if `master.affinity` is set
+  ##
+  key: ""
+  ## @param master.nodeAffinityPreset.values Node label values to match. Ignored if `master.affinity` is set
+  ## E.g.
+  ## values:
+  ##   - e2e-az1
+  ##   - e2e-az2
+  ##
+  values: []
 
-securityContext: {}
-  # capabilities:
-  #   drop:
-  #   - ALL
-  # readOnlyRootFilesystem: true
-  # runAsNonRoot: true
-  # runAsUser: 1000
+## @param master.extraPodSpec Optionally specify extra PodSpec for the Redis(R) master pod(s)
+##
+extraPodSpec: {}
+
+## @param priorityClassName dingtalk-bot pods' priorityClassName
+##
+priorityClassName: ""
+
+## @param master.affinity Affinity for Redis(R) master pods assignment
+## ref: https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#affinity-and-anti-affinity
+## NOTE: `podAffinityPreset`, `podAntiAffinityPreset`, and `nodeAffinityPreset` will be ignored when it's set
+##
+affinity: {}
+## @param master.nodeSelector Node labels for Redis(R) master pods assignment
+## ref: https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/
+##
+nodeSelector: {}
+## @param master.tolerations Tolerations for Redis(R) master pods assignment
+## ref: https://kubernetes.io/docs/concepts/configuration/taint-and-toleration/
+##
+tolerations: []
+## @param master.topologySpreadConstraints Spread Constraints for Redis(R) master pod assignment
+## ref: https://kubernetes.io/docs/concepts/workloads/pods/pod-topology-spread-constraints/
+## E.g.
+## topologySpreadConstraints:
+##   - maxSkew: 1
+##     topologyKey: node
+##     whenUnsatisfiable: DoNotSchedule
+##
+topologySpreadConstraints: []
 
 service:
   type: ClusterIP
@@ -174,11 +291,6 @@ volumeMounts: []
 #   mountPath: "/etc/foo"
 #   readOnly: true
 
-nodeSelector: {}
-
-tolerations: []
-
-affinity: {}
 
 
 redisExternal:
