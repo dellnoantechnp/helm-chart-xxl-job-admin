@@ -100,13 +100,9 @@ config:
 ## @param command Override default container command (useful when using custom images)
 ##
 command: []
-#command:
-#  - sleep
 ## @param args Override default container args (useful when using custom images)
 ##
 args: []
-#args:
-#  - "1800"
 
 imagePullSecrets: []
 nameOverride: ""
@@ -307,8 +303,8 @@ livenessProbe:
 readinessProbe:
   enabled: true
   initialDelaySeconds: 20
-  periodSeconds: 5
-  timeoutSeconds: 1
+  periodSeconds: 10
+  timeoutSeconds: 5
   successThreshold: 1
   failureThreshold: 5
 ## @param master.customStartupProbe Custom startupProbe that overrides the default one
