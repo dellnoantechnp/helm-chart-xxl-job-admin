@@ -73,7 +73,7 @@ spec:
       {{- if .Values.master.runtimeClassName }}
       runtimeClassName: {{ .Values.master.runtimeClassName }}
       {{- end }}
-      {{- if .Values.master.podSecurityContext.enabled }}
+      {{- if .Values.master.podSecurityContext.enabled -}}
       securityContext: {{- include "common.compatibility.renderSecurityContext" (dict "secContext" .Values.master.podSecurityContext "context" $) | nindent 8 }}
       {{- end }}
       serviceAccountName: {{ template "redis.masterServiceAccountName" . }}
@@ -146,10 +146,6 @@ spec:
               value: master
             - name: ALLOW_EMPTY_PASSWORD
               value: {{ ternary "no" "yes" .Values.auth.enabled | quote }}
-            {{- if include "common.fips.enabled" . }}
-            - name: OPENSSL_FIPS
-              value: {{ include "common.fips.config" (dict "tech" "openssl" "fips" .Values.master.fips "global" .Values.global) | quote }}
-            {{- end }}
             {{- if .Values.auth.enabled }}
             {{- if .Values.auth.usePasswordFiles }}
             - name: REDIS_PASSWORD_FILE
@@ -324,12 +320,6 @@ spec:
                   key: {{ template "redis.secretPasswordKey" . }}
             {{- end }}
             {{- end }}
-            {{- if include "common.fips.enabled" . }}
-            - name: OPENSSL_FIPS
-              value: {{ include "common.fips.config" (dict "tech" "openssl" "fips" .Values.metrics.fips "global" .Values.global) | quote }}
-            - name: GODEBUG
-              value: {{ include "common.fips.config" (dict "tech" "golang" "fips" .Values.metrics.fips "global" .Values.global) | quote }}
-            {{- end }}
             {{- if .Values.tls.enabled }}
             - name: REDIS_ADDR
               value: rediss://{{ .Values.metrics.redisTargetHost }}:{{ .Values.master.containerPorts.redis }}
@@ -429,10 +419,6 @@ spec:
           {{- if .Values.volumePermissions.extraEnvVars }}
           {{- include "common.tplvalues.render" (dict "value" .Values.volumePermissions.extraEnvVars "context" $) | nindent 12 }}
           {{- end }}
-            {{- if include "common.fips.enabled" . }}
-            - name: OPENSSL_FIPS
-              value: {{ include "common.fips.config" (dict "tech" "openssl" "fips" .Values.volumePermissions.fips "global" .Values.global) | quote }}
-            {{- end }}
           {{- if .Values.volumePermissions.resources }}
           resources: {{- toYaml .Values.volumePermissions.resources | nindent 12 }}
           {{- else if ne .Values.volumePermissions.resourcesPreset "none" }}
@@ -461,11 +447,6 @@ spec:
           resources: {{- toYaml .Values.sysctl.resources | nindent 12 }}
           {{- else if ne .Values.sysctl.resourcesPreset "none" }}
           resources: {{- include "common.resources.preset" (dict "type" .Values.sysctl.resourcesPreset) | nindent 12 }}
-          {{- end }}
-          {{- if include "common.fips.enabled" . }}
-          env:
-            - name: OPENSSL_FIPS
-              value: {{ include "common.fips.config" (dict "tech" "openssl" "fips" .Values.sysctl.fips "global" .Values.global) | quote }}
           {{- end }}
           {{- if .Values.sysctl.mountHostSys }}
           volumeMounts:

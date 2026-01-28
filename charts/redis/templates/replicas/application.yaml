@@ -158,10 +158,6 @@ spec:
             {{- else }}
               value: {{ .Values.master.containerPorts.redis | quote }}
             {{- end }}
-            {{- if include "common.fips.enabled" . }}
-            - name: OPENSSL_FIPS
-              value: {{ include "common.fips.config" (dict "tech" "openssl" "fips" .Values.replica.fips "global" .Values.global) | quote }}
-            {{- end }}
             - name: ALLOW_EMPTY_PASSWORD
               value: {{ ternary "no" "yes" .Values.auth.enabled | quote }}
             {{- if .Values.auth.enabled }}
@@ -330,12 +326,6 @@ spec:
               value: {{ template "common.names.fullname" . }}
             - name: REDIS_EXPORTER_WEB_LISTEN_ADDRESS
               value: {{ printf ":%v" .Values.metrics.containerPorts.http }}
-            {{- if include "common.fips.enabled" . }}
-            - name: OPENSSL_FIPS
-              value: {{ include "common.fips.config" (dict "tech" "openssl" "fips" .Values.metrics.fips "global" .Values.global) | quote }}
-            - name: GODEBUG
-              value: {{ include "common.fips.config" (dict "tech" "golang" "fips" .Values.metrics.fips "global" .Values.global) | quote }}
-            {{- end }}
             {{- if .Values.auth.enabled }}
             - name: REDIS_USER
               value: default
@@ -449,10 +439,6 @@ spec:
           {{- if .Values.volumePermissions.extraEnvVars }}
           {{- include "common.tplvalues.render" (dict "value" .Values.volumePermissions.extraEnvVars "context" $) | nindent 12 }}
           {{- end }}
-            {{- if include "common.fips.enabled" . }}
-            - name: OPENSSL_FIPS
-              value: {{ include "common.fips.config" (dict "tech" "openssl" "fips" .Values.volumePermissions.fips "global" .Values.global) | quote }}
-            {{- end }}
           {{- if .Values.volumePermissions.resources }}
           resources: {{- toYaml .Values.volumePermissions.resources | nindent 12 }}
           {{- else if ne .Values.volumePermissions.resourcesPreset "none" }}
@@ -481,11 +467,6 @@ spec:
           resources: {{- toYaml .Values.sysctl.resources | nindent 12 }}
           {{- else if ne .Values.sysctl.resourcesPreset "none" }}
           resources: {{- include "common.resources.preset" (dict "type" .Values.sysctl.resourcesPreset) | nindent 12 }}
-          {{- end }}
-          {{- if include "common.fips.enabled" . }}
-          env:
-            - name: OPENSSL_FIPS
-              value: {{ include "common.fips.config" (dict "tech" "openssl" "fips" .Values.sysctl.fips "global" .Values.global) | quote }}
           {{- end }}
           {{- if .Values.sysctl.mountHostSys }}
           volumeMounts:
