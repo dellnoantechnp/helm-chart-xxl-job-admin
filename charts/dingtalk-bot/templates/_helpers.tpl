@@ -73,9 +73,16 @@ Return redis connection info as dict
 */}}
 {{- define "dingtalk-bot.redis.config" -}}
 {{- if .Values.redis.enabled }}
-host: {{ printf "%s-master" (include "common.names.fullname" .) }}
+
+host: {{ printf "%s-master" (include "common.names.dependency.fullname" (dict "chartName" "redis" "chartValues" .Values.redis "context" $)) }}
 port: {{ .Values.redis.master.service.ports.redis }}
+{{- if .Values.redis.auth.enabled }}
+{{- if .Values.redis.auth.password }}
 password: {{ default "" .Values.redis.auth.password | quote }}
+{{- end }}
+{{- else }}
+password: ""
+{{- end }}
 database: 0
 
 {{- else if .Values.redisExternal.enabled }}

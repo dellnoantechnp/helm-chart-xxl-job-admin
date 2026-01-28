@@ -341,12 +341,15 @@ volumeMounts: []
 redis:
   enabled: true
 
+  replica:
+    replicaCount: 1
+
 
 redisExternal:
   enabled: false
-  redisHost: "1.1.1.1"
+  redisHost: "1.2.3.4"
   redisPort: 6379
-  redisPassword: "123456"
+  redisPassword: "password"
   redisDatabase: 1
 
   # redisUrl: redis://:password@host:port/1
