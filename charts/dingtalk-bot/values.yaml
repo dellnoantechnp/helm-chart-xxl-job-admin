@@ -8,7 +8,7 @@
 ## @param global.imagePullSecrets Global Docker registry secret names as an array
 ## @param global.defaultStorageClass Global default StorageClass for Persistent Volume(s)
 ## @param global.storageClass DEPRECATED: use global.defaultStorageClass instead
-## @param global.redis.password Global Redis(R) password (overrides `auth.password`)
+## @param global.redis.password Global dingtalk-bot password (overrides `auth.password`)
 ## @param global.defaultFips Default value for the FIPS configuration (allowed values: '', restricted, relaxed, off). Can be overriden by the 'fips' object
 ##
 global:
@@ -44,16 +44,15 @@ diagnosticMode:
   ## @param diagnosticMode.args Args to override all containers in the deployment
   ##
   args:
-    - infinity
+    - "infinity"
 
-## Bitnami Redis(R) image
-## ref: https://hub.docker.com/r/bitnami/redis/tags/
-## @param image.registry [default: REGISTRY_NAME] Redis(R) image registry
-## @param image.repository [default: REPOSITORY_NAME/redis] Redis(R) image repository
-## @skip image.tag Redis(R) image tag (immutable tags are recommended)
-## @param image.digest Redis(R) image digest in the way sha256:aa.... Please note this parameter, if set, will override the tag
-## @param image.pullPolicy Redis(R) image pull policy
-## @param image.pullSecrets Redis(R) image pull secrets
+## dingtalk-bot image
+## @param image.registry [default: REGISTRY_NAME] dingtalk-bot image registry
+## @param image.repository [default: REPOSITORY_NAME/redis] dingtalk-bot image repository
+## @skip image.tag dingtalk-bot image tag (immutable tags are recommended)
+## @param image.digest dingtalk-bot image digest in the way sha256:aa.... Please note this parameter, if set, will override the tag
+## @param image.pullPolicy dingtalk-bot image pull policy
+## @param image.pullSecrets dingtalk-bot image pull secrets
 ## @param image.debug Enable image debug mode
 ##
 image:
@@ -85,18 +84,27 @@ replicaCount: 1
 
 config:
   # argo-workflows config
-  ARGO_WORKFLOWS_DOMAIN: https://workflows.example.com
-  ARGO_WORKFLOWS_TOKEN: "xxx"
-  ARGO_WORKFLOWS_WORKER_NAMESPACE: workflows
+  argoWorkflows:
+    domain: https://workflows.fawve.cluster.ws
+    token: eyJhbGciOiJSUzI1NiIsImtpZCI6Ii05WUVLWk5ZbmhRa1U3VURlVFpLei1rN09XSFVhdWkxRlJnSE5mNFd6c2cifQ.eyJpc3MiOiJrdWJlcm5ldGVzL3NlcnZpY2VhY2NvdW50Iiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9uYW1lc3BhY2UiOiJhcmdvLXdvcmtmbG93cyIsImt1YmVybmV0ZXMuaW8vc2VydmljZWFjY291bnQvc2VjcmV0Lm5hbWUiOiJhcmdvLXdvcmtmbG93LW9wZXJhdGUtc2EtdG9rZW4iLCJrdWJlcm5ldGVzLmlvL3NlcnZpY2VhY2NvdW50L3NlcnZpY2UtYWNjb3VudC5uYW1lIjoiYXJnby13b3JrZmxvdy1vcGVyYXRvciIsImt1YmVybmV0ZXMuaW8vc2VydmljZWFjY291bnQvc2VydmljZS1hY2NvdW50LnVpZCI6ImIwMDg3M2Q5LTA0ZjgtNDg2YS1iNmQ0LTY4NGExMGE0ZDExMCIsInN1YiI6InN5c3RlbTpzZXJ2aWNlYWNjb3VudDphcmdvLXdvcmtmbG93czphcmdvLXdvcmtmbG93LW9wZXJhdG9yIn0.MidjAeLdcaO71zvhANDAdzwIqZkH96F-bg6ZxlzsP1VeSXdbWjkULPcqLuSYnNpfetv8ne2uX-w3DwZdn47cIub0ifSnucx-t75GqcelwDs0W_LZTEEW0p3WCnjmw3SEPM1q8hrfUW3SkRV4at5novPkfkJeAk6MKRBGXPa-SCyw6OaNMTOkCRh9j40Prkp33H8Fl5UPhXbMeWGSKhC_PbgeoeUC1dCM68zLsYlpWaPIHHPgNQ60IKFSMdbBHJhk25RPRKmVGUaPk2eJ8SkpYmG8x6AyS6q5H8mlP0_9yLOkNNOlJLuPmYeee56Eee6_yQAsBatdZM3GKODJUA55TA
+    tokenSecret: "argo-workflow-operate-sa-token"
+    workerNamespace: argo-workflows
 
   # DingTalk IM config
-  DINGTALK_CLIENT_ID: "xxx"
-  DINGTALK_CLIENT_SECRET: "xxx"
-  DINGTALK_ROBOT_CODE: "xxx"
+  dingTalk:
+    clientId: dingqkoo0gpksjflc7ih
+    clientSecret: utI4JAsz0bZonfiIybwghmE_jf9i3a6dpyQQVsB9qlirIq9h_Sw50qkOzvuMVdPj
+    robotCode: dingqkoo0gpksjflc7ih
 
   # Django debug
   DJANGO_DEBUG: false
 
+## @param secretChecksumAnnotations Enable checksum annotations used to trigger rolling updates when Secret(s) change
+##
+secretChecksumAnnotations: true
+## @param secretAnnotations Annotations to add to secret
+##
+secretAnnotations: {}
 ## @param command Override default container command (useful when using custom images)
 ##
 command: []
@@ -104,30 +112,47 @@ command: []
 ##
 args: []
 
-imagePullSecrets: []
 nameOverride: ""
 fullnameOverride: ""
 
 
 
+## ServiceAccount configuration
+##
 serviceAccount:
-  # Specifies whether a service account should be created
+  ## @param serviceAccount.create Specifies whether a ServiceAccount should be created
+  ##
   create: true
-  # Automatically mount a ServiceAccount's API credentials?
-  automount: true
-  # Annotations to add to the service account
-  annotations: {}
-  # The name of the service account to use.
-  # If not set and create is true, a name is generated using the fullname template
+  ## @param serviceAccount.name The name of the ServiceAccount to use.
+  ## If not set and create is true, a name is generated using the common.names.fullname template
+  ##
   name: ""
+  ## @param serviceAccount.automountServiceAccountToken Whether to auto mount the service account token
+  ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/configure-service-account/#use-the-default-service-account-to-access-the-api-server
+  ##
+  automountServiceAccountToken: false
+  ## @param serviceAccount.annotations Additional custom annotations for the ServiceAccount
+  ##
+  annotations: {}
+
+## Pod Disruption Budget configuration
+## ref: https://kubernetes.io/docs/tasks/run-application/configure-pdb
+## @param pdb.create Enable/disable a Pod Disruption Budget creation
+## @param pdb.minAvailable [object] Minimum number/percentage of pods that should remain scheduled
+## @param pdb.maxUnavailable [object] Maximum number/percentage of pods that may be made unavailable. Defaults to `1` if both `pdb.minAvailable` and `pdb.maxUnavailable` are empty.
+##
+pdb:
+  create: false
+  minAvailable: ""
+  maxUnavailable: ""
 
 ## Configure Pods Security Context
 ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/#set-the-security-context-for-a-pod
-## @param podSecurityContext.enabled Enabled Redis(R) master pods' Security Context
+## @param podSecurityContext.enabled Enabled dingtalk-bot pods' Security Context
 ## @param podSecurityContext.fsGroupChangePolicy Set filesystem group change policy
 ## @param podSecurityContext.sysctls Set kernel settings using the sysctl interface
 ## @param podSecurityContext.supplementalGroups Set filesystem extra groups
-## @param podSecurityContext.fsGroup Set Redis(R) master pod's Security Context fsGroup
+## @param podSecurityContext.fsGroup Set dingtalk-bot pod's Security Context fsGroup
 ##
 podSecurityContext:
   enabled: true
@@ -137,15 +162,15 @@ podSecurityContext:
   fsGroup: 1001
 ## Configure Container Security Context
 ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/#set-the-security-context-for-a-pod
-## @param containerSecurityContext.enabled Enabled Redis(R) master containers' Security Context
+## @param containerSecurityContext.enabled Enabled dingtalk-bot containers' Security Context
 ## @param containerSecurityContext.seLinuxOptions [object,nullable] Set SELinux options in container
-## @param containerSecurityContext.runAsUser Set Redis(R) master containers' Security Context runAsUser
-## @param containerSecurityContext.runAsGroup Set Redis(R) master containers' Security Context runAsGroup
-## @param containerSecurityContext.runAsNonRoot Set Redis(R) master containers' Security Context runAsNonRoot
-## @param containerSecurityContext.allowPrivilegeEscalation Is it possible to escalate Redis(R) pod(s) privileges
+## @param containerSecurityContext.runAsUser Set dingtalk-bot containers' Security Context runAsUser
+## @param containerSecurityContext.runAsGroup Set dingtalk-bot containers' Security Context runAsGroup
+## @param containerSecurityContext.runAsNonRoot Set dingtalk-bot containers' Security Context runAsNonRoot
+## @param containerSecurityContext.allowPrivilegeEscalation Is it possible to escalate dingtalk-bot pod(s) privileges
 ## @param containerSecurityContext.readOnlyRootFilesystem Set container's Security Context read-only root filesystem
-## @param containerSecurityContext.seccompProfile.type Set Redis(R) master containers' Security Context seccompProfile
-## @param containerSecurityContext.capabilities.drop Set Redis(R) master containers' Security Context capabilities to drop
+## @param containerSecurityContext.seccompProfile.type Set dingtalk-bot containers' Security Context seccompProfile
+## @param containerSecurityContext.capabilities.drop Set dingtalk-bot containers' Security Context capabilities to drop
 ##
 containerSecurityContext:
   enabled: true
@@ -160,38 +185,38 @@ containerSecurityContext:
   capabilities:
     drop: ["ALL"]
 
-## @param master.hostAliases Redis(R) master pods host aliases
+## @param hostAliases dingtalk-bot pods host aliases
 ## https://kubernetes.io/docs/concepts/services-networking/add-entries-to-pod-etc-hosts-with-host-aliases/
 ##
 hostAliases: []
-## @param master.podLabels Extra labels for Redis(R) master pods
+## @param podLabels Extra labels for dingtalk-bot pods
 ## ref: https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/
 ##
 podLabels: {}
-## @param master.podAnnotations Annotations for Redis(R) master pods
+## @param podAnnotations Annotations for dingtalk-bot pods
 ## ref: https://kubernetes.io/docs/concepts/overview/working-with-objects/annotations/
 ##
 podAnnotations: {}
 
-## @param master.podAffinityPreset Pod affinity preset. Ignored if `master.affinity` is set. Allowed values: `soft` or `hard`
+## @param podAffinityPreset Pod affinity preset. Ignored if `affinity` is set. Allowed values: `soft` or `hard`
 ## ref: https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#inter-pod-affinity-and-anti-affinity
 ##
 podAffinityPreset: ""
-## @param master.podAntiAffinityPreset Pod anti-affinity preset. Ignored if `master.affinity` is set. Allowed values: `soft` or `hard`
+## @param podAntiAffinityPreset Pod anti-affinity preset. Ignored if `affinity` is set. Allowed values: `soft` or `hard`
 ## ref: https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#inter-pod-affinity-and-anti-affinity
 ##
 podAntiAffinityPreset: soft
-## Node master.affinity preset
+## Node affinity preset
 ## ref: https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#node-affinity
 ##
 nodeAffinityPreset:
-  ## @param master.nodeAffinityPreset.type Node affinity preset type. Ignored if `master.affinity` is set. Allowed values: `soft` or `hard`
+  ## @param nodeAffinityPreset.type Node affinity preset type. Ignored if `affinity` is set. Allowed values: `soft` or `hard`
   ##
   type: ""
-  ## @param master.nodeAffinityPreset.key Node label key to match. Ignored if `master.affinity` is set
+  ## @param nodeAffinityPreset.key Node label key to match. Ignored if `affinity` is set
   ##
   key: ""
-  ## @param master.nodeAffinityPreset.values Node label values to match. Ignored if `master.affinity` is set
+  ## @param nodeAffinityPreset.values Node label values to match. Ignored if `affinity` is set
   ## E.g.
   ## values:
   ##   - e2e-az1
@@ -199,7 +224,7 @@ nodeAffinityPreset:
   ##
   values: []
 
-## @param master.extraPodSpec Optionally specify extra PodSpec for the Redis(R) master pod(s)
+## @param extraPodSpec Optionally specify extra PodSpec for the dingtalk-bot pod(s)
 ##
 extraPodSpec: {}
 
@@ -207,20 +232,20 @@ extraPodSpec: {}
 ##
 priorityClassName: ""
 
-## @param master.affinity Affinity for Redis(R) master pods assignment
+## @param affinity Affinity for dingtalk-bot pods assignment
 ## ref: https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#affinity-and-anti-affinity
 ## NOTE: `podAffinityPreset`, `podAntiAffinityPreset`, and `nodeAffinityPreset` will be ignored when it's set
 ##
 affinity: {}
-## @param master.nodeSelector Node labels for Redis(R) master pods assignment
+## @param nodeSelector Node labels for dingtalk-bot pods assignment
 ## ref: https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/
 ##
 nodeSelector: {}
-## @param master.tolerations Tolerations for Redis(R) master pods assignment
+## @param tolerations Tolerations for dingtalk-bot pods assignment
 ## ref: https://kubernetes.io/docs/concepts/configuration/taint-and-toleration/
 ##
 tolerations: []
-## @param master.topologySpreadConstraints Spread Constraints for Redis(R) master pod assignment
+## @param topologySpreadConstraints Spread Constraints for dingtalk-bot pod assignment
 ## ref: https://kubernetes.io/docs/concepts/workloads/pods/pod-topology-spread-constraints/
 ## E.g.
 ## topologySpreadConstraints:
@@ -230,9 +255,77 @@ tolerations: []
 ##
 topologySpreadConstraints: []
 
+## dingtalk-bot service parameters
+##
 service:
+  ## @param service.type dingtalk-bot service type
+  ##
   type: ClusterIP
-  port: 80
+  ## @param service.portNames.redis dingtalk-bot service port name
+  ##
+  portNames:
+    http: "http-80"
+  ## @param service.ports.redis dingtalk-bot service port
+  ##
+  ports:
+    http: 80
+  ## @param service.nodePorts.redis Node port for dingtalk-bot
+  ## ref: https://kubernetes.io/docs/concepts/services-networking/service/#type-nodeport
+  ## NOTE: choose port between <30000-32767>
+  ##
+  nodePorts:
+    http: ""
+  ## @param service.externalTrafficPolicy dingtalk-bot service external traffic policy
+  ## ref: https://kubernetes.io/docs/tasks/access-application-cluster/create-external-load-balancer/#preserving-the-client-source-ip
+  ##
+  externalTrafficPolicy: Cluster
+  ## @param service.extraPorts Extra ports to expose (normally used with the `sidecar` value)
+  ##
+  extraPorts: []
+  ## @param service.internalTrafficPolicy dingtalk-bot service internal traffic policy (requires Kubernetes v1.22 or greater to be usable)
+  ## ref: https://kubernetes.io/docs/concepts/services-networking/service-traffic-policy/
+  ##
+  internalTrafficPolicy: Cluster
+  ## @param service.clusterIP dingtalk-bot service Cluster IP
+  ##
+  clusterIP: ""
+  ## @param service.loadBalancerIP dingtalk-bot service Load Balancer IP
+  ## ref: https://kubernetes.io/docs/concepts/services-networking/service/#internal-load-balancer
+  ##
+  loadBalancerIP: ""
+  ## @param service.loadBalancerClass service Load Balancer class if service type is `LoadBalancer` (optional, cloud specific)
+  ## ref: https://kubernetes.io/docs/concepts/services-networking/service/#type-loadbalancer
+  ##
+  loadBalancerClass: ""
+  ## @param service.loadBalancerSourceRanges dingtalk-bot service Load Balancer sources
+  ## https://kubernetes.io/docs/tasks/access-application-cluster/configure-cloud-provider-firewall/#restrict-access-for-loadbalancer-service
+  ## e.g.
+  ## loadBalancerSourceRanges:
+  ##   - 10.10.10.0/24
+  ##
+  loadBalancerSourceRanges: []
+  ## @param service.externalIPs dingtalk-bot service External IPs
+  ## https://kubernetes.io/docs/concepts/services-networking/service/#external-ips
+  ## e.g.
+  ## externalIPs:
+  ##   - 10.10.10.1
+  ##   - 201.22.30.1
+  ##
+  externalIPs: []
+  ## @param service.annotations Additional custom annotations for dingtalk-bot service
+  ##
+  annotations: {}
+  ## @param service.sessionAffinity Session Affinity for Kubernetes service, can be "None" or "ClientIP"
+  ## If "ClientIP", consecutive client requests will be directed to the same Pod
+  ## ref: https://kubernetes.io/docs/concepts/services-networking/service/#virtual-ips-and-service-proxies
+  ##
+  sessionAffinity: None
+  ## @param service.sessionAffinityConfig Additional settings for the sessionAffinity. Ignored if `service.sessionAffinity` is `None`
+  ## sessionAffinityConfig:
+  ##   clientIP:
+  ##     timeoutSeconds: 300
+  ##
+  sessionAffinityConfig: {}
 
 ingress:
   enabled: false
@@ -263,14 +356,14 @@ resources: {}
 #   cpu: 100m
 #   memory: 128Mi
 
-## Configure extra options for Redis(R) containers' liveness and readiness probes
+## Configure extra options for dingtalk-bot containers' liveness and readiness probes
 ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-probes/#configure-probes
-## @param master.startupProbe.enabled Enable startupProbe on Redis(R) master nodes
-## @param master.startupProbe.initialDelaySeconds Initial delay seconds for startupProbe
-## @param master.startupProbe.periodSeconds Period seconds for startupProbe
-## @param master.startupProbe.timeoutSeconds Timeout seconds for startupProbe
-## @param master.startupProbe.failureThreshold Failure threshold for startupProbe
-## @param master.startupProbe.successThreshold Success threshold for startupProbe
+## @param startupProbe.enabled Enable startupProbe on dingtalk-bot nodes
+## @param startupProbe.initialDelaySeconds Initial delay seconds for startupProbe
+## @param startupProbe.periodSeconds Period seconds for startupProbe
+## @param startupProbe.timeoutSeconds Timeout seconds for startupProbe
+## @param startupProbe.failureThreshold Failure threshold for startupProbe
+## @param startupProbe.successThreshold Success threshold for startupProbe
 ##
 startupProbe:
   enabled: false
@@ -279,26 +372,26 @@ startupProbe:
   timeoutSeconds: 5
   successThreshold: 1
   failureThreshold: 5
-## @param master.livenessProbe.enabled Enable livenessProbe on Redis(R) master nodes
-## @param master.livenessProbe.initialDelaySeconds Initial delay seconds for livenessProbe
-## @param master.livenessProbe.periodSeconds Period seconds for livenessProbe
-## @param master.livenessProbe.timeoutSeconds Timeout seconds for livenessProbe
-## @param master.livenessProbe.failureThreshold Failure threshold for livenessProbe
-## @param master.livenessProbe.successThreshold Success threshold for livenessProbe
+## @param livenessProbe.enabled Enable livenessProbe on dingtalk-bot nodes
+## @param livenessProbe.initialDelaySeconds Initial delay seconds for livenessProbe
+## @param livenessProbe.periodSeconds Period seconds for livenessProbe
+## @param livenessProbe.timeoutSeconds Timeout seconds for livenessProbe
+## @param livenessProbe.failureThreshold Failure threshold for livenessProbe
+## @param livenessProbe.successThreshold Success threshold for livenessProbe
 ##
 livenessProbe:
-  enabled: false
+  enabled: true
   initialDelaySeconds: 20
-  periodSeconds: 5
-  timeoutSeconds: 5
+  periodSeconds: 10
+  timeoutSeconds: 3
   successThreshold: 1
   failureThreshold: 5
-## @param master.readinessProbe.enabled Enable readinessProbe on Redis(R) master nodes
-## @param master.readinessProbe.initialDelaySeconds Initial delay seconds for readinessProbe
-## @param master.readinessProbe.periodSeconds Period seconds for readinessProbe
-## @param master.readinessProbe.timeoutSeconds Timeout seconds for readinessProbe
-## @param master.readinessProbe.failureThreshold Failure threshold for readinessProbe
-## @param master.readinessProbe.successThreshold Success threshold for readinessProbe
+## @param readinessProbe.enabled Enable readinessProbe on dingtalk-bot nodes
+## @param readinessProbe.initialDelaySeconds Initial delay seconds for readinessProbe
+## @param readinessProbe.periodSeconds Period seconds for readinessProbe
+## @param readinessProbe.timeoutSeconds Timeout seconds for readinessProbe
+## @param readinessProbe.failureThreshold Failure threshold for readinessProbe
+## @param readinessProbe.successThreshold Success threshold for readinessProbe
 ##
 readinessProbe:
   enabled: true
@@ -307,13 +400,13 @@ readinessProbe:
   timeoutSeconds: 5
   successThreshold: 1
   failureThreshold: 5
-## @param master.customStartupProbe Custom startupProbe that overrides the default one
+## @param customStartupProbe Custom startupProbe that overrides the default one
 ##
 customStartupProbe: {}
-## @param master.customLivenessProbe Custom livenessProbe that overrides the default one
+## @param customLivenessProbe Custom livenessProbe that overrides the default one
 ##
 customLivenessProbe: {}
-## @param master.customReadinessProbe Custom readinessProbe that overrides the default one
+## @param customReadinessProbe Custom readinessProbe that overrides the default one
 ##
 customReadinessProbe: {}
 
@@ -339,20 +432,19 @@ volumeMounts: []
 
 
 redis:
-  enabled: true
+  enabled: false
 
   replica:
-    replicaCount: 1
+    replicaCount: 0
 
 
 redisExternal:
-  enabled: false
-  redisHost: "1.2.3.4"
+  enabled: true
+  redisHost: "x.x.x.x"
   redisPort: 6379
   redisPassword: "password"
   redisDatabase: 1
 
-  # redisUrl: redis://:password@host:port/1
 
 
 metrics:

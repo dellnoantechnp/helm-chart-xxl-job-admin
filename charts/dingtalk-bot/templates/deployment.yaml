@@ -14,10 +14,10 @@ spec:
       {{- include "common.labels.matchLabels" . | nindent 6 }}
   template:
     metadata:
-      {{- with .Values.podAnnotations }}
       annotations:
-        {{- toYaml . | nindent 8 }}
-      {{- end }}
+        {{- if .Values.secretChecksumAnnotations }}
+        checksum/secret: {{ pick ( include (print $.Template.BasePath "/secret.yaml") . | fromYaml ) "data" | toYaml | sha256sum }}
+        {{- end }}
       labels:
         {{- include "common.labels.standard" . | nindent 8 }}
         {{- with .Values.podLabels }}
@@ -27,10 +27,7 @@ spec:
       {{- if .Values.extraPodSpec }}
       {{- include "common.tplvalues.render" (dict "value" .Values.extraPodSpec "context" $) | nindent 6 }}
       {{- end }}
-      {{- with .Values.imagePullSecrets }}
-      imagePullSecrets:
-        {{- toYaml . | nindent 8 }}
-      {{- end }}
+      {{- include "dingtalk-bot.imagePullSecrets" . | nindent 6 }}
       {{- if .Values.hostAliases }}
       hostAliases: {{- include "common.tplvalues.render" (dict "value" .Values.hostAliases "context" $) | nindent 8 }}
       {{- end }}
@@ -104,6 +101,37 @@ spec:
                   key: redis-password
                   name: {{ printf "%s" (include "common.names.dependency.fullname" (dict "chartName" "redis" "chartValues" .Values.redis "context" $)) }}
             {{- end }}
+            - name: ARGO_WORKFLOWS_DOMAIN
+              valueFrom:
+                secretKeyRef:
+                  key: ARGO_WORKFLOWS_DOMAIN
+                  name: {{ include "common.names.fullname" . }}
+            - name: ARGO_WORKFLOWS_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  key: ARGO_WORKFLOWS_TOKEN
+                  name: {{ include "common.names.fullname" . }}
+            - name: ARGO_WORKFLOWS_WORKER_NAMESPACE
+              valueFrom:
+                secretKeyRef:
+                  key: ARGO_WORKFLOWS_WORKER_NAMESPACE
+                  name: {{ include "common.names.fullname" . }}
+            - name: DINGTALK_CLIENT_ID
+              valueFrom:
+                secretKeyRef:
+                  key: DINGTALK_CLIENT_ID
+                  name: {{ include "common.names.fullname" . }}
+            - name: DINGTALK_CLIENT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  key: DINGTALK_CLIENT_SECRET
+                  name: {{ include "common.names.fullname" . }}
+            - name: DINGTALK_ROBOT_CODE
+              valueFrom:
+                secretKeyRef:
+                  key: DINGTALK_ROBOT_CODE
+                  name: {{ include "common.names.fullname" . }}
+
           {{- if not .Values.diagnosticMode.enabled }}
           {{- if .Values.customStartupProbe }}
           startupProbe: {{- include "common.tplvalues.render" (dict "value" .Values.customStartupProbe "context" $) | nindent 12 }}
@@ -122,11 +150,9 @@ spec:
             timeoutSeconds: {{ add1 .Values.livenessProbe.timeoutSeconds }}
             successThreshold: {{ .Values.livenessProbe.successThreshold }}
             failureThreshold: {{ .Values.livenessProbe.failureThreshold }}
-            exec:
-              command:
-                - /bin/bash
-                - -ec
-                - "/health/ping_liveness_local.sh {{ .Values.livenessProbe.timeoutSeconds }}"
+            httpGet:
+              port: http
+              path: /health/live
           {{- end }}
           {{- if .Values.customReadinessProbe }}
           readinessProbe: {{- include "common.tplvalues.render" (dict "value" .Values.customReadinessProbe "context" $) | nindent 12 }}
@@ -137,11 +163,9 @@ spec:
             timeoutSeconds: {{ add1 .Values.readinessProbe.timeoutSeconds }}
             successThreshold: {{ .Values.readinessProbe.successThreshold }}
             failureThreshold: {{ .Values.readinessProbe.failureThreshold }}
-            exec:
-              command:
-                - /bin/bash
-                - -ec
-                - "/health/ping_readiness_local.sh {{ .Values.readinessProbe.timeoutSeconds }}"
+            httpGet:
+              port: http
+              path: /health/ready
           {{- end }}
           {{- end }}
           resources:

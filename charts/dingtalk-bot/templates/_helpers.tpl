@@ -69,11 +69,17 @@ Return the proper dingtalk-bot image name
 {{- end -}}
 
 {{/*
+Return the proper Docker Image Registry Secret Names
+*/}}
+{{- define "dingtalk-bot.imagePullSecrets" -}}
+{{- include "common.images.renderPullSecrets" (dict "images" (list .Values.image) "context" $) -}}
+{{- end -}}
+
+{{/*
 Return redis connection info as dict
 */}}
 {{- define "dingtalk-bot.redis.config" -}}
 {{- if .Values.redis.enabled }}
-
 host: {{ printf "%s-master" (include "common.names.dependency.fullname" (dict "chartName" "redis" "chartValues" .Values.redis "context" $)) }}
 port: {{ .Values.redis.master.service.ports.redis }}
 {{- if .Values.redis.auth.enabled }}
@@ -86,10 +92,16 @@ password: ""
 database: 0
 
 {{- else if .Values.redisExternal.enabled }}
-host: {{ .Values.redisExternal.redisHost | quote }}
-port: {{ .Values.redisExternal.redisPort }}
-password: {{ .Values.redisExternal.redisPassword | quote }}
-database: {{ .Values.redisExternal.redisDatabase }}
+{{- with .Values.redisExternal }}
+{{- required "redisExternal.redisHost is required when redisExternal in enabled" .redisHost }}
+{{- required "redisExternal.redisPort is required when redisExternal in enabled" .redisPort }}
+{{- required "redisExternal.redisPassword is required when redisExternal in enabled" .redisPassword }}
+{{- required "redisExternal.redisDatabase is required when redisExternal in enabled" .redisDatabase }}
+host: {{ .redisHost | quote }}
+port: {{ .redisPort }}
+password: {{ .redisPassword | quote }}
+database: {{ .redisDatabase }}
+{{- end }}
 
 {{- else }}
 {{- fail "Either redis.enabled or redisExternal.enabled must be true" }}
