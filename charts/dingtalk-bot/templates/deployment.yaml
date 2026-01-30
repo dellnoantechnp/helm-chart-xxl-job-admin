@@ -94,7 +94,7 @@ spec:
             {{- end }}
           env:
             {{- include "dingtalk-bot.env.redis" . | nindent 12 }}
-            {{- if (and .Values.redis.auth (empty .Values.redis.auth.password)) }}
+            {{- if (and .Values.redis.enabled (and .Values.redis.auth (empty .Values.redis.auth.password))) }}
             - name: REDIS_PASSWORD
               valueFrom:
                 secretKeyRef:

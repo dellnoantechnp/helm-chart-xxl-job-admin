@@ -440,9 +440,9 @@ redis:
 
 redisExternal:
   enabled: true
-  redisHost: "x.x.x.x"
+  redisHost: "192.168.22.81"
   redisPort: 6379
-  redisPassword: "password"
+  redisPassword: "123.com123.com"
   redisDatabase: 1
 
 
