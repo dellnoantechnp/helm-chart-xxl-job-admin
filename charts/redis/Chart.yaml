@@ -3,19 +3,19 @@ annotations:
   images: |
     - name: kubectl
       version: 1.35.0
-      image: registry-1.docker.io/bitnami/kubectl:latest
+      image: ghcr.io/dellnoantechnp/bitnami/kubectl:v1.35.0
     - name: os-shell
       version: "5"
-      image: registry-1.docker.io/bitnami/os-shell:latest
+      image: ghcr.io/dellnoantechnp/bitnami/os-shell:latest
     - name: redis
       version: 8.4.0
-      image: registry-1.docker.io/bitnami/redis:latest
+      image: ghcr.io/dellnoantechnp/bitnami/redis:8.4.0
     - name: redis-exporter
       version: 1.80.1
-      image: registry-1.docker.io/bitnami/redis-exporter:latest
+      image: ghcr.io/dellnoantechnp/bitnami/redis-exporter:v1.80.2
     - name: redis-sentinel
       version: 8.4.0
-      image: registry-1.docker.io/bitnami/redis-sentinel:latest
+      image: ghcr.io/dellnoantechnp/bitnami/redis-sentinel:8.4.0
   licenses: Apache-2.0
 apiVersion: v2
 appVersion: 8.4.0
@@ -38,4 +38,4 @@ maintainers:
 name: redis
 sources:
 - https://github.com/dellnoantechnp/helm-chart-xxl-job-admin/tree/main/charts
-version: 24.1.2
+version: 24.1.3

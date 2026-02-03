@@ -117,9 +117,9 @@ diagnosticMode:
 ## @param image.debug Enable image debug mode
 ##
 image:
-  registry: registry-1.docker.io
-  repository: bitnami/redis
-  tag: latest
+  registry: ghcr.io
+  repository: dellnoantechnp/bitnami/redis
+  tag: 8.4.0
   digest: ""
   ## Specify a imagePullPolicy
   ## ref: https://kubernetes.io/docs/concepts/containers/images/#pre-pulled-images
@@ -1206,9 +1206,9 @@ sentinel:
   ## @param sentinel.image.debug Enable image debug mode
   ##
   image:
-    registry: registry-1.docker.io
-    repository: bitnami/redis-sentinel
-    tag: latest
+    registry: ghcr.io
+    repository: dellnoatechnp/bitnami/redis-sentinel
+    tag: 8.4.0
     digest: ""
     ## Specify a imagePullPolicy
     ## ref: https://kubernetes.io/docs/concepts/containers/images/#pre-pulled-images
@@ -1809,9 +1809,9 @@ metrics:
   ## @param metrics.image.pullSecrets Redis(R) Exporter image pull secrets
   ##
   image:
-    registry: registry-1.docker.io
-    repository: bitnami/redis-exporter
-    tag: latest
+    registry: ghcr.io
+    repository: dellnoantechnp/bitnami/redis-exporter
+    tag: v1.80.2
     digest: ""
     pullPolicy: IfNotPresent
     ## Optionally specify an array of imagePullSecrets.
@@ -2193,8 +2193,8 @@ volumePermissions:
   ## @param volumePermissions.image.pullSecrets OS Shell + Utility image pull secrets
   ##
   image:
-    registry: registry-1.docker.io
-    repository: bitnami/os-shell
+    registry: ghcr.io
+    repository: dellnoantechnp/bitnami/os-shell
     tag: latest
     digest: ""
     pullPolicy: IfNotPresent
@@ -2261,9 +2261,9 @@ kubectl:
   ## @param kubectl.image.pullSecrets Kubectl pull secrets
   ##
   image:
-    registry: registry-1.docker.io
-    repository: bitnami/kubectl
-    tag: latest
+    registry: ghcr.io
+    repository: dellnoantechnp/bitnami/kubectl
+    tag: v1.35.0
     digest: ""
     ## Specify a imagePullPolicy
     ## ref: https://kubernetes.io/docs/concepts/containers/images/#pre-pulled-images
@@ -2336,8 +2336,8 @@ sysctl:
   ## @param sysctl.image.pullSecrets OS Shell + Utility image pull secrets
   ##
   image:
-    registry: registry-1.docker.io
-    repository: bitnami/os-shell
+    registry: ghcr.io
+    repository: dellnoantechnp/bitnami/os-shell
     tag: latest
     digest: ""
     pullPolicy: IfNotPresent
