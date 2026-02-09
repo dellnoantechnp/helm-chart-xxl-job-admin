@@ -120,6 +120,6 @@ Render redis env vars
   value: {{ $redis.port | quote }}
 - name: REDIS_PASSWORD
   value: {{ $redis.password | quote }}
-- name: REDIS_DATABASE
+- name: REDIS_DB
   value: {{ $redis.database | quote }}
 {{- end }}
