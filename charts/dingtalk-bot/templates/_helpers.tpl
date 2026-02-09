@@ -93,14 +93,14 @@ database: 0
 
 {{- else if .Values.redisExternal.enabled }}
 {{- with .Values.redisExternal }}
-{{- required "redisExternal.redisHost is required when redisExternal in enabled" .redisHost }}
-{{- required "redisExternal.redisPort is required when redisExternal in enabled" .redisPort }}
-{{- required "redisExternal.redisPassword is required when redisExternal in enabled" .redisPassword }}
-{{- required "redisExternal.redisDatabase is required when redisExternal in enabled" .redisDatabase }}
-host: {{ .redisHost | quote }}
-port: {{ .redisPort }}
-password: {{ .redisPassword | quote }}
-database: {{ .redisDatabase }}
+{{- $redisHost := required "redisExternal.redisHost is required when redisExternal in enabled" .redisHost }}
+{{- $redisPort := required "redisExternal.redisPort is required when redisExternal in enabled" .redisPort }}
+{{- $redisPassword := required "redisExternal.redisPassword is required when redisExternal in enabled" .redisPassword }}
+{{- $redisDatabase := required "redisExternal.redisDatabase is required when redisExternal in enabled" .redisDatabase }}
+host: {{ $redisHost | quote }}
+port: {{ $redisPort }}
+password: {{ $redisPassword | quote }}
+database: {{ $redisDatabase }}
 {{- end }}
 
 {{- else }}
