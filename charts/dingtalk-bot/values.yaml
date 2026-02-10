@@ -56,14 +56,14 @@ diagnosticMode:
 ## @param image.debug Enable image debug mode
 ##
 image:
-  registry: fcr.fawve.cluster.ws
+  registry: ""
   repository: dellnoantechnp/dingtalk-bot
-  tag: latest
+  tag: v1.0.0
   digest: ""
   ## Specify a imagePullPolicy
   ## ref: https://kubernetes.io/docs/concepts/containers/images/#pre-pulled-images
   ##
-  pullPolicy: Always
+  pullPolicy: IfNotPresent
   ## Optionally specify an array of imagePullSecrets.
   ## Secrets must be manually created in the namespace.
   ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
@@ -85,16 +85,16 @@ replicaCount: 1
 config:
   # argo-workflows config
   argoWorkflows:
-    domain: https://workflows.fawve.cluster.ws
-    token: eyJhbGciOiJSUzI1NiIsImtpZCI6Ii05WUVLWk5ZbmhRa1U3VURlVFpLei1rN09XSFVhdWkxRlJnSE5mNFd6c2cifQ.eyJpc3MiOiJrdWJlcm5ldGVzL3NlcnZpY2VhY2NvdW50Iiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9uYW1lc3BhY2UiOiJhcmdvLXdvcmtmbG93cyIsImt1YmVybmV0ZXMuaW8vc2VydmljZWFjY291bnQvc2VjcmV0Lm5hbWUiOiJhcmdvLXdvcmtmbG93LW9wZXJhdGUtc2EtdG9rZW4iLCJrdWJlcm5ldGVzLmlvL3NlcnZpY2VhY2NvdW50L3NlcnZpY2UtYWNjb3VudC5uYW1lIjoiYXJnby13b3JrZmxvdy1vcGVyYXRvciIsImt1YmVybmV0ZXMuaW8vc2VydmljZWFjY291bnQvc2VydmljZS1hY2NvdW50LnVpZCI6ImIwMDg3M2Q5LTA0ZjgtNDg2YS1iNmQ0LTY4NGExMGE0ZDExMCIsInN1YiI6InN5c3RlbTpzZXJ2aWNlYWNjb3VudDphcmdvLXdvcmtmbG93czphcmdvLXdvcmtmbG93LW9wZXJhdG9yIn0.MidjAeLdcaO71zvhANDAdzwIqZkH96F-bg6ZxlzsP1VeSXdbWjkULPcqLuSYnNpfetv8ne2uX-w3DwZdn47cIub0ifSnucx-t75GqcelwDs0W_LZTEEW0p3WCnjmw3SEPM1q8hrfUW3SkRV4at5novPkfkJeAk6MKRBGXPa-SCyw6OaNMTOkCRh9j40Prkp33H8Fl5UPhXbMeWGSKhC_PbgeoeUC1dCM68zLsYlpWaPIHHPgNQ60IKFSMdbBHJhk25RPRKmVGUaPk2eJ8SkpYmG8x6AyS6q5H8mlP0_9yLOkNNOlJLuPmYeee56Eee6_yQAsBatdZM3GKODJUA55TA
+    domain: https://workflows.example.com
+    token: eyJhbGcxxxxxxA55TA
     tokenSecret: "argo-workflow-operate-sa-token"
     workerNamespace: argo-workflows
 
   # DingTalk IM config
   dingTalk:
-    clientId: dingqkoo0gpksjflc7ih
-    clientSecret: utI4JAsz0bZonfiIybwghmE_jf9i3a6dpyQQVsB9qlirIq9h_Sw50qkOzvuMVdPj
-    robotCode: dingqkoo0gpksjflc7ih
+    clientId: xxxxxxx
+    clientSecret: xxxxxx
+    robotCode: xxxxxxx
 
   # Django debug
   DJANGO_DEBUG: false
@@ -432,17 +432,17 @@ volumeMounts: []
 
 
 redis:
-  enabled: false
+  enabled: true
 
   replica:
     replicaCount: 0
 
 
 redisExternal:
-  enabled: true
-  redisHost: "192.168.22.81"
+  enabled: flase
+  redisHost: "127.0.0.1"
   redisPort: 6379
-  redisPassword: "123.com123.com"
+  redisPassword: "password"
   redisDatabase: 1
 
 
