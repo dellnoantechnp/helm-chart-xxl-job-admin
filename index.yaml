@@ -1006,6 +1006,40 @@ entries:
     urls:
     - https://github.com/dellnoantechnp/helm-chart-xxl-job-admin/releases/download/common-1.10.3/common-1.10.3.tgz
     version: 1.10.3
+  dingtalk-bot:
+  - annotations:
+      artifacthub.io/links: |
+        - name: Chart Source
+          url: https://github.com/dellnoantechnp/helm-chart-xxl-job-admin
+      ghcr.io/license: MIT-License
+      ghcr.io/packages: |
+        - name: dellnoantechnp/dingtalk-bot
+          image: dellnoantechnp/dingtalk-bot:v0.1.0
+    apiVersion: v2
+    appVersion: v1.0.0
+    created: "2026-02-10T12:55:58.709445287Z"
+    dependencies:
+    - name: common
+      repository: https://dellnoantechnp.github.io/helm-chart-xxl-job-admin/
+      version: ^2.0.0
+    - condition: redis.enabled
+      name: redis
+      repository: https://dellnoantechnp.github.io/helm-chart-xxl-job-admin
+      tags:
+      - cache
+      version: ^24.1.0
+    description: Dingtalk-bot is a send message use interactive notification card,
+      use for DingTalk IM.
+    digest: 8a2b1bd3d133389fb44b72e490a38fa612f20351ff7dea8c6ffdc8b71c259d8b
+    home: https://github.com/dellnoantechnp/dingtalk_bot
+    kubeVersion: '>=1.26.0-0'
+    name: dingtalk-bot
+    sources:
+    - https://github.com/dellnoantechnp/helm-chart-xxl-job-admin
+    type: application
+    urls:
+    - https://github.com/dellnoantechnp/helm-chart-xxl-job-admin/releases/download/dingtalk-bot-0.1.0/dingtalk-bot-0.1.0.tgz
+    version: 0.1.0
   elasticsearch:
   - annotations:
       category: Analytics
@@ -2873,4 +2907,4 @@ entries:
     urls:
     - https://github.com/dellnoantechnp/helm-chart-xxl-job-admin/releases/download/zookeeper-7.6.1/zookeeper-7.6.1.tgz
     version: 7.6.1
-generated: "2026-02-03T07:11:30.445613405Z"
+generated: "2026-02-10T12:55:58.709631293Z"
