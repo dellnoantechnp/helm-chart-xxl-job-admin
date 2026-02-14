@@ -459,7 +459,7 @@ redis:
 redisExternal:
   ## @param redisExternal.enabled Enable external redis
   ##
-  enabled: flase
+  enabled: false
   ## @param redisExternal.redisHost Set redis host
   ##
   redisHost: "127.0.0.1"

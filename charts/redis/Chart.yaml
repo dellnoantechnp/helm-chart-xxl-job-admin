@@ -38,4 +38,4 @@ maintainers:
 name: redis
 sources:
 - https://github.com/dellnoantechnp/helm-chart-xxl-job-admin/tree/main/charts
-version: 24.1.4
+version: 24.1.3
