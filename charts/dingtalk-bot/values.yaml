@@ -58,7 +58,7 @@ diagnosticMode:
 image:
   registry: ""
   repository: dellnoantechnp/dingtalk-bot
-  tag: v1.0.0
+  tag: v1.0.1
   digest: ""
   ## Specify a imagePullPolicy
   ## ref: https://kubernetes.io/docs/concepts/containers/images/#pre-pulled-images
@@ -98,6 +98,9 @@ config:
 
   # Django debug
   DJANGO_DEBUG: false
+
+  # card update interval
+  UPDATE_INTERVAL_SECONDS: 20
 
 ## @param secretChecksumAnnotations Enable checksum annotations used to trigger rolling updates when Secret(s) change
 ##

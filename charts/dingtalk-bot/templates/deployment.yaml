@@ -131,6 +131,8 @@ spec:
                 secretKeyRef:
                   key: DINGTALK_ROBOT_CODE
                   name: {{ include "common.names.fullname" . }}
+            - name: UPDATE_INTERVAL_SECONDS
+              value: {{ .Values.config.UPDATE_INTERVAL_SECONDS | quote }}
 
           {{- if not .Values.diagnosticMode.enabled }}
           {{- if .Values.customStartupProbe }}
