@@ -1,0 +1,540 @@
+## @section Global parameters
+## Global Docker image parameters
+## Please, note that this will override the image parameters, including dependencies, configured to use the global value
+## Current available global Docker image parameters: imageRegistry, imagePullSecrets and storageClass
+##
+
+## @param global.imageRegistry Global Docker image registry
+## @param global.imagePullSecrets Global Docker registry secret names as an array
+## @param global.defaultStorageClass Global default StorageClass for Persistent Volume(s)
+## @param global.storageClass DEPRECATED: use global.defaultStorageClass instead
+## @param global.redis.password Global cloudeye-exporter password (overrides `auth.password`)
+## @param global.defaultFips Default value for the FIPS configuration (allowed values: '', restricted, relaxed, off). Can be overriden by the 'fips' object
+##
+global:
+  imageRegistry: ""
+  ## E.g.
+  ## imagePullSecrets:
+  ##   - myRegistryKeySecretName
+  ##
+  imagePullSecrets: []
+  defaultStorageClass: ""
+  storageClass: ""
+  ## Security parameters
+  ##
+  security:
+    ## @param global.security.allowInsecureImages Allows skipping image verification
+    allowInsecureImages: false
+  redis:
+    password: ""
+  ##  Configure FIPS mode: '', 'restricted', 'relaxed', 'off'
+  ##
+  defaultFips: restricted
+
+## Enable diagnostic mode in the deployment
+##
+diagnosticMode:
+  ## @param diagnosticMode.enabled Enable diagnostic mode (all probes will be disabled and the command will be overridden)
+  ##
+  enabled: false
+  ## @param diagnosticMode.command Command to override all containers in the deployment
+  ##
+  command:
+    - sleep
+  ## @param diagnosticMode.args Args to override all containers in the deployment
+  ##
+  args:
+    - "infinity"
+
+## cloudeye-exporter image
+## @param image.registry [default: REGISTRY_NAME] cloudeye-exporter image registry
+## @param image.repository [default: REPOSITORY_NAME/redis] cloudeye-exporter image repository
+## @skip image.tag cloudeye-exporter image tag (immutable tags are recommended)
+## @param image.digest cloudeye-exporter image digest in the way sha256:aa.... Please note this parameter, if set, will override the tag
+## @param image.pullPolicy cloudeye-exporter image pull policy
+## @param image.pullSecrets cloudeye-exporter image pull secrets
+## @param image.debug Enable image debug mode
+##
+image:
+  registry: ""
+  repository: dellnoantechnp/cloudeye-exporter
+  tag: latest
+  digest: ""
+  ## Specify a imagePullPolicy
+  ## ref: https://kubernetes.io/docs/concepts/containers/images/#pre-pulled-images
+  ##
+  pullPolicy: IfNotPresent
+  ## Optionally specify an array of imagePullSecrets.
+  ## Secrets must be manually created in the namespace.
+  ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
+  ## e.g:
+  ## pullSecrets:
+  ##   - myRegistryKeySecretName
+  ##
+  pullSecrets: []
+  ## Enable debug mode
+  ##
+  debug: false
+
+
+containerPorts:
+  metrics: 8087
+
+replicaCount: 1
+
+config:
+  ## global configure
+  ## ref: https://github.com/huaweicloud/cloudeye-exporter/blob/br_release_sdk_v3/README_cn.md
+  ##
+  global:
+    ## @param: config.global.prefix Metric prefix string
+    ##
+    prefix: "huaweicloud"
+    ## @param: config.global.port For security purposes, you are advised not to expose the Expoter service port to the public network.
+    ## You are advised to set this parameter to 127.0.0.1:{port} or {private IP address}:{port}, for example, 192.168.1.100:8087.
+    ## If the port needs to be exposed to the public network, ensure that the security group, firewall, and
+    ## iptables access control policies are properly configured to meet the minimum access permission principle.
+    ##
+    port: "0.0.0.0:8087"
+    ## @param config.global.metric_path Metric endpoint
+    ##
+    metric_path: "/metrics"
+    ## @param config.global.scrape_batch_size Scrape_batch_size
+    ##
+    scrape_batch_size: 300
+    ## @param config.global.resource_sync_interval_minutes Update frequency of resource information: resource information
+    ## is updated every 180 minutes by default; If this parameter is set to a value less than 10 minutes,
+    ## the information is updated every 10 minutes.
+    ##
+    resource_sync_interval_minutes: 180
+    ## @param config.global.ignroe_ssl_verify # This is optional. The SSL certificate is verified by default when the
+    ## exporter queries resources or indicators. If the exporter is abnormal due to SSL certificate verification,
+    ## you can set this configuration to true to skip SSL certificate verification.
+    ##
+    ignore_ssl_verify: false
+    ## @param config.global.metric_timestamp_export_enabled This is optional. used to export the original timestamp of metrics.
+    ## Default is false.
+    ## When enabled, the metric timestamp field will be set to the actual collection time; otherwise, it will be set to
+    ## the time when Prometheus requests metrics from the exporter.
+    ##
+    metric_timestamp_export_enabled: true
+    ## @param config.global.metric_query_duration This is optional.The time interval for querying metric data.
+    ## The default value is 10 minutes. You can configure this value according to the metric reporting period,
+    ## with a configurable range of 10 to 60.
+    ##
+    metric_query_duration: 10
+    ## @param config.global.rms_retry_times Optional, query failed retry count, min 1, max 10.
+    ## default: 1
+    ##
+    rms_retry_times: 1
+
+    ## proxy configure. Optional
+    ## @param config.global.proxy_enabled To enable proxy access huaweicloud.
+    ##
+    proxy_enabled: false
+    ## @param config.global.proxy_schema This is optional. You can replace the proxy schema,
+    ## host and port in the example below according to actual situation.
+    ##
+    proxy_schema: "http"
+    ## @param config.global.proxy_host Proxy host address
+    ##
+    proxy_host: "proxy.huaweicloud.com"
+    ## @param config.global.proxy_port Proxy host port
+    ##
+    proxy_port: 8080
+    ## Proxy Authentication configure. Optional
+    ## @param config.global.proxy_username This is optional. If the proxy requires authentication,
+    ## please configure the username and password
+    ##
+    proxy_username: "username"
+    ## @param config.global.proxy_password This is optional. If the proxy requires authentication,
+    ## please configure the username and password
+    ##
+    proxy_password: "password"
+
+  ## cloud Auth configure
+  ## ref: https://github.com/huaweicloud/cloudeye-exporter/blob/br_release_sdk_v3/README_cn.md
+  ##
+  auth:
+    ## @param config.auth.auth_url The api auth url
+    ## e.g: https://iam.cn-south-1.myhuaweicloud.com/v3
+    ##
+    auth_url: "https://iam.{region_id}.myhuaweicloud.com/v3"
+    ## @param config.auth.project_name The huaweicloud project name
+    ## look at console page 华为云->统一身份认证服务->项目
+    ## e.g: cn-north-1
+    ##
+    project_name: "{project_name}"
+    ## @param config.auth.access_key The access key
+    ## It is strongly remommended that you use a script to decrypt the AK/SK by following the instructions provided in
+    ## section 4.1 to prevent information leakage caused by plaintext AK/SK configuration in the configuration file.
+    ##
+    access_key: "{access_key}"
+    secret_key: "{secret_key}"
+    ## @param config.auth.region The region code.
+    ##
+    region: "{region}"
+
+    ## huaweicloud CCE cluster used oidc auth.
+    ##
+    oidc:
+      enabled: false
+      ## @param config.auth.oidc.id_token_file_path The file path where the id_token is stored. The id_token
+      ## is constructed by the enterprise IdP and carries federated user identity information.
+      ##
+      id_token_file_path: ""
+      ## @param config.auth.oidc.idp_id The idp provider id
+      ##
+      idp_id: ""
+      ## @param config.auth.oidc.domain_id  The huaweicloud account id.
+      ##
+      domain_id: ""
+
+  ## logs configure for cloudeye-exporter
+  logs:
+    ## @param config.logs.level Set log level.
+    ##
+    level: "error"
+    ## @param config.logs.type Set log output method. "FILE" or "STDOUT", Set "FILE" logs to logfile, Set "STDOUT" logs to console.
+    ##
+    type: "STDOUT"
+    ## @param config.logs.filename Set log type "FILE" logfile path, if type is "STDOUT" filename will be ignore.
+    ##
+    filename: "./server.log"
+    time_format: "2006-01-02 15:04:05 Z07:00"
+    max_size: 20480000
+    max_backups: 20
+    max_age: 30
+    enabled: true
+    commpress: true
+
+## @param secretChecksumAnnotations Enable checksum annotations used to trigger rolling updates when Secret(s) change
+##
+secretChecksumAnnotations: true
+## @param secretAnnotations Annotations to add to secret
+##
+secretAnnotations: {}
+## @param command Override default container command (useful when using custom images)
+##
+command: []
+## @param args Override default container args (useful when using custom images)
+##
+args: []
+
+nameOverride: ""
+fullnameOverride: ""
+
+
+
+## ServiceAccount configuration
+##
+serviceAccount:
+  ## @param serviceAccount.create Specifies whether a ServiceAccount should be created
+  ##
+  create: true
+  ## @param serviceAccount.name The name of the ServiceAccount to use.
+  ## If not set and create is true, a name is generated using the common.names.fullname template
+  ##
+  name: ""
+  ## @param serviceAccount.automountServiceAccountToken Whether to auto mount the service account token
+  ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/configure-service-account/#use-the-default-service-account-to-access-the-api-server
+  ##
+  automountServiceAccountToken: false
+  ## @param serviceAccount.annotations Additional custom annotations for the ServiceAccount
+  ##
+  annotations: {}
+
+## Pod Disruption Budget configuration
+## ref: https://kubernetes.io/docs/tasks/run-application/configure-pdb
+## @param pdb.create Enable/disable a Pod Disruption Budget creation
+## @param pdb.minAvailable [object] Minimum number/percentage of pods that should remain scheduled
+## @param pdb.maxUnavailable [object] Maximum number/percentage of pods that may be made unavailable. Defaults to `1` if both `pdb.minAvailable` and `pdb.maxUnavailable` are empty.
+##
+pdb:
+  create: false
+  minAvailable: ""
+  maxUnavailable: ""
+
+## Configure Pods Security Context
+## ref: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/#set-the-security-context-for-a-pod
+## @param podSecurityContext.enabled Enabled cloudeye-exporter pods' Security Context
+## @param podSecurityContext.fsGroupChangePolicy Set filesystem group change policy
+## @param podSecurityContext.sysctls Set kernel settings using the sysctl interface
+## @param podSecurityContext.supplementalGroups Set filesystem extra groups
+## @param podSecurityContext.fsGroup Set cloudeye-exporter pod's Security Context fsGroup
+##
+podSecurityContext:
+  enabled: true
+  fsGroupChangePolicy: Always
+  sysctls: []
+  supplementalGroups: []
+  fsGroup: 1001
+## Configure Container Security Context
+## ref: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/#set-the-security-context-for-a-pod
+## @param containerSecurityContext.enabled Enabled cloudeye-exporter containers' Security Context
+## @param containerSecurityContext.seLinuxOptions [object,nullable] Set SELinux options in container
+## @param containerSecurityContext.runAsUser Set cloudeye-exporter containers' Security Context runAsUser
+## @param containerSecurityContext.runAsGroup Set cloudeye-exporter containers' Security Context runAsGroup
+## @param containerSecurityContext.runAsNonRoot Set cloudeye-exporter containers' Security Context runAsNonRoot
+## @param containerSecurityContext.allowPrivilegeEscalation Is it possible to escalate cloudeye-exporter pod(s) privileges
+## @param containerSecurityContext.readOnlyRootFilesystem Set container's Security Context read-only root filesystem
+## @param containerSecurityContext.seccompProfile.type Set cloudeye-exporter containers' Security Context seccompProfile
+## @param containerSecurityContext.capabilities.drop Set cloudeye-exporter containers' Security Context capabilities to drop
+##
+containerSecurityContext:
+  enabled: true
+  seLinuxOptions: {}
+  runAsUser: 1001
+  runAsGroup: 1001
+  runAsNonRoot: true
+  allowPrivilegeEscalation: false
+  readOnlyRootFilesystem: true
+  seccompProfile:
+    type: RuntimeDefault
+  capabilities:
+    drop: ["ALL"]
+
+## @param hostAliases cloudeye-exporter pods host aliases
+## https://kubernetes.io/docs/concepts/services-networking/add-entries-to-pod-etc-hosts-with-host-aliases/
+##
+hostAliases: []
+## @param podLabels Extra labels for cloudeye-exporter pods
+## ref: https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/
+##
+podLabels: {}
+## @param podAnnotations Annotations for cloudeye-exporter pods
+## ref: https://kubernetes.io/docs/concepts/overview/working-with-objects/annotations/
+##
+podAnnotations: {}
+
+## @param podAffinityPreset Pod affinity preset. Ignored if `affinity` is set. Allowed values: `soft` or `hard`
+## ref: https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#inter-pod-affinity-and-anti-affinity
+##
+podAffinityPreset: ""
+## @param podAntiAffinityPreset Pod anti-affinity preset. Ignored if `affinity` is set. Allowed values: `soft` or `hard`
+## ref: https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#inter-pod-affinity-and-anti-affinity
+##
+podAntiAffinityPreset: soft
+## Node affinity preset
+## ref: https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#node-affinity
+##
+nodeAffinityPreset:
+  ## @param nodeAffinityPreset.type Node affinity preset type. Ignored if `affinity` is set. Allowed values: `soft` or `hard`
+  ##
+  type: ""
+  ## @param nodeAffinityPreset.key Node label key to match. Ignored if `affinity` is set
+  ##
+  key: ""
+  ## @param nodeAffinityPreset.values Node label values to match. Ignored if `affinity` is set
+  ## E.g.
+  ## values:
+  ##   - e2e-az1
+  ##   - e2e-az2
+  ##
+  values: []
+
+## @param extraPodSpec Optionally specify extra PodSpec for the cloudeye-exporter pod(s)
+##
+extraPodSpec: {}
+
+## @param priorityClassName cloudeye-exporter pods' priorityClassName
+##
+priorityClassName: ""
+
+## @param affinity Affinity for cloudeye-exporter pods assignment
+## ref: https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#affinity-and-anti-affinity
+## NOTE: `podAffinityPreset`, `podAntiAffinityPreset`, and `nodeAffinityPreset` will be ignored when it's set
+##
+affinity: {}
+## @param nodeSelector Node labels for cloudeye-exporter pods assignment
+## ref: https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/
+##
+nodeSelector: {}
+## @param tolerations Tolerations for cloudeye-exporter pods assignment
+## ref: https://kubernetes.io/docs/concepts/configuration/taint-and-toleration/
+##
+tolerations: []
+## @param topologySpreadConstraints Spread Constraints for cloudeye-exporter pod assignment
+## ref: https://kubernetes.io/docs/concepts/workloads/pods/pod-topology-spread-constraints/
+## E.g.
+## topologySpreadConstraints:
+##   - maxSkew: 1
+##     topologyKey: node
+##     whenUnsatisfiable: DoNotSchedule
+##
+topologySpreadConstraints: []
+
+## cloudeye-exporter service parameters
+##
+service:
+  ## @param service.type cloudeye-exporter service type
+  ##
+  type: ClusterIP
+  ## @param service.portNames.redis cloudeye-exporter service port name
+  ##
+  portNames:
+    http: "http-80"
+  ## @param service.ports.redis cloudeye-exporter service port
+  ##
+  ports:
+    http: 80
+  ## @param service.nodePorts.redis Node port for cloudeye-exporter
+  ## ref: https://kubernetes.io/docs/concepts/services-networking/service/#type-nodeport
+  ## NOTE: choose port between <30000-32767>
+  ##
+  nodePorts:
+    http: ""
+  ## @param service.externalTrafficPolicy cloudeye-exporter service external traffic policy
+  ## ref: https://kubernetes.io/docs/tasks/access-application-cluster/create-external-load-balancer/#preserving-the-client-source-ip
+  ##
+  externalTrafficPolicy: Cluster
+  ## @param service.extraPorts Extra ports to expose (normally used with the `sidecar` value)
+  ##
+  extraPorts: []
+  ## @param service.internalTrafficPolicy cloudeye-exporter service internal traffic policy (requires Kubernetes v1.22 or greater to be usable)
+  ## ref: https://kubernetes.io/docs/concepts/services-networking/service-traffic-policy/
+  ##
+  internalTrafficPolicy: Cluster
+  ## @param service.clusterIP cloudeye-exporter service Cluster IP
+  ##
+  clusterIP: ""
+  ## @param service.loadBalancerIP cloudeye-exporter service Load Balancer IP
+  ## ref: https://kubernetes.io/docs/concepts/services-networking/service/#internal-load-balancer
+  ##
+  loadBalancerIP: ""
+  ## @param service.loadBalancerClass service Load Balancer class if service type is `LoadBalancer` (optional, cloud specific)
+  ## ref: https://kubernetes.io/docs/concepts/services-networking/service/#type-loadbalancer
+  ##
+  loadBalancerClass: ""
+  ## @param service.loadBalancerSourceRanges cloudeye-exporter service Load Balancer sources
+  ## https://kubernetes.io/docs/tasks/access-application-cluster/configure-cloud-provider-firewall/#restrict-access-for-loadbalancer-service
+  ## e.g.
+  ## loadBalancerSourceRanges:
+  ##   - 10.10.10.0/24
+  ##
+  loadBalancerSourceRanges: []
+  ## @param service.externalIPs cloudeye-exporter service External IPs
+  ## https://kubernetes.io/docs/concepts/services-networking/service/#external-ips
+  ## e.g.
+  ## externalIPs:
+  ##   - 10.10.10.1
+  ##   - 201.22.30.1
+  ##
+  externalIPs: []
+  ## @param service.annotations Additional custom annotations for cloudeye-exporter service
+  ##
+  annotations: {}
+  ## @param service.sessionAffinity Session Affinity for Kubernetes service, can be "None" or "ClientIP"
+  ## If "ClientIP", consecutive client requests will be directed to the same Pod
+  ## ref: https://kubernetes.io/docs/concepts/services-networking/service/#virtual-ips-and-service-proxies
+  ##
+  sessionAffinity: None
+  ## @param service.sessionAffinityConfig Additional settings for the sessionAffinity. Ignored if `service.sessionAffinity` is `None`
+  ## sessionAffinityConfig:
+  ##   clientIP:
+  ##     timeoutSeconds: 300
+  ##
+  sessionAffinityConfig: {}
+
+ingress:
+  enabled: false
+  className: ""
+  annotations: {}
+    # kubernetes.io/ingress.class: nginx
+    # kubernetes.io/tls-acme: "true"
+  hosts:
+    - host: chart-example.local
+      paths:
+        - path: /
+          pathType: ImplementationSpecific
+  tls: []
+  #  - secretName: chart-example-tls
+  #    hosts:
+  #      - chart-example.local
+
+resources: {}
+
+# We usually recommend not to specify default resources and to leave this as a conscious
+# choice for the user. This also increases chances charts run on environments with little
+# resources, such as Minikube. If you do want to specify resources, uncomment the following
+# lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+# limits:
+#   cpu: 100m
+#   memory: 128Mi
+# requests:
+#   cpu: 100m
+#   memory: 128Mi
+
+## Configure extra options for cloudeye-exporter containers' liveness and readiness probes
+## ref: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-probes/#configure-probes
+## @param startupProbe.enabled Enable startupProbe on cloudeye-exporter nodes
+## @param startupProbe.initialDelaySeconds Initial delay seconds for startupProbe
+## @param startupProbe.periodSeconds Period seconds for startupProbe
+## @param startupProbe.timeoutSeconds Timeout seconds for startupProbe
+## @param startupProbe.failureThreshold Failure threshold for startupProbe
+## @param startupProbe.successThreshold Success threshold for startupProbe
+##
+startupProbe:
+  enabled: false
+  initialDelaySeconds: 20
+  periodSeconds: 5
+  timeoutSeconds: 5
+  successThreshold: 1
+  failureThreshold: 5
+## @param livenessProbe.enabled Enable livenessProbe on cloudeye-exporter nodes
+## @param livenessProbe.initialDelaySeconds Initial delay seconds for livenessProbe
+## @param livenessProbe.periodSeconds Period seconds for livenessProbe
+## @param livenessProbe.timeoutSeconds Timeout seconds for livenessProbe
+## @param livenessProbe.failureThreshold Failure threshold for livenessProbe
+## @param livenessProbe.successThreshold Success threshold for livenessProbe
+##
+livenessProbe:
+  enabled: true
+  initialDelaySeconds: 20
+  periodSeconds: 10
+  timeoutSeconds: 3
+  successThreshold: 1
+  failureThreshold: 5
+## @param readinessProbe.enabled Enable readinessProbe on cloudeye-exporter nodes
+## @param readinessProbe.initialDelaySeconds Initial delay seconds for readinessProbe
+## @param readinessProbe.periodSeconds Period seconds for readinessProbe
+## @param readinessProbe.timeoutSeconds Timeout seconds for readinessProbe
+## @param readinessProbe.failureThreshold Failure threshold for readinessProbe
+## @param readinessProbe.successThreshold Success threshold for readinessProbe
+##
+readinessProbe:
+  enabled: true
+  initialDelaySeconds: 20
+  periodSeconds: 10
+  timeoutSeconds: 5
+  successThreshold: 1
+  failureThreshold: 5
+## @param customStartupProbe Custom startupProbe that overrides the default one
+##
+customStartupProbe: {}
+## @param customLivenessProbe Custom livenessProbe that overrides the default one
+##
+customLivenessProbe: {}
+## @param customReadinessProbe Custom readinessProbe that overrides the default one
+##
+customReadinessProbe: {}
+
+autoscaling:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 100
+  targetCPUUtilizationPercentage: 80
+  # targetMemoryUtilizationPercentage: 80
+
+# Additional volumes on the output Deployment definition.
+volumes: []
+# - name: foo
+#   secret:
+#     secretName: mysecret
+#     optional: false
+
+# Additional volumeMounts on the output Deployment definition.
+volumeMounts: []
+# - name: foo
+#   mountPath: "/etc/foo"
+#   readOnly: true
