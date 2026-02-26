@@ -15,7 +15,8 @@
 </p>
 <p align="center">
   <img width="250" alt="Apollo" height="90" src="https://raw.githubusercontent.com/dellnoantechnp/helm-chart-xxl-job-admin/main/assets/stacks/apollo/img/logo-simple.png">
-  <img width="209" alt="Apollo" height="154" src="https://raw.githubusercontent.com/mailhog/MailHog-UI/master/assets/images/hog.png">
+  <img width="209" alt="MailHog-UI" height="154" src="https://raw.githubusercontent.com/mailhog/MailHog-UI/master/assets/images/hog.png">
+  <img width="209" alt="Huawei Cloud" height="154" src="https://raw.githubusercontent.com/dellnoantechnp/helm-chart-xxl-job-admin/main/assets/stacks/huawei-cloud/img/huaweicloud-logo.svg">
 </p>
 
 # This helm chart repository include charts:
@@ -41,6 +42,9 @@
 - [x] MailHog-*v1.0.1*
   - Project: https://github.com/mailhog/MailHog
   - About: Web and API based SMTP testing
+- [x] Cloudeye-exporter-*v2.0.31*
+  - Project: [https://github.com/huaweicloud/cloudeye-exporter](https://github.com/huaweicloud/cloudeye-exporter)
+  - About: Prometheus cloudeye exporter for Huaweicloud.
 
 
 # Helm Charts repository
