@@ -585,8 +585,7 @@ serviceMonitor:
   targetLimit: false
   ## @param serviceMonitor.params To set the scrape http url params.
   ## services:
-  ##   - SYS.ELB
-  ##   - SYS.VPC
+  ##   - SYS.ELB,SYS.VPC
   ##
   params:
     services:
@@ -643,8 +642,7 @@ podMonitor:
   honorLabels: false
   ## @param podMonitor.additionalLabels Additional labels that can be used so PodMonitor resource(s) can be discovered by Prometheus
   ##
-  additionalLabels:
-    release: kube-prometheus-stack
+  additionalLabels: {}
   ## @param podMonitor.podTargetLabels Labels from the Kubernetes pod to be transferred to the created metrics
   ##
   podTargetLabels: []
@@ -656,8 +654,7 @@ podMonitor:
   targetLimit: false
   ## @param podMonitor.params To set the scrape http url params.
   ## services:
-  ##   - SYS.ELB
-  ##   - SYS.VPC
+  ##   - SYS.ELB,SYS.VPC
   ##
   params:
     services:
