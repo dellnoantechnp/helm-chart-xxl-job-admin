@@ -935,6 +935,32 @@ entries:
           image: dellnoantechnp/cloudeye-exporter:v2.0.31
     apiVersion: v2
     appVersion: v2.0.31
+    created: "2026-02-26T10:20:04.904502795Z"
+    dependencies:
+    - name: common
+      repository: https://dellnoantechnp.github.io/helm-chart-xxl-job-admin/
+      version: ^2.0.0
+    description: Prometheus cloudeye exporter for Huaweicloud.
+    digest: 9279f4325a21c7d1a37a3b514d9cf72c95b759c31264bd1d2702ae8b85569b2f
+    home: https://github.com/huaweicloud/cloudeye-exporter
+    kubeVersion: '>=1.26.0-0'
+    name: cloudeye-exporter
+    sources:
+    - https://github.com/dellnoantechnp/helm-chart-xxl-job-admin
+    type: application
+    urls:
+    - https://github.com/dellnoantechnp/helm-chart-xxl-job-admin/releases/download/cloudeye-exporter-0.1.2/cloudeye-exporter-0.1.2.tgz
+    version: 0.1.2
+  - annotations:
+      artifacthub.io/links: |
+        - name: Chart Source
+          url: https://github.com/dellnoantechnp/helm-chart-xxl-job-admin
+      ghcr.io/license: Apache-2.0 license
+      ghcr.io/packages: |
+        - name: dellnoantechnp/cloudeye-exporter
+          image: dellnoantechnp/cloudeye-exporter:v2.0.31
+    apiVersion: v2
+    appVersion: v2.0.31
     created: "2026-02-26T10:06:40.548221429Z"
     dependencies:
     - name: common
@@ -3026,4 +3052,4 @@ entries:
     urls:
     - https://github.com/dellnoantechnp/helm-chart-xxl-job-admin/releases/download/zookeeper-7.6.1/zookeeper-7.6.1.tgz
     version: 7.6.1
-generated: "2026-02-26T10:06:40.54845583Z"
+generated: "2026-02-26T10:20:04.904718178Z"
