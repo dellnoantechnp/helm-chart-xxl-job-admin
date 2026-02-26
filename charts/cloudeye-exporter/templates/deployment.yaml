@@ -85,7 +85,7 @@ spec:
           {{- else if .Values.startupProbe.enabled }}
           startupProbe: {{- include "common.tplvalues.render" (dict "value" (omit .Values.startupProbe "enabled") "context" $) | nindent 12 }}
             tcpSocket:
-              port: redis
+              port: metrics
           {{- end }}
           {{- if .Values.customLivenessProbe }}
           livenessProbe: {{- include "common.tplvalues.render" (dict "value" .Values.customLivenessProbe "context" $) | nindent 12 }}
@@ -118,17 +118,26 @@ spec:
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
           volumeMounts:
-            - name: cache-dir
-              mountPath: /tmp
+            - name: config
+              mountPath: /exporter/clouds.yml
+              subPath: clouds.yml
+            - name: config
+              mountPath: /exporter/logs.yml
+              subPath: logs.yml
           {{- with .Values.volumeMounts }}
-          volumeMounts:
             {{- toYaml . | nindent 12 }}
           {{- end }}
       volumes:
-        - name: cache-dir
-          emptyDir: {}
+        - name: config
+          secret:
+            secretName: {{ include "common.names.fullname" . }}
+            optional: true
+            items:
+              - key: clouds.yml
+                path: clouds.yml
+              - key: logs.yml
+                path: logs.yml
       {{- with .Values.volumes }}
-      volumes:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       {{- with .Values.nodeSelector }}
