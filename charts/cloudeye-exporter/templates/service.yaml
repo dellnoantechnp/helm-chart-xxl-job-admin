@@ -34,7 +34,7 @@ spec:
   ports:
     - name: {{ .Values.service.portNames.http }}
       port: {{ .Values.service.ports.http }}
-      targetPort: http
+      targetPort: metrics
       protocol: TCP
       {{- if and (or (eq .Values.service.type "NodePort") (eq .Values.service.type "LoadBalancer")) .Values.service.nodePorts.redis}}
       nodePort: {{ .Values.service.nodePorts.http }}

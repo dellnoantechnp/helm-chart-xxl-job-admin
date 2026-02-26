@@ -1,0 +1,98 @@
+{{- /*
+Copyright Broadcom, Inc. All Rights Reserved.
+SPDX-License-Identifier: APACHE-2.0
+*/}}
+
+{{- if .Values.serviceMonitor.enabled }}
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: {{ template "common.names.fullname" . }}
+  namespace: {{ default (include "common.names.namespace" .) .Values.serviceMonitor.namespace | quote }}
+  labels: {{- include "common.labels.standard" ( dict "customLabels" .Values.commonLabels "context" $ ) | nindent 4 }}
+    {{- if .Values.serviceMonitor.additionalLabels }}
+    {{- include "common.tplvalues.render" (dict "value" .Values.serviceMonitor.additionalLabels "context" $) | nindent 4 }}
+    {{- end }}
+  {{- if .Values.commonAnnotations }}
+  annotations: {{- include "common.tplvalues.render" ( dict "value" .Values.commonAnnotations "context" $ ) | nindent 4 }}
+  {{- end }}
+spec:
+  endpoints:
+    - port: {{ .Values.serviceMonitor.port }}
+      {{- if .Values.serviceMonitor.tlsConfig }}
+      scheme: https
+      tlsConfig: {{- toYaml .Values.serviceMonitor.tlsConfig | nindent 8 }}
+      {{- end }}
+      {{- if .Values.serviceMonitor.interval }}
+      interval: {{ .Values.serviceMonitor.interval }}
+      {{- end }}
+      {{- if .Values.serviceMonitor.scrapeTimeout }}
+      scrapeTimeout: {{ .Values.serviceMonitor.scrapeTimeout }}
+      {{- end }}
+      {{- if .Values.serviceMonitor.params }}
+      params:
+      {{- range $key, $value := .Values.serviceMonitor.params }}
+        {{ $key }}:
+        {{- range $value }}
+          - {{ . | quote }}
+        {{- end }}
+      {{- end }}
+      {{- end }}
+      {{- if .Values.serviceMonitor.honorLabels }}
+      honorLabels: {{ .Values.serviceMonitor.honorLabels }}
+      {{- end }}
+      {{- with concat .Values.serviceMonitor.relabelings .Values.serviceMonitor.relabellings }}
+      relabelings: {{- toYaml . | nindent 6 }}
+      {{- end }}
+      {{- if .Values.serviceMonitor.metricRelabelings }}
+      metricRelabelings: {{- toYaml .Values.serviceMonitor.metricRelabelings | nindent 6 }}
+      {{- end }}
+      {{- range .Values.serviceMonitor.additionalEndpoints }}
+    - port: {{ .port }}
+      {{- if .tlsConfig }}
+      scheme: https
+      tlsConfig: {{- toYaml .tlsConfig | nindent 8 }}
+      {{- end }}
+      {{- if .interval }}
+      interval: {{ .interval }}
+      {{- end }}
+      {{- if .scrapeTimeout }}
+      scrapeTimeout: {{ .scrapeTimeout }}
+      {{- end }}
+      {{- if .honorLabels }}
+      honorLabels: {{ .honorLabels }}
+      {{- end }}
+      {{- with concat $.Values.serviceMonitor.relabelings $.Values.serviceMonitor.relabellings }}
+      relabelings: {{- toYaml . | nindent 6 }}
+      {{- end }}
+      {{- if .metricRelabelings }}
+      metricRelabelings: {{- toYaml .metricRelabelings | nindent 6 }}
+      {{- end }}
+      {{- if .path }}
+      path: {{ .path }}
+      {{- end }}
+      {{- if .params }}
+      params:
+        {{- range $key, $value := .params }}
+        {{ $key }}:
+          {{- range $value }}
+          - {{ . | quote }}
+          {{- end }}
+        {{- end }}
+      {{- end }}
+    {{- end }}
+  {{- if .Values.serviceMonitor.podTargetLabels }}
+  podTargetLabels: {{- toYaml .Values.serviceMonitor.podTargetLabels | nindent 4 }}
+  {{- end }}
+  {{- with .Values.serviceMonitor.sampleLimit }}
+  sampleLimit: {{ . }}
+  {{- end }}
+  {{- with .Values.serviceMonitor.targetLimit }}
+  targetLimit: {{ . }}
+  {{- end }}
+  namespaceSelector:
+    matchNames:
+      - {{ include "common.names.namespace" . | quote }}
+  selector:
+    matchLabels: {{- include "common.labels.matchLabels" ( dict "customLabels" .Values.commonLabels "context" $ ) | nindent 6 }}
+{{- end }}
