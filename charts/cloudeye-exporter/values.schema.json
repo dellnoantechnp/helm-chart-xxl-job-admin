@@ -31,36 +31,121 @@
         "config": {
             "type": "object",
             "properties": {
-                "DJANGO_DEBUG": {
-                    "type": "boolean"
-                },
-                "argoWorkflows": {
+                "auth": {
                     "type": "object",
                     "properties": {
-                        "domain": {
+                        "access_key": {
                             "type": "string"
                         },
-                        "token": {
+                        "auth_url": {
                             "type": "string"
                         },
-                        "tokenSecret": {
+                        "oidc": {
+                            "type": "object",
+                            "properties": {
+                                "domain_id": {
+                                    "type": "string"
+                                },
+                                "enabled": {
+                                    "type": "boolean"
+                                },
+                                "id_token_file_path": {
+                                    "type": "string"
+                                },
+                                "idp_id": {
+                                    "type": "string"
+                                }
+                            }
+                        },
+                        "project_name": {
                             "type": "string"
                         },
-                        "workerNamespace": {
+                        "region": {
+                            "type": "string"
+                        },
+                        "secret_key": {
                             "type": "string"
                         }
                     }
                 },
-                "dingTalk": {
+                "global": {
                     "type": "object",
                     "properties": {
-                        "clientId": {
+                        "ignore_ssl_verify": {
+                            "type": "boolean"
+                        },
+                        "metric_path": {
                             "type": "string"
                         },
-                        "clientSecret": {
+                        "metric_query_duration": {
+                            "type": "integer"
+                        },
+                        "metric_timestamp_export_enabled": {
+                            "type": "boolean"
+                        },
+                        "port": {
                             "type": "string"
                         },
-                        "robotCode": {
+                        "prefix": {
+                            "type": "string"
+                        },
+                        "proxy_enabled": {
+                            "type": "boolean"
+                        },
+                        "proxy_host": {
+                            "type": "string"
+                        },
+                        "proxy_password": {
+                            "type": "string"
+                        },
+                        "proxy_port": {
+                            "type": "integer"
+                        },
+                        "proxy_schema": {
+                            "type": "string"
+                        },
+                        "proxy_username": {
+                            "type": "string"
+                        },
+                        "resource_sync_interval_minutes": {
+                            "type": "integer"
+                        },
+                        "rms_retry_times": {
+                            "type": "integer"
+                        },
+                        "scrape_batch_size": {
+                            "type": "integer"
+                        }
+                    }
+                },
+                "logs": {
+                    "type": "object",
+                    "properties": {
+                        "commpress": {
+                            "type": "boolean"
+                        },
+                        "enabled": {
+                            "type": "boolean"
+                        },
+                        "filename": {
+                            "type": "string"
+                        },
+                        "level": {
+                            "type": "string"
+                        },
+                        "max_age": {
+                            "type": "integer"
+                        },
+                        "max_backups": {
+                            "type": "integer"
+                        },
+                        "max_size": {
+                            "type": "integer"
+                        },
+                        "time_format": {
+                            "type": "string"
+                        },
+                        "type": {
                             "type": "string"
                         }
                     }
@@ -70,7 +155,7 @@
         "containerPorts": {
             "type": "object",
             "properties": {
-                "http": {
+                "metrics": {
                     "type": "integer"
                 }
             }
@@ -169,14 +254,6 @@
                 },
                 "imageRegistry": {
                     "type": "string"
-                },
-                "redis": {
-                    "type": "object",
-                    "properties": {
-                        "password": {
-                            "type": "string"
-                        }
-                    }
                 },
                 "security": {
                     "type": "object",
@@ -285,22 +362,6 @@
                 }
             }
         },
-        "metrics": {
-            "type": "object",
-            "properties": {
-                "containerPorts": {
-                    "type": "object",
-                    "properties": {
-                        "metrics": {
-                            "type": "integer"
-                        }
-                    }
-                },
-                "enabled": {
-                    "type": "boolean"
-                }
-            }
-        },
         "nameOverride": {
             "type": "string"
         },
@@ -347,6 +408,72 @@
         "podLabels": {
             "type": "object"
         },
+        "podMonitor": {
+            "type": "object",
+            "properties": {
+                "additionalEndpoints": {
+                    "type": "array"
+                },
+                "additionalLabels": {
+                    "type": "object",
+                    "properties": {
+                        "release": {
+                            "type": "string"
+                        }
+                    }
+                },
+                "enabled": {
+                    "type": "boolean"
+                },
+                "honorLabels": {
+                    "type": "boolean"
+                },
+                "interval": {
+                    "type": "string"
+                },
+                "metricRelabelings": {
+                    "type": "array"
+                },
+                "namespace": {
+                    "type": "string"
+                },
+                "params": {
+                    "type": "object",
+                    "properties": {
+                        "services": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                },
+                "podTargetLabels": {
+                    "type": "array"
+                },
+                "port": {
+                    "type": "string"
+                },
+                "relabelings": {
+                    "type": "array"
+                },
+                "relabellings": {
+                    "type": "array"
+                },
+                "sampleLimit": {
+                    "type": "boolean"
+                },
+                "scrapeTimeout": {
+                    "type": "string"
+                },
+                "targetLimit": {
+                    "type": "boolean"
+                },
+                "tlsConfig": {
+                    "type": "object"
+                }
+            }
+        },
         "podSecurityContext": {
             "type": "object",
             "properties": {
@@ -370,6 +497,23 @@
         "priorityClassName": {
             "type": "string"
         },
+        "prometheusRule": {
+            "type": "object",
+            "properties": {
+                "additionalLabels": {
+                    "type": "object"
+                },
+                "enabled": {
+                    "type": "boolean"
+                },
+                "namespace": {
+                    "type": "string"
+                },
+                "rules": {
+                    "type": "array"
+                }
+            }
+        },
         "readinessProbe": {
             "type": "object",
             "properties": {
@@ -389,42 +533,6 @@
                     "type": "integer"
                 },
                 "timeoutSeconds": {
-                    "type": "integer"
-                }
-            }
-        },
-        "redis": {
-            "type": "object",
-            "properties": {
-                "enabled": {
-                    "type": "boolean"
-                },
-                "replica": {
-                    "type": "object",
-                    "properties": {
-                        "replicaCount": {
-                            "type": "integer"
-                        }
-                    }
-                }
-            }
-        },
-        "redisExternal": {
-            "type": "object",
-            "properties": {
-                "enabled": {
-                    "type": "boolean"
-                },
-                "redisDatabase": {
-                    "type": "integer"
-                },
-                "redisHost": {
-                    "type": "string"
-                },
-                "redisPassword": {
-                    "type": "string"
-                },
-                "redisPort": {
                     "type": "integer"
                 }
             }
@@ -520,6 +628,67 @@
                 },
                 "name": {
                     "type": "string"
+                }
+            }
+        },
+        "serviceMonitor": {
+            "type": "object",
+            "properties": {
+                "additionalEndpoints": {
+                    "type": "array"
+                },
+                "additionalLabels": {
+                    "type": "object"
+                },
+                "enabled": {
+                    "type": "boolean"
+                },
+                "honorLabels": {
+                    "type": "boolean"
+                },
+                "interval": {
+                    "type": "string"
+                },
+                "metricRelabelings": {
+                    "type": "array"
+                },
+                "namespace": {
+                    "type": "string"
+                },
+                "params": {
+                    "type": "object",
+                    "properties": {
+                        "services": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                },
+                "podTargetLabels": {
+                    "type": "array"
+                },
+                "port": {
+                    "type": "string"
+                },
+                "relabelings": {
+                    "type": "array"
+                },
+                "relabellings": {
+                    "type": "array"
+                },
+                "sampleLimit": {
+                    "type": "boolean"
+                },
+                "scrapeTimeout": {
+                    "type": "string"
+                },
+                "targetLimit": {
+                    "type": "boolean"
+                },
+                "tlsConfig": {
+                    "type": "object"
                 }
             }
         },
