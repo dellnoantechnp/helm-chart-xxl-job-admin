@@ -8,7 +8,6 @@
 ## @param global.imagePullSecrets Global Docker registry secret names as an array
 ## @param global.defaultStorageClass Global default StorageClass for Persistent Volume(s)
 ## @param global.storageClass DEPRECATED: use global.defaultStorageClass instead
-## @param global.redis.password Global cloudeye-exporter password (overrides `auth.password`)
 ## @param global.defaultFips Default value for the FIPS configuration (allowed values: '', restricted, relaxed, off). Can be overriden by the 'fips' object
 ##
 global:
@@ -25,8 +24,6 @@ global:
   security:
     ## @param global.security.allowInsecureImages Allows skipping image verification
     allowInsecureImages: false
-  redis:
-    password: ""
   ##  Configure FIPS mode: '', 'restricted', 'relaxed', 'off'
   ##
   defaultFips: restricted
@@ -48,7 +45,7 @@ diagnosticMode:
 
 ## cloudeye-exporter image
 ## @param image.registry [default: REGISTRY_NAME] cloudeye-exporter image registry
-## @param image.repository [default: REPOSITORY_NAME/redis] cloudeye-exporter image repository
+## @param image.repository [default: REPOSITORY_NAME/cloudeye-exporter] cloudeye-exporter image repository
 ## @skip image.tag cloudeye-exporter image tag (immutable tags are recommended)
 ## @param image.digest cloudeye-exporter image digest in the way sha256:aa.... Please note this parameter, if set, will override the tag
 ## @param image.pullPolicy cloudeye-exporter image pull policy
@@ -58,7 +55,7 @@ diagnosticMode:
 image:
   registry: ""
   repository: dellnoantechnp/cloudeye-exporter
-  tag: latest
+  tag: v2.0.31
   digest: ""
   ## Specify a imagePullPolicy
   ## ref: https://kubernetes.io/docs/concepts/containers/images/#pre-pulled-images
@@ -159,21 +156,26 @@ config:
     ## @param config.auth.auth_url The api auth url
     ## e.g: https://iam.cn-south-1.myhuaweicloud.com/v3
     ##
-    auth_url: "https://iam.{region_id}.myhuaweicloud.com/v3"
+    #auth_url: "https://iam.{region_id}.myhuaweicloud.com/v3"
+    auth_url: "https://iam.cn-south-1.myhuaweicloud.com/v3"
     ## @param config.auth.project_name The huaweicloud project name
     ## look at console page 华为云->统一身份认证服务->项目
     ## e.g: cn-north-1
     ##
-    project_name: "{project_name}"
+    #project_name: "{project_name}"
+    project_name: "cn-south-1"
     ## @param config.auth.access_key The access key
     ## It is strongly remommended that you use a script to decrypt the AK/SK by following the instructions provided in
     ## section 4.1 to prevent information leakage caused by plaintext AK/SK configuration in the configuration file.
     ##
-    access_key: "{access_key}"
-    secret_key: "{secret_key}"
+    #access_key: "{access_key}"
+    access_key: "HPUAOOV7T4LJ0XXJVAAH"
+    #secret_key: "{secret_key}"
+    secret_key: "6XQeQhnhLcURDjqltozGvLh8IuIAH9R167dZkEUf"
     ## @param config.auth.region The region code.
     ##
-    region: "{region}"
+    #region: "{region}"
+    region: "cn-south-1"
 
     ## huaweicloud CCE cluster used oidc auth.
     ##
@@ -370,15 +372,15 @@ service:
   ## @param service.type cloudeye-exporter service type
   ##
   type: ClusterIP
-  ## @param service.portNames.redis cloudeye-exporter service port name
+  ## @param service.portNames.http cloudeye-exporter service port name
   ##
   portNames:
-    http: "http-80"
-  ## @param service.ports.redis cloudeye-exporter service port
+    http: "http-metrics"
+  ## @param service.ports.http cloudeye-exporter service port
   ##
   ports:
-    http: 80
-  ## @param service.nodePorts.redis Node port for cloudeye-exporter
+    http: 8087
+  ## @param service.nodePorts.http Node port for cloudeye-exporter
   ## ref: https://kubernetes.io/docs/concepts/services-networking/service/#type-nodeport
   ## NOTE: choose port between <30000-32767>
   ##
@@ -538,3 +540,167 @@ volumeMounts: []
 # - name: foo
 #   mountPath: "/etc/foo"
 #   readOnly: true
+
+## Prometheus Service Monitor
+## ref: https://github.com/coreos/prometheus-operator
+##      https://github.com/coreos/prometheus-operator/blob/master/Documentation/api.md#endpoint
+##
+serviceMonitor:
+  ## @param serviceMonitor.port the service port to scrape metrics from
+  ##
+  port: http-metrics
+  ## @param serviceMonitor.enabled Create ServiceMonitor resource(s) for scraping metrics using PrometheusOperator
+  ##
+  enabled: false
+  ## @param serviceMonitor.namespace The namespace in which the ServiceMonitor will be created
+  ##
+  namespace: ""
+  ## @param serviceMonitor.tlsConfig [object] TLS configuration used for scrape endpoints used by Prometheus
+  ##
+  tlsConfig: {}
+  ## @param serviceMonitor.interval The interval at which metrics should be scraped
+  ##
+  interval: 1m
+  ## @param serviceMonitor.scrapeTimeout The timeout after which the scrape is ended
+  ##
+  scrapeTimeout: ""
+  ## @param serviceMonitor.relabelings Metrics RelabelConfigs to apply to samples before scraping.
+  ##
+  relabelings: []
+  ## @skip serviceMonitor.relabellings DEPRECATED: Use `serviceMonitor.relabelings` instead.
+  ##
+  relabellings: []
+  ## @param serviceMonitor.metricRelabelings Metrics RelabelConfigs to apply to samples before ingestion.
+  ##
+  metricRelabelings: []
+  ## @param serviceMonitor.honorLabels Specify honorLabels parameter to add the scrape endpoint
+  ##
+  honorLabels: false
+  ## @param serviceMonitor.additionalLabels Additional labels that can be used so ServiceMonitor resource(s) can be discovered by Prometheus
+  ##
+  additionalLabels: {}
+  ## @param serviceMonitor.podTargetLabels Labels from the Kubernetes pod to be transferred to the created metrics
+  ##
+  podTargetLabels: []
+  ## @param serviceMonitor.sampleLimit Limit of how many samples should be scraped from every Pod
+  ##
+  sampleLimit: false
+  ## @param serviceMonitor.targetLimit Limit of how many targets should be scraped
+  ##
+  targetLimit: false
+  ## @param serviceMonitor.params To set the scrape http url params.
+  ## services:
+  ##   - SYS.ELB
+  ##   - SYS.VPC
+  ##
+  params:
+    services:
+      - SYS.ELB
+  ## @param serviceMonitor.additionalEndpoints  Additional endpoints to scrape (e.g sentinel)
+  ##
+  additionalEndpoints: []
+  # uncomment in order to scrape sentinel metrics, also to in order distinguish between Sentinel and cloudeye-exporter container metrics
+  # add metricRelabelings with label like app=cloudeye-exporter to main cloudeye-exporter pod-monitor port
+  # - interval: "30s"
+  #   path: "/metrics"
+  #   port: "http-metrics"
+  #   params:
+  #     services: ["localhost:26379"]
+  #   metricRelabelings:
+  #     - targetLabel: "app"
+  #       replacement: "sentinel"
+## Prometheus Pod Monitor
+## ref: https://github.com/coreos/prometheus-operator
+##      https://github.com/coreos/prometheus-operator/blob/master/Documentation/api.md#podmonitor
+##
+podMonitor:
+  ## @param podMonitor.port the pod port to scrape metrics from
+  ##
+  port: metrics
+  ## @param podMonitor.enabled Create PodMonitor resource(s) for scraping metrics using PrometheusOperator
+  ##
+  enabled: false
+  ## @param podMonitor.namespace The namespace in which the PodMonitor will be created
+  ##
+  namespace: ""
+  ## @param podMonitor.tlsConfig [object] TLS configuration used for scrape endpoints used by Prometheus
+  ##
+  tlsConfig: {}
+  ## @param podMonitor.interval The interval at which metrics should be scraped
+  ##
+  interval: 1m
+  ## @param podMonitor.scrapeTimeout The timeout after which the scrape is ended
+  ##
+  scrapeTimeout: ""
+  ## @param podMonitor.relabelings Metrics RelabelConfigs to apply to samples before scraping.
+  ##
+  relabelings: []
+  ## @skip podMonitor.relabellings DEPRECATED: Use `podMonitor.relabelings` instead.
+  ##
+  relabellings: []
+  ## @param podMonitor.metricRelabelings Metrics RelabelConfigs to apply to samples before ingestion.
+  ##
+  metricRelabelings: []
+  # - targetLabel: "app"
+  #   replacement: "cloudeye-exporter"
+  ## @param podMonitor.honorLabels Specify honorLabels parameter to add the scrape endpoint
+  ##
+  honorLabels: false
+  ## @param podMonitor.additionalLabels Additional labels that can be used so PodMonitor resource(s) can be discovered by Prometheus
+  ##
+  additionalLabels:
+    release: kube-prometheus-stack
+  ## @param podMonitor.podTargetLabels Labels from the Kubernetes pod to be transferred to the created metrics
+  ##
+  podTargetLabels: []
+  ## @param podMonitor.sampleLimit Limit of how many samples should be scraped from every Pod
+  ##
+  sampleLimit: false
+  ## @param podMonitor.targetLimit Limit of how many targets should be scraped
+  ##
+  targetLimit: false
+  ## @param podMonitor.params To set the scrape http url params.
+  ## services:
+  ##   - SYS.ELB
+  ##   - SYS.VPC
+  ##
+  params:
+    services:
+      - SYS.ELB
+  ## @param podMonitor.additionalEndpoints  Additional endpoints to scrape (e.g sentinel)
+  ##
+  additionalEndpoints: []
+  # - interval: "30s"
+  #   path: "/scrape"
+  #   port: "metrics"
+  #   params:
+  #     target: ["localhost:26379"]
+  #   metricRelabelings:
+  #     - targetLabel: "app"
+  #       replacement: "sentinel"
+## Custom PrometheusRule to be defined
+## ref: https://github.com/coreos/prometheus-operator#customresourcedefinitions
+##
+prometheusRule:
+  ## @param prometheusRule.enabled Create a custom prometheusRule Resource for scraping metrics using PrometheusOperator
+  ##
+  enabled: true
+  ## @param prometheusRule.namespace The namespace in which the prometheusRule will be created
+  ##
+  namespace: ""
+  ## @param prometheusRule.additionalLabels Additional labels for the prometheusRule
+  ##
+  additionalLabels: {}
+  ## @param prometheusRule.rules Custom Prometheus rules
+  ## e.g:
+  ## rules:
+  ##  - alert: L4InBandwidthBpsUsage above 80%
+  ##    expr: huaweicloud_sys_elb_l4_in_bps_usage > 80
+  ##    for: 2m
+  ##    labels:
+  ##      severity: warning
+  ##    annotations:
+  ##      summary: L4 Input bandwidth on {{ "{{ $labels.name }}" }} usage above 80%
+  ##      description: huaweicloud ELB at zone {{ "{{ $labels.available_zone }}" }} instance {{ "{{ $labels.lbaas_instance_id }}" }} name {{ "{{ $labels.name }}" }} bandwidth usage above 80%.
+  ##
+  rules: []

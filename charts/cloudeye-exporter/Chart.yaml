@@ -5,7 +5,7 @@ home: https://github.com/huaweicloud/cloudeye-exporter
 annotations:
   ghcr.io/packages: |
     - name: dellnoantechnp/cloudeye-exporter
-      image: dellnoantechnp/cloudeye-exporter:v0.0.1
+      image: dellnoantechnp/cloudeye-exporter:v2.0.31
   ghcr.io/license: Apache-2.0 license
   artifacthub.io/links: |
     - name: Chart Source
