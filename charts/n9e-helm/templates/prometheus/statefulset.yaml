@@ -1,0 +1,122 @@
+{{/*
+# Copyright 2022 flashcat.cloud | 快猫星云
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+# http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+*/}}
+{{- if eq .Values.prometheus.type "internal" -}}
+{{- $prometheus := .Values.persistence.persistentVolumeClaim.prometheus -}}
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: "{{ template "nightingale.prometheus" . }}"
+  labels:
+{{ include "nightingale.labels" . | indent 4 }}
+    component: prometheus
+spec:
+  replicas: 1
+  serviceName: "{{ template "nightingale.prometheus" . }}"
+  selector:
+    matchLabels:
+{{ include "nightingale.matchLabels" . | indent 6 }}
+      component: prometheus
+  template:
+    metadata:
+      labels:
+{{ include "nightingale.labels" . | indent 8 }}
+        component: prometheus
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      initContainers:
+      - name: fix-permission
+        image: busybox
+        command: ["sh", "-c", "chown -R 65534:65534 /prometheus"]
+        volumeMounts:
+        - name: prometheus-data
+          mountPath: /prometheus
+      containers:
+      - args:
+          - --config.file=/etc/prometheus/prometheus.yml
+          - --storage.tsdb.path=/prometheus
+          - --web.console.libraries=/usr/share/prometheus/console_libraries
+          - --web.console.templates=/usr/share/prometheus/consoles
+          - --enable-feature=remote-write-receiver
+          - --query.lookback-delta=2m
+        env:
+          - name: TZ
+            value: Asia/Shanghai
+        image: {{ .Values.prometheus.internal.image.repository }}:{{ .Values.prometheus.internal.image.tag }}
+        name: prometheus
+        ports:
+        - containerPort: 9090
+{{- if .Values.prometheus.internal.resources }}
+        resources:
+{{ toYaml .Values.prometheus.internal.resources | indent 10 }}
+{{- end }}
+        volumeMounts:
+         - mountPath: /etc/prometheus
+           name: prometheus-config
+         - mountPath: /prometheus
+           name: prometheus-data
+      hostname: prometheus
+      restartPolicy: Always
+      volumes:
+        {{- if not .Values.persistence.enabled }}
+        - name: prometheus-data
+          emptyDir: {}
+        {{- else if $prometheus.existingClaim }}
+        - name: prometheus-data
+          persistentVolumeClaim:
+            claimName: {{ $prometheus.existingClaim }}
+        {{- end }}
+        - name: prometheus-config
+          configMap:
+            name: prometheus-config
+      {{- with .Values.prometheus.internal.nodeSelector }}
+      nodeSelector:
+{{ toYaml . | indent 8 }}
+    {{- end }}
+    {{- with .Values.prometheus.internal.affinity }}
+      affinity:
+{{ toYaml . | indent 8 }}
+    {{- end }}
+    {{- with .Values.prometheus.internal.tolerations }}
+      tolerations:
+{{ toYaml . | indent 8 }}
+    {{- end }}
+    {{- if .Values.prometheus.internal.priorityClassName }}
+      priorityClassName: {{ .Values.prometheus.internal.priorityClassName }}
+    {{- end }}
+  {{- if and .Values.persistence.enabled (not $prometheus.existingClaim) }}
+  volumeClaimTemplates:
+  - metadata:
+      name: "prometheus-data"
+      labels:
+{{ include "nightingale.labels" . | indent 8 }}
+    spec:
+      accessModes: [{{ $prometheus.accessMode | quote }}]
+      {{- if $prometheus.storageClass }}
+      {{- if (eq "-" $prometheus.storageClass) }}
+      storageClassName: ""
+      {{- else }}
+      storageClassName: "{{ $prometheus.storageClass }}"
+      {{- end }}
+      {{- end }}
+      resources:
+        requests:
+          storage: {{ $prometheus.size | quote }}
+  {{- end }}
+{{- end -}}
