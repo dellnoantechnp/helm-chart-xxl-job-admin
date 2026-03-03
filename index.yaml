@@ -1549,6 +1549,32 @@ entries:
     urls:
     - https://github.com/dellnoantechnp/helm-chart-xxl-job-admin/releases/download/nfs-subdir-external-provisioner-4.0.18/nfs-subdir-external-provisioner-4.0.18.tgz
     version: 4.0.18
+  nightingale:
+  - annotations:
+      catalog.cattle.io/release-name: flashcatcloud
+    apiVersion: v1
+    appVersion: 8.0.0-beta12
+    created: "2026-03-03T10:58:37.010277223Z"
+    description: A Helm Chart for nightingale, cloud-native monitoring system
+    digest: 4cf16d99f2ab810febc6ba0ce1fa98989694978dac09907e33b884904969bff4
+    home: https://n9e.github.io
+    icon: https://raw.githubusercontent.com/flashcatcloud/n9e-helm/master/n9e-icon.png
+    keywords:
+    - nightingale
+    - monitoring
+    - alerting
+    - metrics
+    - traces
+    - logs
+    maintainers:
+    - email: contact-us@flashcat.cloud
+      name: flashcatcloud
+    name: nightingale
+    sources:
+    - https://github.com/ccfos/nightingale
+    urls:
+    - https://github.com/dellnoantechnp/helm-chart-xxl-job-admin/releases/download/nightingale-0.2.11/nightingale-0.2.11.tgz
+    version: 0.2.11
   pgcat:
   - apiVersion: v2
     appVersion: v1.2.0
@@ -3052,4 +3078,4 @@ entries:
     urls:
     - https://github.com/dellnoantechnp/helm-chart-xxl-job-admin/releases/download/zookeeper-7.6.1/zookeeper-7.6.1.tgz
     version: 7.6.1
-generated: "2026-02-26T10:20:04.904718178Z"
+generated: "2026-03-03T10:58:37.010463532Z"
