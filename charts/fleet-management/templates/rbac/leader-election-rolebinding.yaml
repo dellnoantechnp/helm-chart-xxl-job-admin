@@ -1,0 +1,15 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  labels:
+    {{- include "fleet-management.labels" . | nindent 4 }}
+  name: {{ include "fleet-management.resourceName" (dict "suffix" "leader-election-rolebinding" "context" $) }}
+  namespace: {{ .Release.Namespace }}
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: {{ include "fleet-management.resourceName" (dict "suffix" "leader-election-role" "context" $) }}
+subjects:
+- kind: ServiceAccount
+  name: {{ include "fleet-management.resourceName" (dict "suffix" "controller-manager" "context" $) }}
+  namespace: {{ .Release.Namespace }}

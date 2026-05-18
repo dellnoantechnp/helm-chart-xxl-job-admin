@@ -1,0 +1,23 @@
+{{- if .Values.rbacHelpers.enable }}
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  labels:
+    {{- include "fleet-management.labels" . | nindent 4 }}
+  name: {{ include "fleet-management.resourceName" (dict "suffix" "collectorgroupbinding-viewer-role" "context" $) }}
+rules:
+- apiGroups:
+  - fleet.pkarakal.com
+  resources:
+  - collectorgroupbindings
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - fleet.pkarakal.com
+  resources:
+  - collectorgroupbindings/status
+  verbs:
+  - get
+{{- end }}

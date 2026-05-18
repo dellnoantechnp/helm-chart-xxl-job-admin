@@ -1,0 +1,68 @@
+## CI test values: gateway with JWT authentication and TLS termination.
+## Validates ConfigMap generation, Deployment volumes, Service, and ingress routing.
+## A self-signed TLS Secret is generated via extraObjects so the gateway pod can mount it.
+
+manager:
+  image:
+    registry: ghcr.io
+    repository: pkarakal/alloy-remote-config
+    tag: latest
+    pullPolicy: Never
+  args: []
+
+metrics:
+  enable: false
+
+ingress:
+  enabled: true
+  className: nginx
+  hosts:
+    - host: alloy-config.example.com
+      paths:
+        - path: /
+          pathType: Prefix
+
+gateway:
+  enabled: true
+  image:
+    repository: envoyproxy/envoy
+    tag: distroless-v1.37.1
+    pullPolicy: Never
+  service:
+    type: ClusterIP
+    port: 8443
+  tls:
+    enabled: true
+    secretName: gateway-tls-secret
+  auth:
+    type: jwt
+    jwt:
+      issuer: https://example.com
+      audiences:
+        - alloy-remote-config
+      jwksUri: https://example.com/.well-known/jwks.json
+      jwksHost: example.com
+      forwardPayloadHeader: x-jwt-payload
+
+defaults:
+  collectorGroup:
+    enabled: false
+  pipelineConfig:
+    enabled: false
+  collectorGroupBinding:
+    enabled: false
+
+
+## Generate a self-signed TLS Secret so the gateway pod's server-cert volume mount succeeds in CI.
+## $cert is set once in tls.crt (tpl renders the whole YAML as one template) and reused in tls.key,
+## ensuring the cert and key are from the same key pair.
+extraObjects:
+  - apiVersion: v1
+    kind: Secret
+    metadata:
+      name: gateway-tls-secret
+      namespace: '{{ .Release.Namespace }}'
+    type: kubernetes.io/tls
+    data:
+      tls.crt: '{{- $cert := genSelfSignedCert .Release.Name nil nil 3650 }}{{ $cert.Cert | b64enc }}'
+      tls.key: '{{ $cert.Key | b64enc }}'

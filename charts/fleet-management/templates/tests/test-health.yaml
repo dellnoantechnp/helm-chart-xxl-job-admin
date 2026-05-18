@@ -1,0 +1,52 @@
+{{- if .Values.service.enabled }}
+apiVersion: v1
+kind: Pod
+metadata:
+  name: {{ include "fleet-management.resourceName" (dict "suffix" "test-health" "context" $) }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "fleet-management.labels" . | nindent 4 }}
+  annotations:
+    "helm.sh/hook": test
+    "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
+spec:
+  restartPolicy: Never
+  containers:
+  - name: health-check
+    image: busybox:1.36
+    command:
+    - sh
+    - -c
+    - |
+      set -e
+      SVC={{ include "fleet-management.resourceName" (dict "suffix" "api" "context" $) }}.{{ .Release.Namespace }}.svc.cluster.local
+      PORT={{ .Values.service.port }}
+
+      # 1. TCP connectivity: ensure the Service routes to a live pod
+      echo "==> [1/2] Checking TCP connectivity to ${SVC}:${PORT}..."
+      nc -z -w 10 "${SVC}" "${PORT}"
+      echo "    TCP OK"
+
+      # 2. HTTP-level check: send a raw HTTP/1.0 request and verify the server
+      #    responds with an HTTP status line. A Connect-RPC server will return
+      #    405 or 415 for a plain GET, but any HTTP response proves the server
+      #    is alive and routing works end-to-end.
+      echo "==> [2/2] Checking HTTP response from ${SVC}:${PORT}..."
+      response=$(printf "GET / HTTP/1.0\r\nHost: %s\r\nConnection: close\r\n\r\n" "${SVC}" \
+        | nc -w 10 "${SVC}" "${PORT}" | head -1)
+      echo "    Server responded: ${response}"
+      echo "${response}" | grep -q "^HTTP/" || {
+        echo "    ERROR: expected HTTP response, got: ${response}"
+        exit 1
+      }
+      echo "    HTTP OK"
+      echo "==> All checks passed."
+    securityContext:
+      allowPrivilegeEscalation: false
+      capabilities:
+        drop:
+        - ALL
+      readOnlyRootFilesystem: true
+      runAsNonRoot: true
+      runAsUser: 65534
+{{- end }}

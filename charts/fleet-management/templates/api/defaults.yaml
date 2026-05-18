@@ -1,0 +1,41 @@
+{{- if .Values.defaults.collectorGroup.enabled }}
+apiVersion: fleet.pkarakal.com/v1alpha1
+kind: CollectorGroup
+metadata:
+  name: {{ .Values.defaults.collectorGroup.name | quote }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "fleet-management.labels" . | nindent 4 }}
+    fleet.pkarakal.com/default-collector-group: "true"
+spec:
+  description: {{ .Values.defaults.collectorGroup.description | quote }}
+---
+{{- end }}
+{{- if .Values.defaults.pipelineConfig.enabled }}
+apiVersion: fleet.pkarakal.com/v1alpha1
+kind: PipelineConfig
+metadata:
+  name: {{ .Values.defaults.pipelineConfig.name | quote }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "fleet-management.labels" . | nindent 4 }}
+    fleet.pkarakal.com/default-pipeline-config: "true"
+spec:
+  content: {{ .Values.defaults.pipelineConfig.content | quote }}
+  {{- with .Values.defaults.pipelineConfig.description }}
+  description: {{ . | quote }}
+  {{- end }}
+---
+{{- end }}
+{{- if and .Values.defaults.collectorGroupBinding.enabled .Values.defaults.collectorGroup.enabled .Values.defaults.pipelineConfig.enabled }}
+apiVersion: fleet.pkarakal.com/v1alpha1
+kind: CollectorGroupBinding
+metadata:
+  name: {{ .Values.defaults.collectorGroupBinding.name | quote }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "fleet-management.labels" . | nindent 4 }}
+spec:
+  collectorGroupRef: {{ .Values.defaults.collectorGroup.name | quote }}
+  pipelineConfigRef: {{ .Values.defaults.pipelineConfig.name | quote }}
+{{- end }}

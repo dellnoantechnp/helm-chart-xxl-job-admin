@@ -1,0 +1,526 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "global": {
+      "type": "object",
+      "description": "Global values shared across this chart and any subcharts.",
+      "properties": {
+        "imageRegistry": {
+          "type": "string",
+          "description": "Global container image registry override. Takes precedence over per-component image.registry values."
+        }
+      }
+    },
+    "nameOverride": {
+      "type": "string",
+      "description": "Partial override for the chart fullname template."
+    },
+    "fullnameOverride": {
+      "type": "string",
+      "description": "Full override for the chart fullname template."
+    },
+    "podAnnotations": {
+      "type": "object",
+      "description": "Annotations to add to the controller manager Pod.",
+      "additionalProperties": { "type": "string" }
+    },
+    "podLabels": {
+      "type": "object",
+      "description": "Additional labels to add to the controller manager Pod.",
+      "additionalProperties": { "type": "string" }
+    },
+    "manager": {
+      "type": "object",
+      "required": ["image"],
+      "additionalProperties": false,
+      "properties": {
+        "replicas": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "Number of controller manager replicas."
+        },
+        "image": {
+          "type": "object",
+          "required": ["repository", "tag"],
+          "additionalProperties": false,
+          "properties": {
+            "registry": {
+              "type": "string",
+              "description": "Container image registry. Overridden by global.imageRegistry when set."
+            },
+            "repository": {
+              "type": "string",
+              "minLength": 1,
+              "description": "Container image repository."
+            },
+            "tag": {
+              "type": "string",
+              "minLength": 1,
+              "description": "Container image tag."
+            },
+            "pullPolicy": {
+              "type": "string",
+              "enum": ["Always", "IfNotPresent", "Never"],
+              "description": "Image pull policy."
+            }
+          }
+        },
+        "args": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Extra arguments passed to the manager binary."
+        },
+        "env": {
+          "type": "array",
+          "description": "Environment variables for the manager container (v1.EnvVar format).",
+          "items": { "type": "object" }
+        },
+        "envOverrides": {
+          "type": "object",
+          "description": "Simple key=value env overrides (take precedence over env).",
+          "additionalProperties": { "type": "string" }
+        },
+        "imagePullSecrets": {
+          "type": "array",
+          "items": { "type": "object" },
+          "description": "Image pull secrets for private registries."
+        },
+        "podSecurityContext": {
+          "type": "object",
+          "description": "Pod-level security context."
+        },
+        "securityContext": {
+          "type": "object",
+          "description": "Container-level security context."
+        },
+        "resources": {
+          "type": "object",
+          "description": "Resource requests and limits for the manager container."
+        },
+        "affinity": {
+          "type": "object",
+          "description": "Pod affinity rules."
+        },
+        "nodeSelector": {
+          "type": "object",
+          "additionalProperties": { "type": "string" },
+          "description": "Node selector labels."
+        },
+        "tolerations": {
+          "type": "array",
+          "items": { "type": "object" },
+          "description": "Pod tolerations."
+        },
+        "topologySpreadConstraints": {
+          "type": "array",
+          "items": { "type": "object" },
+          "description": "Topology spread constraints for distributing pods across zones or nodes."
+        },
+        "pdb": {
+          "type": "object",
+          "additionalProperties": false,
+          "description": "PodDisruptionBudget configuration.",
+          "properties": {
+            "enabled": {
+              "type": "boolean",
+              "description": "Create a PodDisruptionBudget for the controller manager."
+            },
+            "minAvailable": {
+              "oneOf": [
+                { "type": "integer", "minimum": 0 },
+                { "type": "string", "pattern": "^[0-9]+%$" }
+              ],
+              "description": "Minimum number or percentage of pods that must remain available."
+            },
+            "maxUnavailable": {
+              "oneOf": [
+                { "type": "integer", "minimum": 0 },
+                { "type": "string", "pattern": "^[0-9]+%$" }
+              ],
+              "description": "Maximum number or percentage of pods that may be unavailable."
+            }
+          }
+        }
+      }
+    },
+    "rbacHelpers": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "enable": {
+          "type": "boolean",
+          "description": "Install admin/editor/viewer ClusterRoles for each CRD."
+        }
+      }
+    },
+    "metrics": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "enable": {
+          "type": "boolean",
+          "description": "Expose the /metrics endpoint and create the metrics RBAC resources."
+        },
+        "port": {
+          "type": "integer",
+          "minimum": 1024,
+          "maximum": 65535,
+          "description": "Port the metrics server listens on."
+        }
+      }
+    },
+    "certManager": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "enable": {
+          "type": "boolean",
+          "description": "Use cert-manager for TLS certificates (metrics endpoint and webhooks)."
+        }
+      }
+    },
+    "prometheus": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "enable": {
+          "type": "boolean",
+          "description": "Create a Prometheus ServiceMonitor (requires prometheus-operator)."
+        }
+      }
+    },
+    "service": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "enabled": {
+          "type": "boolean",
+          "description": "Create a Service for the Connect-RPC API."
+        },
+        "type": {
+          "type": "string",
+          "enum": ["ClusterIP", "NodePort", "LoadBalancer", "ExternalName"],
+          "description": "Kubernetes Service type."
+        },
+        "port": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 65535,
+          "description": "Service port for the Connect-RPC endpoint."
+        },
+        "annotations": {
+          "type": "object",
+          "additionalProperties": { "type": "string" },
+          "description": "Annotations to add to the Service resource."
+        }
+      }
+    },
+    "ingress": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "enabled": {
+          "type": "boolean",
+          "description": "Create an Ingress for the Connect-RPC API."
+        },
+        "className": {
+          "type": "string",
+          "description": "Ingress class name (e.g. nginx, traefik)."
+        },
+        "annotations": {
+          "type": "object",
+          "additionalProperties": { "type": "string" },
+          "description": "Annotations to add to the Ingress resource."
+        },
+        "hosts": {
+          "type": "array",
+          "description": "Ingress host rules.",
+          "items": {
+            "type": "object",
+            "required": ["host", "paths"],
+            "properties": {
+              "host": { "type": "string" },
+              "paths": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "required": ["path", "pathType"],
+                  "properties": {
+                    "path": { "type": "string" },
+                    "pathType": {
+                      "type": "string",
+                      "enum": ["Exact", "Prefix", "ImplementationSpecific"]
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "tls": {
+          "type": "array",
+          "description": "TLS configuration for the Ingress.",
+          "items": { "type": "object" }
+        }
+      }
+    },
+    "gateway": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "Optional Envoy gateway for authentication and TLS termination in front of the Connect-RPC API.",
+      "properties": {
+        "enabled": {
+          "type": "boolean",
+          "description": "Deploy an Envoy gateway in front of the Connect-RPC API service."
+        },
+        "image": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["repository", "tag"],
+          "properties": {
+            "registry":   { "type": "string", "description": "Envoy container image registry. Overridden by global.imageRegistry when set." },
+            "repository": { "type": "string", "minLength": 1, "description": "Envoy container image repository." },
+            "tag":        { "type": "string", "minLength": 1, "description": "Envoy container image tag." },
+            "pullPolicy": { "type": "string", "enum": ["Always", "IfNotPresent", "Never"], "description": "Image pull policy." }
+          }
+        },
+        "replicas": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "Number of Envoy gateway replicas."
+        },
+        "imagePullSecrets": {
+          "type": "array",
+          "items": { "type": "object" },
+          "description": "Image pull secrets for private registries."
+        },
+        "service": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "type": {
+              "type": "string",
+              "enum": ["ClusterIP", "NodePort", "LoadBalancer", "ExternalName"],
+              "description": "Kubernetes Service type for the gateway."
+            },
+            "port": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 65535,
+              "description": "Port exposed by the gateway service (8080 for plain HTTP, 443 for TLS)."
+            },
+            "annotations": {
+              "type": "object",
+              "additionalProperties": { "type": "string" },
+              "description": "Annotations to add to the gateway Service."
+            }
+          }
+        },
+        "tls": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "enabled":       { "type": "boolean", "description": "Enable TLS at the Envoy gateway listener." },
+            "secretName":    { "type": "string",  "description": "Pre-created Secret containing tls.crt and tls.key." },
+            "certKey":       { "type": "string",  "description": "Key in the Secret holding the certificate." },
+            "privateKeyKey": { "type": "string",  "description": "Key in the Secret holding the private key." }
+          },
+          "if":   { "properties": { "enabled": { "const": true } }, "required": ["enabled"] },
+          "then": { "required": ["secretName"], "properties": { "secretName": { "minLength": 1 } } }
+        },
+        "auth": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "type": {
+              "type": "string",
+              "enum": ["none", "jwt", "basic", "mtls"],
+              "description": "Authentication mode."
+            },
+            "jwt": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "issuer":               { "type": "string", "description": "JWT issuer (must match the 'iss' claim)." },
+                "audiences":            { "type": "array", "items": { "type": "string" }, "description": "Allowed JWT audiences." },
+                "jwksUri":              { "type": "string", "description": "Remote JWKS URI." },
+                "jwksHost":             { "type": "string", "description": "Explicit hostname for the JWKS upstream cluster (required for non-standard ports)." },
+                "localJwks":            { "type": "string", "description": "Inline JWKS JSON string (used when jwksUri is empty)." },
+                "forwardPayloadHeader": { "type": "string", "description": "Forward the validated JWT payload as this upstream request header." }
+              }
+            },
+            "basic": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "realm":       { "type": "string", "description": "HTTP Basic Auth realm." },
+                "usersInline": { "type": "string", "description": "Inline htpasswd content (one user:hash per line)." },
+                "secretName":  { "type": "string", "description": "Pre-created Secret containing htpasswd-formatted content." },
+                "secretKey":   { "type": "string", "description": "Key within the Secret (default: credentials)." }
+              }
+            },
+            "mtls": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "caSecretName": { "type": "string", "description": "Pre-created Secret containing the PEM CA certificate bundle." },
+                "caSecretKey":  { "type": "string", "description": "Key within the Secret holding the CA certificate (default: ca.crt)." }
+              }
+            }
+          },
+          "if":   { "properties": { "type": { "const": "mtls" } }, "required": ["type"] },
+          "then": {
+            "properties": {
+              "mtls": {
+                "required": ["caSecretName"],
+                "properties": { "caSecretName": { "minLength": 1 } }
+              }
+            }
+          }
+        },
+        "hpa": {
+          "type": "object",
+          "additionalProperties": false,
+          "description": "HorizontalPodAutoscaler for the gateway deployment.",
+          "properties": {
+            "enabled":                        { "type": "boolean" },
+            "minReplicas":                    { "type": "integer", "minimum": 1 },
+            "maxReplicas":                    { "type": "integer", "minimum": 1 },
+            "targetCPUUtilizationPercentage": { "type": "integer", "minimum": 1, "maximum": 100 }
+          }
+        },
+        "pdb": {
+          "type": "object",
+          "additionalProperties": false,
+          "description": "PodDisruptionBudget for the gateway deployment.",
+          "properties": {
+            "enabled": { "type": "boolean" },
+            "minAvailable": {
+              "oneOf": [
+                { "type": "integer", "minimum": 0 },
+                { "type": "string",  "pattern": "^[0-9]+%$" }
+              ],
+              "description": "Minimum number or percentage of gateway pods that must remain available."
+            },
+            "maxUnavailable": {
+              "oneOf": [
+                { "type": "integer", "minimum": 0 },
+                { "type": "string",  "pattern": "^[0-9]+%$" }
+              ],
+              "description": "Maximum number or percentage of gateway pods that may be unavailable."
+            }
+          }
+        },
+        "resources":            { "type": "object", "description": "Resource requests and limits for the Envoy container." },
+        "podSecurityContext":   { "type": "object", "description": "Pod-level security context." },
+        "securityContext":      { "type": "object", "description": "Container-level security context." },
+        "podAnnotations": {
+          "type": "object",
+          "additionalProperties": { "type": "string" },
+          "description": "Extra annotations for gateway pods."
+        },
+        "podLabels": {
+          "type": "object",
+          "additionalProperties": { "type": "string" },
+          "description": "Extra labels for gateway pods."
+        },
+        "nodeSelector": {
+          "type": "object",
+          "additionalProperties": { "type": "string" },
+          "description": "Node selector for gateway pods."
+        },
+        "tolerations":             { "type": "array",  "items": { "type": "object" }, "description": "Tolerations for gateway pods." },
+        "affinity":                { "type": "object", "description": "Affinity rules for gateway pods." },
+        "topologySpreadConstraints": { "type": "array", "items": { "type": "object" }, "description": "Topology spread constraints for gateway pods." },
+        "logLevel": {
+          "type": "string",
+          "enum": ["trace", "debug", "info", "warn", "error", "critical", "off"],
+          "description": "Envoy log level."
+        },
+        "adminPort": {
+          "type": "integer",
+          "minimum": 1024,
+          "maximum": 65535,
+          "description": "Envoy admin interface port (internal only)."
+        },
+        "config": {
+          "type": "string",
+          "description": "Envoy bootstrap config as a templated YAML string. Merged with structuredConfig (structuredConfig wins)."
+        },
+        "structuredConfig": {
+          "type": "object",
+          "description": "Deep-merged overrides applied on top of the rendered gateway.config. structuredConfig wins on conflicts."
+        }
+      }
+    },
+    "extraObjects": {
+      "type": "array",
+      "description": "Extra Kubernetes objects to deploy alongside the chart. Each entry is rendered as a full manifest with Helm template support.",
+      "items": { "type": "object" }
+    },
+    "collectorTTL": {
+      "type": "string",
+      "description": "Go duration string for the collector registration TTL (e.g. \"5m\", \"0\" to disable).",
+      "pattern": "^(0|[1-9][0-9]*(ns|us|\u00b5s|ms|s|m|h))$"
+    },
+    "defaults": {
+      "type": "object",
+      "description": "Default resources created on chart install.",
+      "additionalProperties": false,
+      "properties": {
+        "collectorGroup": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "enabled":     { "type": "boolean", "description": "Create a default CollectorGroup." },
+            "name":        { "type": "string", "minLength": 1, "description": "Name of the default CollectorGroup." },
+            "description": { "type": "string", "description": "Description of the default CollectorGroup." }
+          }
+        },
+        "pipelineConfig": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "enabled":     { "type": "boolean", "description": "Create a default PipelineConfig." },
+            "name":        { "type": "string", "minLength": 1, "description": "Name of the default PipelineConfig." },
+            "description": { "type": "string", "description": "Description of the default PipelineConfig." },
+            "content":     { "type": "string", "description": "Alloy pipeline content for the default config." }
+          }
+        },
+        "collectorGroupBinding": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "enabled": { "type": "boolean", "description": "Create a default CollectorGroupBinding." },
+            "name":    { "type": "string", "minLength": 1, "description": "Name of the default CollectorGroupBinding." }
+          }
+        }
+      }
+    },
+    "preDeleteHook": {
+      "type": "object",
+      "description": "Pre-delete hook that strips finalizers from CRs before Helm deletes the manager",
+      "additionalProperties": false,
+      "properties": {
+        "enabled": {
+          "type": "boolean",
+          "description": "Enable the pre-delete finalizer cleanup hook"
+        },
+        "image": {
+          "type": "string",
+          "description": "Image to use for the cleanup job (must have kubectl and jq)"
+        },
+        "imagePullPolicy": {
+          "type": "string",
+          "enum": [
+            "Always",
+            "IfNotPresent",
+            "Never"
+          ]
+        }
+      }
+    }
+  }
+}

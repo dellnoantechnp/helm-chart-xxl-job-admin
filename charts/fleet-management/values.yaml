@@ -1,0 +1,609 @@
+## Global values shared across this chart and any subcharts.
+## global.imageRegistry takes precedence over per-component image.registry values.
+##
+global:
+  ## Global container image registry override.
+  ## When set, all component images are pulled from this registry regardless of their
+  ## individual image.registry settings.
+  ## Example: "my-registry.example.com"
+  ##
+  imageRegistry: ""
+
+## String to partially override chart.fullname template (will maintain the release name)
+##
+# nameOverride: ""
+
+## String to fully override chart.fullname template
+##
+# fullnameOverride: ""
+
+## Annotations to add to the controller manager Pod
+##
+podAnnotations: {}
+
+## Additional labels to add to the controller manager Pod
+##
+podLabels: {}
+
+## Configure the controller manager deployment
+##
+manager:
+  replicas: 1
+
+  image:
+    ## Registry for the manager image. Overridden by global.imageRegistry when set.
+    registry: "ghcr.io"
+    repository: dellnoantechnp/alloy-remote-config/fleet-management
+    tag: master
+    pullPolicy: IfNotPresent
+
+  ## Arguments
+  ##
+  args:
+    - --leader-elect
+
+  ## Environment variables
+  ##
+  env: []
+
+  ## Env overrides (--set manager.envOverrides.VAR=value)
+  ## Same name in env above: this value takes precedence.
+  ##
+  envOverrides: {}
+
+  ## Image pull secrets
+  ##
+  imagePullSecrets: []
+
+  ## Pod-level security settings
+  ##
+  podSecurityContext:
+    runAsNonRoot: true
+    seccompProfile:
+      type: RuntimeDefault
+
+  ## Container-level security settings
+  ##
+  securityContext:
+    allowPrivilegeEscalation: false
+    capabilities:
+      drop:
+      - ALL
+    readOnlyRootFilesystem: true
+
+  ## Resource limits and requests
+  ##
+  resources:
+    limits:
+      cpu: 500m
+      memory: 128Mi
+    requests:
+      cpu: 10m
+      memory: 64Mi
+
+  ## Manager pod's affinity
+  ##
+  affinity: {}
+
+  ## Manager pod's node selector
+  ##
+  nodeSelector: {}
+
+  ## Manager pod's tolerations
+  ##
+  tolerations: []
+
+  ## Topology spread constraints for zone/node distribution.
+  ## Useful when replicas > 1 to spread pods across failure domains.
+  ## Ref: https://kubernetes.io/docs/concepts/scheduling-eviction/topology-spread-constraints/
+  ##
+  topologySpreadConstraints: []
+  # - maxSkew: 1
+  #   topologyKey: topology.kubernetes.io/zone
+  #   whenUnsatisfiable: DoNotSchedule
+  #   labelSelector:
+  #     matchLabels:
+  #       control-plane: controller-manager
+
+  ## PodDisruptionBudget ensures a minimum number of pods remain available during voluntary disruptions.
+  ## Enable when running replicas > 1 (requires leader election disabled or HA-aware setup).
+  ##
+  pdb:
+    enabled: false
+    ## minAvailable and maxUnavailable are mutually exclusive.
+    ## If neither is set, defaults to minAvailable: 1.
+    ##
+    # minAvailable: 1
+    # maxUnavailable: 1
+
+## Helper RBAC roles for managing custom resources
+##
+rbacHelpers:
+  # Install convenience admin/editor/viewer roles for CRDs
+  enable: false
+
+## Controller metrics endpoint.
+## Enable to expose /metrics endpoint with RBAC protection.
+##
+metrics:
+  enable: true
+  # Metrics server port
+  port: 8443
+
+## Cert-manager integration for TLS certificates.
+## Required for webhook certificates and metrics endpoint certificates.
+##
+certManager:
+  enable: false
+
+## Prometheus ServiceMonitor for metrics scraping.
+## Requires prometheus-operator to be installed in the cluster.
+##
+prometheus:
+  enable: false
+
+## Connect-RPC / Alloy remote-config API service.
+## Exposes the config distribution endpoint that Alloy collectors query.
+##
+service:
+  enabled: true
+  type: ClusterIP
+  port: 12345
+  ## Additional annotations for the Service resource
+  ##
+  annotations: {}
+
+## Optional Ingress for the Connect-RPC API.
+## Useful when collectors run outside the cluster.
+##
+ingress:
+  enabled: false
+  ## Ingress class name (e.g. "nginx", "traefik")
+  ##
+  className: ""
+  ## Additional annotations for the Ingress resource
+  ##
+  annotations: {}
+  ## Ingress host rules
+  ##
+  hosts: []
+  # - host: alloy-config.example.com
+  #   paths:
+  #     - path: /
+  #       pathType: Prefix
+  ## TLS configuration
+  ##
+  tls: []
+  # - secretName: alloy-config-tls
+  #   hosts:
+  #     - alloy-config.example.com
+
+## Optional Envoy gateway for authentication and optional TLS termination.
+## When enabled, a separate Envoy deployment is placed in front of the Connect-RPC API service.
+## The API service remains ClusterIP; the gateway service becomes the externally-accessible endpoint.
+## TLS termination can be offloaded to an upstream ingress controller / ALB instead of the gateway.
+##
+gateway:
+  enabled: false
+
+  image:
+    repository: envoyproxy/envoy
+    tag: distroless-v1.37.1
+    pullPolicy: IfNotPresent
+
+  ## Number of Envoy gateway replicas
+  ##
+  replicas: 1
+
+  ## Image pull secrets for private registries
+  ##
+  imagePullSecrets: []
+
+  ## Service configuration for the gateway (the externally-accessible endpoint).
+  ## Default port is 8080 (plain HTTP). Set to 443 when tls.enabled is true.
+  ##
+  service:
+    type: ClusterIP
+    port: 8080
+    annotations: {}
+
+  ## TLS termination at the gateway listener.
+  ## Can be omitted when an upstream ALB or ingress controller terminates TLS.
+  ## The referenced Secret must be pre-created (e.g., via cert-manager or manually).
+  ##
+  tls:
+    enabled: false
+    ## Name of the Kubernetes Secret containing tls.crt and tls.key
+    secretName: ""
+    certKey: tls.crt
+    privateKeyKey: tls.key
+
+  ## Authentication configuration
+  ##
+  auth:
+    ## Authentication type: "none", "jwt", "basic", or "mtls"
+    type: none
+
+    ## JWT authentication (used when type == "jwt").
+    ## Uses Envoy's native envoy.filters.http.jwt_authn filter.
+    ##
+    jwt:
+      ## JWT issuer — must match the "iss" claim in incoming tokens
+      issuer: ""
+      ## Allowed audiences (leave empty to skip audience validation)
+      audiences: []
+      ## Remote JWKS URI (e.g., https://accounts.google.com/.well-known/jwks.json)
+      jwksUri: ""
+      ## Explicit hostname for the JWKS upstream cluster.
+      ## Required when jwksUri uses a non-standard port. Falls back to parsing jwksUri.
+      jwksHost: ""
+      ## Inline JWKS JSON string — used when jwksUri is empty
+      localJwks: ""
+      ## Forward the validated JWT payload to the upstream as this header
+      forwardPayloadHeader: "x-jwt-payload"
+
+    ## Basic auth (used when type == "basic").
+    ## Uses Envoy's native envoy.filters.http.basic_auth filter (available since Envoy v1.28).
+    ## Passwords must be in htpasswd format: {SHA}, $apr1$, or $2y$ (bcrypt, recommended).
+    ## Generate with: htpasswd -nB username
+    ##
+    ## Two mutually exclusive credential sources — secretName takes precedence when both are set.
+    ##
+    basic:
+      realm: "alloy-remote-config"
+      ## Option A: inline htpasswd content (one "user:hash" per line)
+      ## Changes here trigger a ConfigMap update and rolling pod restart (checksum/config annotation).
+      usersInline: ""
+      # user1:{SHA}W6ph5Mm5Pz8GgiULbPgzG37mj9g=
+      # user2:$2y$05$...bcrypt hash...
+      ## Option B: load from a pre-existing Secret containing htpasswd-formatted content.
+      ## The Secret is mounted as a volume; Envoy reads the file at startup.
+      secretName: ""
+      ## Key within the Secret that holds the htpasswd content (default: "credentials")
+      secretKey: credentials
+
+    ## Mutual TLS client authentication (used when type == "mtls").
+    ## The referenced CA Secret must be pre-created.
+    ##
+    mtls:
+      ## Name of the Kubernetes Secret containing the PEM-encoded CA certificate
+      caSecretName: ""
+      ## Key within the Secret (default: "ca.crt")
+      caSecretKey: ca.crt
+
+  ## HorizontalPodAutoscaler for the gateway deployment
+  ##
+  hpa:
+    enabled: false
+    minReplicas: 1
+    maxReplicas: 3
+    targetCPUUtilizationPercentage: 80
+
+  ## PodDisruptionBudget for the gateway deployment.
+  ## minAvailable and maxUnavailable are mutually exclusive.
+  ## If neither is set, defaults to minAvailable: 1.
+  ##
+  pdb:
+    enabled: false
+    # minAvailable: 1
+    # maxUnavailable: 1
+
+  ## Resource limits and requests for the Envoy container
+  ##
+  resources:
+    limits:
+      cpu: 500m
+      memory: 128Mi
+    requests:
+      cpu: 50m
+      memory: 64Mi
+
+  ## Pod-level security context
+  ##
+  podSecurityContext:
+    runAsNonRoot: true
+    seccompProfile:
+      type: RuntimeDefault
+
+  ## Container-level security context
+  ## runAsUser/runAsGroup 65532 is the nonroot uid in the Envoy distroless base image.
+  ## Required because the distroless image does not declare a non-root USER, so
+  ## Kubernetes rejects the pod when podSecurityContext.runAsNonRoot is true without
+  ## an explicit UID override here.
+  ##
+  securityContext:
+    allowPrivilegeEscalation: false
+    capabilities:
+      drop:
+      - ALL
+    readOnlyRootFilesystem: true
+    runAsUser: 65532
+    runAsGroup: 65532
+
+  ## Extra annotations for gateway pods
+  ##
+  podAnnotations: {}
+
+  ## Extra labels for gateway pods
+  ##
+  podLabels: {}
+
+  ## Node selector for gateway pods
+  ##
+  nodeSelector: {}
+
+  ## Tolerations for gateway pods
+  ##
+  tolerations: []
+
+  ## Affinity rules for gateway pods
+  ##
+  affinity: {}
+
+  ## Topology spread constraints for zone/node distribution.
+  ## Useful when replicas > 1 to spread pods across failure domains.
+  ##
+  topologySpreadConstraints: []
+  # - maxSkew: 1
+  #   topologyKey: topology.kubernetes.io/zone
+  #   whenUnsatisfiable: DoNotSchedule
+  #   labelSelector:
+  #     matchLabels:
+  #       app.kubernetes.io/component: gateway
+
+  ## Envoy log level
+  ## One of: trace, debug, info, warn, error, critical, off
+  ##
+  logLevel: info
+
+  ## Envoy admin interface port (internal only — used by liveness/readiness probes, never exposed)
+  ##
+  adminPort: 9901
+
+  ## Envoy bootstrap configuration as a templated YAML string.
+  ## Rendered with Helm's tpl function, so it can reference .Values.* and template helpers.
+  ## Deep-merged with gateway.structuredConfig (structuredConfig wins on conflicts).
+  ##
+  ## Advanced users can replace this entire block to supply a custom Envoy config.
+  ## Most users should leave this unchanged and use gateway.structuredConfig for overrides.
+  ##
+  config: |
+    admin:
+      address:
+        socket_address:
+          address: 0.0.0.0
+          port_value: {{ .Values.gateway.adminPort }}
+
+    static_resources:
+      listeners:
+      - name: connect_rpc_listener
+        address:
+          socket_address:
+            address: 0.0.0.0
+            port_value: {{ .Values.gateway.service.port }}
+        filter_chains:
+        - filters:
+          - name: envoy.filters.network.http_connection_manager
+            typed_config:
+              "@type": type.googleapis.com/envoy.extensions.filters.network.http_connection_manager.v3.HttpConnectionManager
+              stat_prefix: ingress_http
+              codec_type: AUTO
+              use_remote_address: true
+              xff_num_trusted_hops: 1
+              access_log:
+              - name: envoy.access_loggers.stdout
+                typed_config:
+                  "@type": type.googleapis.com/envoy.extensions.access_loggers.stream.v3.StdoutAccessLog
+              route_config:
+                name: connect_rpc_route
+                virtual_hosts:
+                - name: connect_rpc
+                  domains:
+                  - "*"
+                  routes:
+                  - match:
+                      prefix: "/healthz"
+                    direct_response:
+                      status: 200
+                      body:
+                        inline_string: "OK"
+                  - match:
+                      prefix: "/ready"
+                    direct_response:
+                      status: 200
+                      body:
+                        inline_string: "OK"
+                  - match:
+                      prefix: "/"
+                    route:
+                      cluster: connect_rpc_upstream
+                      timeout: 0s
+              http_filters:
+              {{- if eq .Values.gateway.auth.type "jwt" }}
+              - name: envoy.filters.http.jwt_authn
+                typed_config:
+                  "@type": type.googleapis.com/envoy.extensions.filters.http.jwt_authn.v3.JwtAuthentication
+                  providers:
+                    jwt_provider:
+                      issuer: {{ .Values.gateway.auth.jwt.issuer | quote }}
+                      {{- if .Values.gateway.auth.jwt.audiences }}
+                      audiences:
+                      {{- range .Values.gateway.auth.jwt.audiences }}
+                      - {{ . | quote }}
+                      {{- end }}
+                      {{- end }}
+                      {{- if .Values.gateway.auth.jwt.jwksUri }}
+                      remote_jwks:
+                        http_uri:
+                          uri: {{ .Values.gateway.auth.jwt.jwksUri | quote }}
+                          cluster: jwks_cluster
+                          timeout: 5s
+                        cache_duration: 300s
+                      {{- else if .Values.gateway.auth.jwt.localJwks }}
+                      local_jwks:
+                        inline_string: {{ .Values.gateway.auth.jwt.localJwks | quote }}
+                      {{- end }}
+                      {{- if .Values.gateway.auth.jwt.forwardPayloadHeader }}
+                      forward_payload_header: {{ .Values.gateway.auth.jwt.forwardPayloadHeader | quote }}
+                      {{- end }}
+                      forward: false
+                  rules:
+                  - match:
+                      prefix: "/"
+                    requires:
+                      provider_name: jwt_provider
+              {{- end }}
+              {{- if eq .Values.gateway.auth.type "basic" }}
+              - name: envoy.filters.http.basic_auth
+                typed_config:
+                  "@type": type.googleapis.com/envoy.extensions.filters.http.basic_auth.v3.BasicAuth
+                  {{- if .Values.gateway.auth.basic.secretName }}
+                  users:
+                    filename: /etc/envoy/auth/{{ .Values.gateway.auth.basic.secretKey }}
+                  {{- else }}
+                  users:
+                    inline_string: {{ .Values.gateway.auth.basic.usersInline | quote }}
+                  {{- end }}
+              {{- end }}
+              - name: envoy.filters.http.router
+                typed_config:
+                  "@type": type.googleapis.com/envoy.extensions.filters.http.router.v3.Router
+          {{- if or .Values.gateway.tls.enabled (eq .Values.gateway.auth.type "mtls") }}
+          transport_socket:
+            name: envoy.transport_sockets.tls
+            typed_config:
+              "@type": type.googleapis.com/envoy.extensions.transport_sockets.tls.v3.DownstreamTlsContext
+              {{- if and .Values.gateway.tls.enabled (eq .Values.gateway.auth.type "mtls") }}
+              require_client_certificate: true
+              common_tls_context:
+                tls_certificates:
+                - certificate_chain:
+                    filename: /etc/envoy/certs/server/{{ .Values.gateway.tls.certKey }}
+                  private_key:
+                    filename: /etc/envoy/certs/server/{{ .Values.gateway.tls.privateKeyKey }}
+                validation_context:
+                  trusted_ca:
+                    filename: /etc/envoy/certs/client-ca/{{ .Values.gateway.auth.mtls.caSecretKey }}
+              {{- else if .Values.gateway.tls.enabled }}
+              common_tls_context:
+                tls_certificates:
+                - certificate_chain:
+                    filename: /etc/envoy/certs/server/{{ .Values.gateway.tls.certKey }}
+                  private_key:
+                    filename: /etc/envoy/certs/server/{{ .Values.gateway.tls.privateKeyKey }}
+              {{- else if eq .Values.gateway.auth.type "mtls" }}
+              require_client_certificate: true
+              common_tls_context:
+                validation_context:
+                  trusted_ca:
+                    filename: /etc/envoy/certs/client-ca/{{ .Values.gateway.auth.mtls.caSecretKey }}
+              {{- end }}
+          {{- end }}
+      clusters:
+      - name: connect_rpc_upstream
+        type: LOGICAL_DNS
+        connect_timeout: 5s
+        lb_policy: ROUND_ROBIN
+        http2_protocol_options: {}  # enable if Alloy RPC uses HTTP/2
+        load_assignment:
+          cluster_name: connect_rpc_upstream
+          endpoints:
+          - lb_endpoints:
+            - endpoint:
+                address:
+                  socket_address:
+                    address: {{ include "fleet-management.gatewayUpstreamHost" . }}
+                    port_value: {{ .Values.service.port }}
+      {{- if and (eq .Values.gateway.auth.type "jwt") .Values.gateway.auth.jwt.jwksUri }}
+      - name: jwks_cluster
+        type: LOGICAL_DNS
+        connect_timeout: 5s
+        load_assignment:
+          cluster_name: jwks_cluster
+          endpoints:
+          - lb_endpoints:
+            - endpoint:
+                address:
+                  socket_address:
+                    address: {{ .Values.gateway.auth.jwt.jwksHost | default (.Values.gateway.auth.jwt.jwksUri | regexFind "://([^/:]+)" | trimPrefix "://") }}
+                    port_value: 443
+        transport_socket:
+          name: envoy.transport_sockets.tls
+          typed_config:
+            "@type": type.googleapis.com/envoy.extensions.transport_sockets.tls.v3.UpstreamTlsContext
+            sni: {{ .Values.gateway.auth.jwt.jwksHost | default (.Values.gateway.auth.jwt.jwksUri | regexFind "://([^/:]+)" | trimPrefix "://") }}
+      {{- end }}
+
+  ## Structured config overrides — deep-merged on top of the rendered gateway.config above.
+  ## structuredConfig wins on conflicts. Useful for tweaking individual Envoy fields
+  ## without replacing the entire config string.
+  ##
+  ## Example: increase upstream connect timeout:
+  ##   gateway:
+  ##     structuredConfig:
+  ##       static_resources:
+  ##         clusters:
+  ##         - name: connect_rpc_upstream
+  ##           connect_timeout: 10s
+  ##
+  structuredConfig: {}
+
+## Collector registration TTL.
+## Controls how long a registered tenant entry lives without a refresh before
+## the reconciler evicts it. Maps to the --collector-ttl manager flag.
+## Format: Go duration string (e.g. "5m", "30s"). Set to "0" to disable eviction.
+##
+collectorTTL: "5m"
+
+## Default resources created on chart install.
+## Provides a minimal working configuration out of the box.
+## Resources are labelled with well-known labels so the operator can discover
+## them by label rather than by name.
+##
+defaults:
+  ## Default CollectorGroup — collectors with no explicit group fall through to this.
+  collectorGroup:
+    enabled: true
+    name: "default"
+    description: "Default collector group"
+
+  ## Default PipelineConfig — served to collectors in the default group.
+  pipelineConfig:
+    enabled: true
+    name: "default"
+    description: "Default pipeline configuration"
+    content: |
+      // Replace with your Alloy pipeline configuration.
+
+  ## Default CollectorGroupBinding linking the default group to the default config.
+  ## Only created when both collectorGroup.enabled and pipelineConfig.enabled are true.
+  collectorGroupBinding:
+    enabled: true
+    name: "default"
+
+## Pre-delete hook: strips finalizers from all fleet.pkarakal.com CRs before
+## Helm tears down the manager, preventing namespace stuck-terminating deadlocks.
+## Enable this when defaults are enabled or when CRs may have been created manually.
+##
+preDeleteHook:
+  enabled: false
+  image: bitnami/kubectl:latest
+  imagePullPolicy: IfNotPresent
+
+## Extra Kubernetes objects to deploy alongside the chart.
+## Each entry is rendered as a full Kubernetes manifest (supports Helm template directives).
+## Useful for deploying additional resources (Secrets, ConfigMaps, NetworkPolicies, etc.)
+## that are tightly coupled to this chart but not worth bundling directly.
+##
+## Example:
+##   extraObjects:
+##     - apiVersion: v1
+##       kind: Secret
+##       metadata:
+##         name: my-basic-auth
+##         namespace: {{ .Release.Namespace }}
+##       stringData:
+##         credentials: |
+##           alloy:$2y$05$...bcrypt hash...
+##
+extraObjects: []

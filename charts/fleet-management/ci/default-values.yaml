@@ -1,0 +1,25 @@
+# CI test values: minimal install against a locally-built image in a
+# single-node kind cluster.
+#
+# - pullPolicy: Never so kind uses the pre-loaded image without a registry push
+# - No --leader-elect since kind is a single-node cluster
+# - Metrics disabled to avoid HTTPS cert requirements in tests
+
+manager:
+  image:
+    registry: ghcr.io
+    repository: pkarakal/alloy-remote-config
+    tag: latest
+    pullPolicy: Never
+  args: []
+
+metrics:
+  enable: false
+
+defaults:
+  collectorGroup:
+    enabled: false
+  pipelineConfig:
+    enabled: false
+  collectorGroupBinding:
+    enabled: false

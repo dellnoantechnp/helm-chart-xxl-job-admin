@@ -1,0 +1,20 @@
+{{- if .Values.manager.pdb.enabled }}
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  labels:
+    {{- include "fleet-management.labels" . | nindent 4 }}
+  name: {{ include "fleet-management.resourceName" (dict "suffix" "controller-manager" "context" $) }}
+  namespace: {{ .Release.Namespace }}
+spec:
+  selector:
+    matchLabels:
+      {{- include "fleet-management.selectorLabels" . | nindent 6 }}
+  {{- if .Values.manager.pdb.minAvailable }}
+  minAvailable: {{ .Values.manager.pdb.minAvailable }}
+  {{- else if .Values.manager.pdb.maxUnavailable }}
+  maxUnavailable: {{ .Values.manager.pdb.maxUnavailable }}
+  {{- else }}
+  minAvailable: 1
+  {{- end }}
+{{- end }}

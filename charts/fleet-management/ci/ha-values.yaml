@@ -1,0 +1,36 @@
+# CI test values: HA mode with 2 replicas, PDB, and metrics enabled.
+# Exercises the PodDisruptionBudget, topologySpreadConstraints, and metrics code paths.
+#
+# Note: leader-elect is intentionally kept off for kind (single-node) installs.
+# In production you'd enable it alongside replicas > 1.
+
+manager:
+  image:
+    registry: ghcr.io
+    repository: pkarakal/alloy-remote-config
+    tag: latest
+    pullPolicy: Never
+  replicas: 2
+  args: []
+  topologySpreadConstraints:
+    - maxSkew: 1
+      topologyKey: kubernetes.io/hostname
+      whenUnsatisfiable: ScheduleAnyway
+      labelSelector:
+        matchLabels:
+          control-plane: controller-manager
+  pdb:
+    enabled: true
+    minAvailable: 1
+
+metrics:
+  enable: true
+  port: 8443
+
+defaults:
+  collectorGroup:
+    enabled: false
+  pipelineConfig:
+    enabled: false
+  collectorGroupBinding:
+    enabled: false

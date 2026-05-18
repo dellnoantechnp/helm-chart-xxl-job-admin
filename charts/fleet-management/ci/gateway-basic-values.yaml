@@ -1,0 +1,49 @@
+## CI test values: gateway with basic auth, no gateway-level TLS (ALB terminates TLS upstream).
+## Validates the basic_auth filter, inline htpasswd rendering, and ingress routing to gateway.
+
+manager:
+  image:
+    registry: ghcr.io
+    repository: pkarakal/alloy-remote-config
+    tag: latest
+    pullPolicy: Never
+  args: []
+
+metrics:
+  enable: false
+
+ingress:
+  enabled: true
+  className: alb
+  hosts:
+    - host: alloy-config.example.com
+      paths:
+        - path: /
+          pathType: Prefix
+
+gateway:
+  enabled: true
+  image:
+    repository: envoyproxy/envoy
+    tag: distroless-v1.37.1
+    pullPolicy: Never
+  service:
+    type: ClusterIP
+    port: 8080
+  tls:
+    enabled: false
+  auth:
+    type: basic
+    basic:
+      realm: alloy-remote-config
+      ## htpasswd -ns alloy  →  alloy:{SHA}W6ph5Mm5Pz8GgiULbPgzG37mj9g=
+      usersInline: |
+        alloy:{SHA}W6ph5Mm5Pz8GgiULbPgzG37mj9g=
+
+defaults:
+  collectorGroup:
+    enabled: false
+  pipelineConfig:
+    enabled: false
+  collectorGroupBinding:
+    enabled: false

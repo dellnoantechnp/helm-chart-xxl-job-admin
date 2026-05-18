@@ -1,0 +1,113 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    {{- include "fleet-management.labels" . | nindent 4 }}
+  name: {{ include "fleet-management.resourceName" (dict "suffix" "controller-manager" "context" $) }}
+  namespace: {{ .Release.Namespace }}
+spec:
+  replicas: {{ .Values.manager.replicas }}
+  selector:
+    matchLabels:
+      {{- include "fleet-management.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      annotations:
+        kubectl.kubernetes.io/default-container: manager
+        {{- with .Values.podAnnotations }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+      labels:
+        {{- include "fleet-management.labels" . | nindent 8 }}
+        control-plane: controller-manager
+        {{- with .Values.podLabels }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+    spec:
+      {{- with .Values.manager.tolerations }}
+      tolerations: {{ toYaml . | nindent 10 }}
+      {{- end }}
+      {{- with .Values.manager.affinity }}
+      affinity: {{ toYaml . | nindent 10 }}
+      {{- end }}
+      {{- with .Values.manager.nodeSelector }}
+      nodeSelector: {{ toYaml . | nindent 10 }}
+      {{- end }}
+      {{- with .Values.manager.imagePullSecrets }}
+      imagePullSecrets: {{ toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.manager.topologySpreadConstraints }}
+      topologySpreadConstraints: {{ toYaml . | nindent 8 }}
+      {{- end }}
+      containers:
+      - args:
+        {{- if .Values.metrics.enable }}
+        - --metrics-bind-address=:{{ .Values.metrics.port }}
+        {{- else }}
+        # Bind to :0 to disable the controller-runtime managed metrics server
+        - --metrics-bind-address=0
+        {{- end }}
+        - --health-probe-bind-address=:8081
+        - --collector-ttl={{ .Values.collectorTTL }}
+        {{- range .Values.manager.args }}
+        - {{ . }}
+        {{- end }}
+        command:
+        - /manager
+        env:
+        {{- range .Values.manager.env }}
+        - {{ toYaml . | nindent 10 | trim }}
+        {{- end }}
+        {{- range $key, $val := .Values.manager.envOverrides }}
+        - name: {{ $key }}
+          value: {{ $val | quote }}
+        {{- end }}
+        image: "{{ include "fleet-management.image" (dict "global" .Values.global "image" .Values.manager.image) }}"
+        imagePullPolicy: {{ .Values.manager.image.pullPolicy }}
+        livenessProbe:
+          httpGet:
+            path: /healthz
+            port: health-probe
+          initialDelaySeconds: 15
+          periodSeconds: 20
+        name: manager
+        ports:
+        - containerPort: 12345
+          name: connect-rpc
+          protocol: TCP
+        {{- if .Values.metrics.enable }}
+        - containerPort: {{ .Values.metrics.port }}
+          name: metrics
+          protocol: TCP
+        {{- end }}
+        - containerPort: 8081
+          name: health-probe
+          protocol: TCP
+        readinessProbe:
+          httpGet:
+            path: /readyz
+            port: health-probe
+          initialDelaySeconds: 5
+          periodSeconds: 10
+        resources:
+          {{- if .Values.manager.resources }}
+          {{- toYaml .Values.manager.resources | nindent 10 }}
+          {{- else }}
+          {}
+          {{- end }}
+        securityContext:
+          {{- if .Values.manager.securityContext }}
+          {{- toYaml .Values.manager.securityContext | nindent 10 }}
+          {{- else }}
+          {}
+          {{- end }}
+        volumeMounts: []
+      securityContext:
+        {{- if .Values.manager.podSecurityContext }}
+        {{- toYaml .Values.manager.podSecurityContext | nindent 8 }}
+        {{- else }}
+        {}
+        {{- end }}
+      serviceAccountName: {{ include "fleet-management.resourceName" (dict "suffix" "controller-manager" "context" $) }}
+      terminationGracePeriodSeconds: 10
+      volumes: []

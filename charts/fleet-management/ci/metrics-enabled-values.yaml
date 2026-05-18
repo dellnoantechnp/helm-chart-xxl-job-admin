@@ -1,0 +1,22 @@
+# CI test values: same as default but with metrics enabled.
+# Exercises the metrics Service, RBAC, and manager args code paths.
+
+manager:
+  image:
+    registry: ghcr.io
+    repository: pkarakal/alloy-remote-config
+    tag: latest
+    pullPolicy: Never
+  args: []
+
+metrics:
+  enable: true
+  port: 8443
+
+defaults:
+  collectorGroup:
+    enabled: false
+  pipelineConfig:
+    enabled: false
+  collectorGroupBinding:
+    enabled: false

@@ -1,0 +1,12 @@
+{{- if .Values.gateway.enabled }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  labels:
+    {{- include "fleet-management.labels" . | nindent 4 }}
+  name: {{ include "fleet-management.resourceName" (dict "suffix" "gateway-config" "context" $) }}
+  namespace: {{ .Release.Namespace }}
+data:
+  envoy.yaml: |
+    {{- include "fleet-management.gatewayCalculatedConfig" . | nindent 4 }}
+{{- end }}

@@ -1,0 +1,234 @@
+---
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  annotations:
+    controller-gen.kubebuilder.io/version: v0.20.1
+  name: collectorgroupbindings.fleet.pkarakal.com
+spec:
+  group: fleet.pkarakal.com
+  names:
+    kind: CollectorGroupBinding
+    listKind: CollectorGroupBindingList
+    plural: collectorgroupbindings
+    singular: collectorgroupbinding
+  scope: Namespaced
+  versions:
+  - additionalPrinterColumns:
+    - jsonPath: .status.phase
+      name: Phase
+      type: string
+    - jsonPath: .spec.pipelineConfigRef
+      name: Config
+      type: string
+    - jsonPath: .status.configHash
+      name: Hash
+      type: string
+    - jsonPath: .status.lastSyncedAt
+      name: Synced
+      type: date
+    - jsonPath: .metadata.creationTimestamp
+      name: Age
+      type: date
+    name: v1alpha1
+    schema:
+      openAPIV3Schema:
+        description: CollectorGroupBinding is the Schema for the collectorgroupbindings
+          API
+        properties:
+          apiVersion:
+            description: |-
+              APIVersion defines the versioned schema of this representation of an object.
+              Servers should convert recognized schemas to the latest internal value, and
+              may reject unrecognized values.
+              More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
+            type: string
+          kind:
+            description: |-
+              Kind is a string value representing the REST resource this object represents.
+              Servers may infer this from the endpoint the client submits requests to.
+              Cannot be updated.
+              In CamelCase.
+              More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
+            type: string
+          metadata:
+            type: object
+          spec:
+            description: spec defines the desired state of CollectorGroupBinding
+            properties:
+              collectorGroupRef:
+                description: |-
+                  CollectorGroupRef is the name of the CollectorGroup this binding
+                  targets. All collectors that self-identify with this group via
+                  their remotecfg attributes will receive the referenced config.
+                  Mutually exclusive with TenantRef.
+                type: string
+              pipelineConfigRef:
+                description: |-
+                  PipelineConfigRef is the name of the PipelineConfig to serve
+                  to collectors matched by this binding.
+                type: string
+              tenantRef:
+                description: |-
+                  TenantRef is the tenant ID of a specific collector to target.
+                  Takes precedence over CollectorGroupRef during config resolution
+                  if both a tenant-specific and group-wide binding exist.
+                  Mutually exclusive with CollectorGroupRef.
+                type: string
+            required:
+            - pipelineConfigRef
+            type: object
+            x-kubernetes-validations:
+            - message: exactly one of collectorGroupRef or tenantRef must be set
+              rule: (has(self.collectorGroupRef) && self.collectorGroupRef != "")
+                != (has(self.tenantRef) && self.tenantRef != "")
+          status:
+            description: status defines the observed state of CollectorGroupBinding
+            properties:
+              boundCollectorGroupRef:
+                description: |-
+                  BoundCollectorGroupRef tracks the CollectorGroupRef used in the last
+                  successful reconcile. Used to detect ref changes for idempotent
+                  activeBindings counter management.
+                type: string
+              boundPipelineConfigRef:
+                description: |-
+                  BoundPipelineConfigRef tracks the PipelineConfigRef used in the last
+                  successful reconcile. Used to detect ref changes for idempotent
+                  activeBindings counter management.
+                type: string
+              conditions:
+                description: |-
+                  Conditions contains the current observed conditions of this binding.
+                  RefsValid: both collectorGroupRef/tenantRef and pipelineConfigRef
+                    resolve to existing resources.
+                  Indexed: this binding is actively projected into the serving index
+                    and being served to matched collectors.
+                items:
+                  description: Condition contains details for one aspect of the current
+                    state of this API Resource.
+                  properties:
+                    lastTransitionTime:
+                      description: |-
+                        lastTransitionTime is the last time the condition transitioned from one status to another.
+                        This should be when the underlying condition changed.  If that is not known, then using the time when the API field changed is acceptable.
+                      format: date-time
+                      type: string
+                    message:
+                      description: |-
+                        message is a human readable message indicating details about the transition.
+                        This may be an empty string.
+                      maxLength: 32768
+                      type: string
+                    observedGeneration:
+                      description: |-
+                        observedGeneration represents the .metadata.generation that the condition was set based upon.
+                        For instance, if .metadata.generation is currently 12, but the .status.conditions[x].observedGeneration is 9, the condition is out of date
+                        with respect to the current state of the instance.
+                      format: int64
+                      minimum: 0
+                      type: integer
+                    reason:
+                      description: |-
+                        reason contains a programmatic identifier indicating the reason for the condition's last transition.
+                        Producers of specific condition types may define expected values and meanings for this field,
+                        and whether the values are considered a guaranteed API.
+                        The value should be a CamelCase string.
+                        This field may not be empty.
+                      maxLength: 1024
+                      minLength: 1
+                      pattern: ^[A-Za-z]([A-Za-z0-9_,:]*[A-Za-z0-9_])?$
+                      type: string
+                    status:
+                      description: status of the condition, one of True, False, Unknown.
+                      enum:
+                      - "True"
+                      - "False"
+                      - Unknown
+                      type: string
+                    type:
+                      description: type of condition in CamelCase or in foo.example.com/CamelCase.
+                      maxLength: 316
+                      pattern: ^([a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*/)?(([A-Za-z0-9][-A-Za-z0-9_.]*)?[A-Za-z0-9])$
+                      type: string
+                  required:
+                  - lastTransitionTime
+                  - message
+                  - reason
+                  - status
+                  - type
+                  type: object
+                type: array
+              configHash:
+                description: |-
+                  ConfigHash is the SHA256 hash of the PipelineConfig content
+                  currently being served to matched collectors. Matches the hash
+                  field in GetConfigResponse — compare against remotecfg_* metrics
+                  to verify collectors have picked up the latest config.
+                type: string
+              lastSyncedAt:
+                description: |-
+                  LastSyncedAt is the time at which the operator last successfully
+                  projected this binding into the in-memory index.
+                format: date-time
+                type: string
+              observedGeneration:
+                description: |-
+                  ObservedGeneration is the last generation of this binding that
+                  the operator has successfully reconciled. If this value is less
+                  than metadata.generation, the current status reflects a previous
+                  version of the spec and the reconciler has not yet processed the
+                  latest changes.
+                format: int64
+                type: integer
+              phase:
+                description: Phase summarises the current state of this binding.
+                type: string
+              registeredTenants:
+                description: |-
+                  RegisteredTenants is the list of tenants currently registered against
+                  this binding. Entries are upserted on RegisterCollector and removed on
+                  UnregisterCollector or when the entry has not been refreshed within the
+                  collector TTL window.
+                items:
+                  description: |-
+                    RegisteredTenant records a tenant that has called RegisterCollector and has
+                    been matched to this binding. Entries are evicted by the reconciler when
+                    LastSeenAt is older than the configured collector TTL.
+                  properties:
+                    collectorId:
+                      description: |-
+                        CollectorID is the collector instance ID from RegisterCollectorRequest.Id.
+                        Stored so that UnregisterCollector (which only carries the collector ID)
+                        can find and remove this entry.
+                      type: string
+                    id:
+                      description: ID is the tenant ID from LocalAttributes["tenant"].
+                      minLength: 1
+                      type: string
+                    lastSeenAt:
+                      description: LastSeenAt is the time the collector last called
+                        RegisterCollector for this tenant.
+                      format: date-time
+                      type: string
+                  required:
+                  - collectorId
+                  - id
+                  - lastSeenAt
+                  type: object
+                type: array
+                x-kubernetes-list-map-keys:
+                - id
+                x-kubernetes-list-type: map
+            type: object
+        required:
+        - spec
+        type: object
+        x-kubernetes-validations:
+        - message: exactly one of collectorGroupRef or tenantRef must be set
+          rule: (has(self.spec.collectorGroupRef) && self.spec.collectorGroupRef !=
+            "") != (has(self.spec.tenantRef) && self.spec.tenantRef != "")
+    served: true
+    storage: true
+    subresources:
+      status: {}

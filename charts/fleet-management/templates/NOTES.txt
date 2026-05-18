@@ -1,0 +1,42 @@
+Thank you for installing {{ .Chart.Name }} {{ .Chart.AppVersion }}.
+
+Your release is named {{ .Release.Name }} in namespace {{ .Release.Namespace }}.
+
+The controller and CRDs have been installed. Verify the installation:
+
+  kubectl get pods -n {{ .Release.Namespace }}
+  kubectl get customresourcedefinitions | grep pkarakal.com
+
+{{- if .Values.service.enabled }}
+
+Connect-RPC API (alloy-remote-config endpoint)
+-----------------------------------------------
+The Alloy remote-config API is reachable inside the cluster at:
+
+  {{ include "fleet-management.resourceName" (dict "suffix" "api" "context" $) }}.{{ .Release.Namespace }}.svc.cluster.local:{{ .Values.service.port }}
+
+To test locally, forward the service port:
+
+  kubectl port-forward svc/{{ include "fleet-management.resourceName" (dict "suffix" "api" "context" $) }} \
+    {{ .Values.service.port }}:{{ .Values.service.port }} -n {{ .Release.Namespace }}
+
+{{- end }}
+{{- if .Values.ingress.enabled }}
+
+Ingress is enabled. The API is accessible at the following host(s):
+{{- range .Values.ingress.hosts }}
+  - {{ .host }}
+{{- end }}
+
+{{- end }}
+{{- if .Values.metrics.enable }}
+
+Metrics
+-------
+The Prometheus metrics endpoint is available on port {{ .Values.metrics.port }} (HTTPS).
+{{- end }}
+
+For release details:
+
+  $ helm status {{ .Release.Name }} -n {{ .Release.Namespace }}
+  $ helm get all {{ .Release.Name }} -n {{ .Release.Namespace }}

@@ -1,0 +1,122 @@
+{{/*
+Pre-delete hook: strip finalizers from all fleet.pkarakal.com CRs before Helm
+tears down the manager Deployment.
+
+Without this, deleting the release causes a deadlock:
+  Kubernetes tries to delete CRs → finalizers block deletion
+  → controller needs to run to remove finalizers
+  → manager pod is already being deleted
+  → namespace hangs in Terminating indefinitely
+
+The Job patches the finalizers array to [] on every CollectorGroup,
+CollectorGroupBinding, and PipelineConfig across all namespaces so that
+Kubernetes can garbage-collect them immediately once the manager is gone.
+*/}}
+{{- if .Values.preDeleteHook.enabled }}
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: {{ include "fleet-management.resourceName" (dict "suffix" "pre-delete-hook" "context" $) }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "fleet-management.labels" . | nindent 4 }}
+  annotations:
+    "helm.sh/hook": pre-delete
+    "helm.sh/hook-weight": "-5"
+    "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: {{ include "fleet-management.resourceName" (dict "suffix" "pre-delete-hook" "context" $) }}
+  labels:
+    {{- include "fleet-management.labels" . | nindent 4 }}
+  annotations:
+    "helm.sh/hook": pre-delete
+    "helm.sh/hook-weight": "-5"
+    "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
+rules:
+- apiGroups:
+  - fleet.pkarakal.com
+  resources:
+  - collectorgroups
+  - collectorgroupbindings
+  - pipelineconfigs
+  verbs:
+  - list
+  - patch
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: {{ include "fleet-management.resourceName" (dict "suffix" "pre-delete-hook" "context" $) }}
+  labels:
+    {{- include "fleet-management.labels" . | nindent 4 }}
+  annotations:
+    "helm.sh/hook": pre-delete
+    "helm.sh/hook-weight": "-5"
+    "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: {{ include "fleet-management.resourceName" (dict "suffix" "pre-delete-hook" "context" $) }}
+subjects:
+- kind: ServiceAccount
+  name: {{ include "fleet-management.resourceName" (dict "suffix" "pre-delete-hook" "context" $) }}
+  namespace: {{ .Release.Namespace }}
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ include "fleet-management.resourceName" (dict "suffix" "pre-delete-hook" "context" $) }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "fleet-management.labels" . | nindent 4 }}
+  annotations:
+    "helm.sh/hook": pre-delete
+    "helm.sh/hook-weight": "0"
+    "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
+spec:
+  backoffLimit: 0
+  ttlSecondsAfterFinished: 60
+  template:
+    metadata:
+      labels:
+        {{- include "fleet-management.labels" . | nindent 8 }}
+    spec:
+      restartPolicy: Never
+      serviceAccountName: {{ include "fleet-management.resourceName" (dict "suffix" "pre-delete-hook" "context" $) }}
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 65534
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+      - name: finalizer-cleanup
+        image: {{ .Values.preDeleteHook.image }}
+        imagePullPolicy: {{ .Values.preDeleteHook.imagePullPolicy }}
+        securityContext:
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop:
+            - ALL
+          readOnlyRootFilesystem: true
+        command:
+        - sh
+        - -c
+        - |
+          set -e
+          PATCH='{"metadata":{"finalizers":[]}}'
+          for resource in collectorgroups collectorgroupbindings pipelineconfigs; do
+            echo "==> Stripping finalizers from ${resource}..."
+            kubectl get "${resource}" --all-namespaces -o json \
+              | jq -r '.items[] | "\(.metadata.namespace) \(.metadata.name)"' \
+              | while read -r ns name; do
+                  echo "    patching ${resource}/${name} in ${ns}"
+                  kubectl patch "${resource}" "${name}" -n "${ns}" \
+                    --type=merge -p "${PATCH}" || true
+                done
+          done
+          echo "==> Finalizer cleanup complete"
+{{- end }}

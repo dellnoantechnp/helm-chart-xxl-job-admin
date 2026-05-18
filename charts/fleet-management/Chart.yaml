@@ -1,0 +1,34 @@
+apiVersion: v2
+name: fleet-management
+description: >
+  Kubernetes operator that distributes Alloy pipeline configurations to tenants
+  via the alloy-remote-config API (Connect-RPC).
+type: application
+
+version: 1.0.0
+appVersion: "1.0.0"
+
+keywords:
+  - kubernetes
+  - operator
+  - alloy
+  - grafana
+  - observability
+  - remote-config
+
+home: https://github.com/pkarakal/alloy-remote-config
+sources:
+  - https://github.com/pkarakal/alloy-remote-config
+  - https://github.com/dellnoantechnp/alloy-remote-config
+
+maintainers:
+  - name: Pavlos Karakalidis
+    url: https://github.com/pkarakal
+
+annotations:
+  kubebuilder.io/generated-by: kubebuilder
+  artifacthub.io/license: MIT
+  artifacthub.io/operator: "true"
+  artifacthub.io/operatorCapabilities: Basic Install
+  artifacthub.io/prerelease: "false"
+  artifacthub.io/category: monitoring-logging

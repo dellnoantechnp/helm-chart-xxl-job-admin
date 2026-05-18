@@ -1,0 +1,18 @@
+## CI test values: install with default CollectorGroup, PipelineConfig, and
+## CollectorGroupBinding enabled. Validates that the operator reconciles the
+## default resources and that the pre-delete hook cleanly strips finalizers
+## before Helm tears down the manager.
+
+manager:
+  image:
+    registry: ghcr.io
+    repository: pkarakal/alloy-remote-config
+    tag: latest
+    pullPolicy: Never
+  args: []
+
+metrics:
+  enable: false
+
+preDeleteHook:
+  enabled: true

@@ -1,0 +1,22 @@
+{{- if .Values.gateway.enabled }}
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    {{- include "fleet-management.labels" . | nindent 4 }}
+  {{- with .Values.gateway.service.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+  name: {{ include "fleet-management.resourceName" (dict "suffix" "gateway" "context" $) }}
+  namespace: {{ .Release.Namespace }}
+spec:
+  type: {{ .Values.gateway.service.type }}
+  ports:
+  - name: proxy
+    port: {{ .Values.gateway.service.port }}
+    protocol: TCP
+    targetPort: proxy
+  selector:
+    {{- include "fleet-management.gatewaySelectorLabels" . | nindent 4 }}
+{{- end }}

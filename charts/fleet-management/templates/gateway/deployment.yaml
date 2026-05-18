@@ -1,0 +1,133 @@
+{{- if .Values.gateway.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    {{- include "fleet-management.labels" . | nindent 4 }}
+  name: {{ include "fleet-management.resourceName" (dict "suffix" "gateway" "context" $) }}
+  namespace: {{ .Release.Namespace }}
+spec:
+  replicas: {{ .Values.gateway.replicas }}
+  selector:
+    matchLabels:
+      {{- include "fleet-management.gatewaySelectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      annotations:
+        checksum/config: {{ include (print $.Template.BasePath "/gateway/configmap.yaml") . | sha256sum }}
+        {{- with .Values.gateway.podAnnotations }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+      labels:
+        {{- include "fleet-management.labels" . | nindent 8 }}
+        {{- include "fleet-management.gatewaySelectorLabels" . | nindent 8 }}
+        {{- with .Values.gateway.podLabels }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+    spec:
+      {{- with .Values.gateway.tolerations }}
+      tolerations: {{ toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.gateway.affinity }}
+      affinity: {{ toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.gateway.nodeSelector }}
+      nodeSelector: {{ toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.gateway.imagePullSecrets }}
+      imagePullSecrets: {{ toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.gateway.topologySpreadConstraints }}
+      topologySpreadConstraints: {{ toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "fleet-management.resourceName" (dict "suffix" "gateway" "context" $) }}
+      securityContext:
+        {{- if .Values.gateway.podSecurityContext }}
+        {{- toYaml .Values.gateway.podSecurityContext | nindent 8 }}
+        {{- else }}
+        {}
+        {{- end }}
+      terminationGracePeriodSeconds: 30
+      containers:
+      - name: envoy
+        image: "{{ include "fleet-management.image" (dict "global" .Values.global "image" .Values.gateway.image) }}"
+        imagePullPolicy: {{ .Values.gateway.image.pullPolicy }}
+        args:
+        - --config-path
+        - /etc/envoy/envoy.yaml
+        - --log-level
+        - {{ .Values.gateway.logLevel }}
+        ports:
+        - name: proxy
+          containerPort: {{ .Values.gateway.service.port }}
+          protocol: TCP
+        - name: admin
+          containerPort: {{ .Values.gateway.adminPort }}
+          protocol: TCP
+        livenessProbe:
+          httpGet:
+            path: /healthcheck
+            port: admin
+          initialDelaySeconds: 10
+          periodSeconds: 20
+        readinessProbe:
+          httpGet:
+            path: /ready
+            port: admin
+          initialDelaySeconds: 5
+          periodSeconds: 10
+        resources:
+          {{- if .Values.gateway.resources }}
+          {{- toYaml .Values.gateway.resources | nindent 10 }}
+          {{- else }}
+          {}
+          {{- end }}
+        securityContext:
+          {{- if .Values.gateway.securityContext }}
+          {{- toYaml .Values.gateway.securityContext | nindent 10 }}
+          {{- else }}
+          {}
+          {{- end }}
+        volumeMounts:
+        - name: envoy-config
+          mountPath: /etc/envoy
+          readOnly: true
+        - name: tmp
+          mountPath: /tmp
+        {{- if .Values.gateway.tls.enabled }}
+        - name: server-cert
+          mountPath: /etc/envoy/certs/server
+          readOnly: true
+        {{- end }}
+        {{- if eq .Values.gateway.auth.type "mtls" }}
+        - name: client-ca
+          mountPath: /etc/envoy/certs/client-ca
+          readOnly: true
+        {{- end }}
+        {{- if and (eq .Values.gateway.auth.type "basic") .Values.gateway.auth.basic.secretName }}
+        - name: basic-auth-credentials
+          mountPath: /etc/envoy/auth
+          readOnly: true
+        {{- end }}
+      volumes:
+      - name: envoy-config
+        configMap:
+          name: {{ include "fleet-management.resourceName" (dict "suffix" "gateway-config" "context" $) }}
+      - name: tmp
+        emptyDir: {}
+      {{- if .Values.gateway.tls.enabled }}
+      - name: server-cert
+        secret:
+          secretName: {{ .Values.gateway.tls.secretName }}
+      {{- end }}
+      {{- if eq .Values.gateway.auth.type "mtls" }}
+      - name: client-ca
+        secret:
+          secretName: {{ .Values.gateway.auth.mtls.caSecretName }}
+      {{- end }}
+      {{- if and (eq .Values.gateway.auth.type "basic") .Values.gateway.auth.basic.secretName }}
+      - name: basic-auth-credentials
+        secret:
+          secretName: {{ .Values.gateway.auth.basic.secretName }}
+      {{- end }}
+{{- end }}
