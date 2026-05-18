@@ -1219,6 +1219,39 @@ entries:
     urls:
     - https://charts.bitnami.com/bitnami/elasticsearch-17.9.29.tgz
     version: 17.9.29
+  fleet-management:
+  - annotations:
+      artifacthub.io/category: monitoring-logging
+      artifacthub.io/license: MIT
+      artifacthub.io/operator: "true"
+      artifacthub.io/operatorCapabilities: Basic Install
+      artifacthub.io/prerelease: "false"
+      kubebuilder.io/generated-by: kubebuilder
+    apiVersion: v2
+    appVersion: 1.0.0
+    created: "2026-05-18T08:13:29.350204346Z"
+    description: 'Kubernetes operator that distributes Alloy pipeline configurations
+      to tenants via the alloy-remote-config API (Connect-RPC). '
+    digest: 75cb991abcca3a4d705a63438c105f16da36da3308ebda42ab48c5aa28d1fc99
+    home: https://github.com/pkarakal/alloy-remote-config
+    keywords:
+    - kubernetes
+    - operator
+    - alloy
+    - grafana
+    - observability
+    - remote-config
+    maintainers:
+    - name: Pavlos Karakalidis
+      url: https://github.com/pkarakal
+    name: fleet-management
+    sources:
+    - https://github.com/pkarakal/alloy-remote-config
+    - https://github.com/dellnoantechnp/alloy-remote-config
+    type: application
+    urls:
+    - https://github.com/dellnoantechnp/helm-chart-xxl-job-admin/releases/download/fleet-management-1.0.0/fleet-management-1.0.0.tgz
+    version: 1.0.0
   kadalu-operator:
   - annotations:
       category: Storage
@@ -3078,4 +3111,4 @@ entries:
     urls:
     - https://github.com/dellnoantechnp/helm-chart-xxl-job-admin/releases/download/zookeeper-7.6.1/zookeeper-7.6.1.tgz
     version: 7.6.1
-generated: "2026-03-03T10:58:37.010463532Z"
+generated: "2026-05-18T08:13:29.350407905Z"
