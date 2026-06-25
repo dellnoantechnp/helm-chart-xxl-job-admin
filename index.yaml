@@ -1492,6 +1492,28 @@ entries:
     urls:
     - https://github.com/dellnoantechnp/helm-chart-xxl-job-admin/releases/download/kafka-14.9.3/kafka-14.9.3.tgz
     version: 14.9.3
+  kminion:
+  - apiVersion: v2
+    appVersion: v2.3.2
+    created: "2026-06-25T05:36:34.16467399Z"
+    description: A Helm chart to deploy KMinion - a Prometheus Exporter for Apache
+      Kafka
+    digest: 1fe472d1674881e4d66fff455d92ac0a9d5bfb46323d4a52e28be7285b1cee3b
+    keywords:
+    - kafka
+    - kafka-exporter
+    - streaming
+    - producer
+    - consumer
+    - messages
+    name: kminion
+    sources:
+    - https://github.com/redpanda-data/kminion
+    - https://github.com/dellnoantechnp/helm-chart-xxl-job-admin.git
+    type: application
+    urls:
+    - https://github.com/dellnoantechnp/helm-chart-xxl-job-admin/releases/download/kminion-0.13.0/kminion-0.13.0.tgz
+    version: 0.13.0
   mailhog:
   - apiVersion: v2
     appVersion: v1.0.1
@@ -3111,4 +3133,4 @@ entries:
     urls:
     - https://github.com/dellnoantechnp/helm-chart-xxl-job-admin/releases/download/zookeeper-7.6.1/zookeeper-7.6.1.tgz
     version: 7.6.1
-generated: "2026-05-18T08:13:29.350407905Z"
+generated: "2026-06-25T05:36:34.164942594Z"
