@@ -1,0 +1,16 @@
+apiVersion: v2
+appVersion: v2.3.2
+description: A Helm chart to deploy KMinion - a Prometheus Exporter for Apache Kafka
+name: kminion
+type: application
+version: 0.13.0
+keywords:
+  - kafka
+  - kafka-exporter
+  - streaming
+  - producer
+  - consumer
+  - messages
+sources:
+  - https://github.com/redpanda-data/kminion
+  - https://github.com/dellnoantechnp/helm-chart-xxl-job-admin.git
