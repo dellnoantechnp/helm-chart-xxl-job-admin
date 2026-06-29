@@ -2194,7 +2194,7 @@ volumePermissions:
   ##
   image:
     registry: ghcr.io
-    repository: dellnoantechnp/bitnami/os-shell
+    repository: soldevelo/os-shell
     tag: latest
     digest: ""
     pullPolicy: IfNotPresent
@@ -2337,7 +2337,7 @@ sysctl:
   ##
   image:
     registry: ghcr.io
-    repository: dellnoantechnp/bitnami/os-shell
+    repository: soldevelo/os-shell
     tag: latest
     digest: ""
     pullPolicy: IfNotPresent
