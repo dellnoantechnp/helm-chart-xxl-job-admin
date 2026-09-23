@@ -587,7 +587,7 @@ defaults:
 ##
 preDeleteHook:
   enabled: false
-  image: bitnami/kubectl:latest
+  image: soldevelo/kubectl:latest
   imagePullPolicy: IfNotPresent
 
 ## Extra Kubernetes objects to deploy alongside the chart.
