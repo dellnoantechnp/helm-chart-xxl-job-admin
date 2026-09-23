@@ -439,7 +439,48 @@ redis:
   ##
   enabled: true
 
+  master:
+    ## @param master.kind Use either Deployment, StatefulSet (default) or DaemonSet
+    ## ref: https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/
+    ##
+    kind: StatefulSet
+
+    ## @param master.count Number of Redis(R) master instances to deploy (experimental, requires additional configuration)
+    ##
+    count: 1
+
+    ## Persistence parameters
+    ## ref: https://kubernetes.io/docs/concepts/storage/persistent-volumes/
+    ##
+    persistence:
+      ## @param master.persistence.storageClass Persistent Volume storage class
+      ## If defined, storageClassName: <storageClass>
+      ## If set to "-", storageClassName: "", which disables dynamic provisioning
+      ## If undefined (the default) or set to null, no storageClassName spec is set, choosing the default provisioner
+      ##
+      storageClass: ""
+      ## @param master.persistence.accessModes Persistent Volume access modes
+      ##
+      accessModes:
+        - ReadWriteOnce
+      ## @param master.persistence.size Persistent Volume size
+      ##
+      size: 8Gi
+
+    ## Redis(R) master service parameters
+    ##
+    service:
+      ## @param master.service.type Redis(R) master service type
+      ##
+      type: ClusterIP
+
   replica:
+    ## @param replica.kind Use either DaemonSet or StatefulSet (default)
+    ## ref: https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/
+    ##
+    kind: StatefulSet
+    ## @param replica.replicaCount Number of Redis(R) replicas to deploy
+    ##
     replicaCount: 0
 
   auth:
@@ -458,6 +499,31 @@ redis:
     ## NOTE: ignored unless `auth.existingSecret` parameter is set
     ##
     existingSecretPasswordKey: ""
+
+  ## @section Metrics Parameters
+  ##
+  metrics:
+    ## @param metrics.enabled Start a sidecar prometheus exporter to expose Redis(R) metrics
+    ##
+    enabled: false
+
+    ## Prometheus Service Monitor
+    ## ref: https://github.com/coreos/prometheus-operator
+    ##      https://github.com/coreos/prometheus-operator/blob/master/Documentation/api.md#endpoint
+    ##
+    serviceMonitor:
+      ## @param metrics.serviceMonitor.enabled Create ServiceMonitor resource(s) for scraping metrics using PrometheusOperator
+      ##
+      enabled: false
+
+    ## Prometheus Pod Monitor
+    ## ref: https://github.com/coreos/prometheus-operator
+    ##      https://github.com/coreos/prometheus-operator/blob/master/Documentation/api.md#podmonitor
+    ##
+    podMonitor:
+      ## @param metrics.podMonitor.enabled Create PodMonitor resource(s) for scraping metrics using PrometheusOperator
+      ##
+      enabled: false
 
 redisExternal:
   ## @param redisExternal.enabled Enable external redis
